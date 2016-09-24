@@ -1,0 +1,47 @@
+==================================
+Setting up an rfw server (without 
+a remote client) on a Ubuntu VM 
+==================================
+
+-- Install Python 2.7
+$ sudo apt-get install python2.7
+
+-- Install rfw
+$ [sudo] pip install rfw
+
+-- Check /etc to verify that an rfw directory was created
+$ ls /etc
+
+    -- If it was not created, browse to...
+    $ cd /usr/local/lib/python2.7/etc/dist-packages/etc
+
+    -- If an rfw directory exists here, copy it to /etc (if its not here, theres a problem)
+    $ sudo cp -R rfw/ /etc
+
+-- Edit config file
+$ sudo vi /etc/rfw/rfw.conf
+Comment out line that says outward.server
+
+-- Verify that 127.0.0.1 is listed in the whitelist
+$ cat /etc/rfw/white.list
+
+-- Edit a config file (in two locations)
+$ vi /usr/local/lib/python2.7/dist-packages/rfw/rfw.conf 
+Line 238 - Change variable declaration of rfw_port from rfwconf.outward_server_port() to rfwconf.local_server_port()
+-- Repeat this process for the same file
+$ vi /home/$USER/.local/lib/python2.7/site-packages/rfw/rfw.py
+
+
+-- Start rfw in verbose mode or in the background
+$ sudo rfw -v
+ or
+$ sudo rfw &
+
+-- Use curl to send REST API requests to server
+$ curl -v -XGET http://localhost:7390/GET/REQUEST/HERE
+$ curl -v -XPUT http://localhost:7390/PUT/REQUEST/HERE
+$ curl -v -XDELETE http://localhost:7390/DELETE/REQUEST/HERE
+
+Check this link for the syntax of the API requests: https://github.com/securitykiss-com/rfw/blob/master/README.rst
+
+
