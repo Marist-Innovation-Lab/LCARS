@@ -16,9 +16,12 @@
 
     <!-- Custom Theme Style -->
     <link href="../build/css/custom.min.css" rel="stylesheet">
+
+    <script src="js/firewall.js"></script>
+
   </head>
 
-  <body class="nav-md">
+  <body class="nav-md" onload="javascript:refreshFirewall();">
     <div class="container body">
       <div class="main_container">
         <div class="col-md-3 left_col">
@@ -196,7 +199,15 @@
                           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Target <span class="caret"></span></button>
                           <ul class="dropdown-menu">
                             <li><a href="#">Accept</a></li>
+                            <li><a href="#">Drop</a></li>
                             <li><a href="#">Reject</a></li>
+                          </ul>
+                        </div>
+                        <div class="input-group-btn">
+                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Chain <span class="caret"></span></button>
+                          <ul class="dropdown-menu">
+                            <li><a href="#">Input</a></li>
+                            <li><a href="#">Output</a></li>
                             <li><a href="#">Forward</a></li>
                           </ul>
                         </div>
@@ -226,80 +237,26 @@
                     <h2>
                        Firewall State
                        &nbsp;&nbsp;
-                       <a href="#">
+                       <a href="#" onclick="javascript:refreshFirewall();">
                           <i class="fa fa-refresh"></i>
                        </a>
                     </h2>
                     <div class="clearfix"></div>
                   </div>
-                  <div class="x_content">                   
+                  <div class="x_content" style="height: 400px; overflow: auto;">                   
                     <table class="table table-hover">
                       <thead>
                         <tr>
                           <th>#</th>
                           <th>Target</th>
+                          <th>Chain</th>
                           <th>Protocol</th>
                           <th>Source</th>
                           <th>Destination</th>
                           <th>Actions</th>
                         </tr>
                       </thead>
-                      <tbody>
-                        <tr>
-                          <th scope="row">1</th>
-                          <td>Accept</td>                          
-                          <td>All</td>
-                          <td>1.0.0.7/0</td>
-                          <td>1.0.0.7/0</td>
-                          <td>
-                             <button type="button" class="btn btn-primary btn-xs">Edit</button>
-                             <button type="button" class="btn btn-primary btn-xs">Delete</button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th scope="row">2</th>
-                          <td>Accept</td>
-                          <td>UDP</td>
-                          <td>1.2.3.4/0</td>
-                          <td>4.3.2.1/0</td>
-                          <td>
-                             <button type="button" class="btn btn-primary btn-xs">Edit</button>
-                             <button type="button" class="btn btn-primary btn-xs">Delete</button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th scope="row">3</th>
-                          <td>Reject</td>
-                          <td>TCP</td>
-                          <td>8.6.7.5/0</td>
-                          <td>3.0.9.J/0</td>
-                          <td>
-                             <button type="button" class="btn btn-primary btn-xs">Edit</button>
-                             <button type="button" class="btn btn-primary btn-xs">Delete</button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th scope="row">4</th>
-                          <td>Forward</td>
-                          <td>SSH</td>
-                          <td>148.100.100.0/0</td>
-                          <td>162.243.254.46/0</td>
-                          <td>
-                             <button type="button" class="btn btn-primary btn-xs">Edit</button>
-                             <button type="button" class="btn btn-primary btn-xs">Delete</button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th scope="row">5</th>
-                          <td>Reject</td>
-                          <td>All</td>
-                          <td>162.243.254.46/0</td>
-                          <td>162.243.254.46/0</td>
-                          <td>
-                             <button type="button" class="btn btn-primary btn-xs">Edit</button>
-                             <button type="button" class="btn btn-primary btn-xs">Delete</button>
-                          </td>
-                        </tr>
+                      <tbody id="firewall-rules">
                       </tbody>
                     </table>
                   </div>
