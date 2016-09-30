@@ -52,12 +52,22 @@ $(document).ready(function() {
         var chain = $(this).text();
         $("#chain-title").text(chain);
     });
+    $("#protocol-dropdown").on("click", "li a", function() {
+        var protocol = $(this).text();
+        $("#protocol-title").text(protocol);
+    });
+    $("#interface-dropdown").on("click", "li a", function() {
+        var interface = $(this).text();
+        $("#interface-title").text(interface);
+    });
 
     $("#add-rule").on("click", function() {
         var target = $("#target-title").text().toLowerCase().trim();
         var chain = $("#chain-title").text().toLowerCase().trim();
+        var protocol = $("#protocol-title").text().toLowerCase().trim();
+        var interface = $("#interface-title").text().toLowerCase().trim();
         var addr = $("#address").val();
-        buildRequest(target, chain, addr);
+        buildRequest(target, chain, protocol, interface, addr);
     });
  
 
@@ -67,13 +77,13 @@ function addRuleErrorMsg() {
     $("#addrule-error").text("Invalid Request");
 }
 
-function buildRequest(target, chain, address) {
+function buildRequest(target, chain, protocol, interface, address) {
     var url = "http://10.10.7.84:7390/"
 
-    if ( target === "target" || chain === "chain" ) {
+    if ( target === "target" || chain === "chain" || protocol === "protocol" || interface === "interface" ) {
         return addRuleErrorMsg();        
     } else {
-        var path = url + target + "/" + chain + "/any/" + address;
+        var path = url + target + "/" + chain + "/" + interface + "/" + protocol + "/" + address;
         return addNewRule(path);
     }
 }
