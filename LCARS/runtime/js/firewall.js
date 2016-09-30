@@ -46,14 +46,14 @@ function refreshFirewall() {
 $(document).ready(function() {
     $("#target-dropdown").on("click", "li a", function() {
         var target = $(this).text();
-        $("#target-title").html(target);
+        $("#target-title").text(target);
     });
     $("#chain-dropdown").on("click", "li a", function() {
         var chain = $(this).text();
-        $("#chain-title").html(chain);
+        $("#chain-title").text(chain);
     });
 
-    $("#add-rule").click(function() {
+    $("#add-rule").on("click", function() {
         var target = $("#target-title").text().toLowerCase().trim();
         var chain = $("#chain-title").text().toLowerCase().trim();
         var addr = $("#address").val();
@@ -63,17 +63,15 @@ $(document).ready(function() {
 
 });
 
-function addRuleErrorMsg(msg) {
-    // Put a message in the firewall rules box
-    // Console for now
-    console.log(msg);
+function addRuleErrorMsg() {
+    $("#addrule-error").text("Invalid Request");
 }
 
 function buildRequest(target, chain, address) {
     var url = "http://10.10.7.84:7390/"
 
     if ( target === "target" || chain === "chain" ) {
-        return addRuleErrorMsg("Specify target and chain");        
+        return addRuleErrorMsg();        
     } else {
         var path = url + target + "/" + chain + "/any/" + address;
         return addNewRule(path);
@@ -85,12 +83,12 @@ function addNewRule(URL) {
             url: URL,
             type: 'PUT',
             success: function() {
-                return refreshFirewall();
+                return location.reload();
             },
             error: function() {
-                return addRuleErrorMsg("Invalid request");
+                return addRuleErrorMsg();
             }
-        });
+    });
 }
 
 
