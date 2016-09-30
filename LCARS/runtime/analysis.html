@@ -238,11 +238,25 @@
                    <h2>Integrated Graph and SQL Analytics - G*Studio</h2>
                    <div class="clearfix"></div>
                  </div>
-                 <div class="x_content">
-                    <img src="images/gstar-studio.png" class="img-responsive">                    
+                 <div class="row">
+                   <div class="x_content">
+                     <div class="col-md-4 col-sm-4">
+                       <h4>BIG* Data Studio</h4>
+                       <iframe src="placeholder.html"></iframe>
+                     </div>
+                     <div class="col-md-8 col-sm-8 col-xs-12">
+                       <h4>Input Data</h4>
+                       <textarea class="form-control" id="logData" rows="3"></textarea>
+                       <br>
+                       <button type="button" class="btn btn-primary" onclick="convertToGstar()">Convert</button>
+                       <br>
+                       <h4>G* Commands</h4>
+                       <textarea class="form-control" id="logDataOutput" rows="3"></textarea>           
+                     </div>
+                   </div>
                  </div>
                </div>
-            </div>
+              </div>
             
             <div class="col-md-3 col-sm-3 col-xs-12">
                <div class="x_panel">
@@ -315,6 +329,8 @@
 
     <!-- Custom Theme Scripts -->
     <script src="../build/js/custom.min.js"></script>
+    <!-- "Log Data to G* Commands" Function -->
+    <script src="js/convert.js"></script>
 
   </body>
 </html>
