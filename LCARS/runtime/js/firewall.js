@@ -42,3 +42,55 @@ function getData() {
 function refreshFirewall() {
     getData();   
 }
+
+$(document).ready(function() {
+    $("#target-dropdown").on("click", "li a", function() {
+        var target = $(this).text();
+        $("#target-title").html(target);
+    });
+    $("#chain-dropdown").on("click", "li a", function() {
+        var chain = $(this).text();
+        $("#chain-title").html(chain);
+    });
+
+    $("#add-rule").click(function() {
+        var target = $("#target-title").text().toLowerCase().trim();
+        var chain = $("#chain-title").text().toLowerCase().trim();
+        var addr = $("#address").val();
+        buildRequest(target, chain, addr);
+    });
+ 
+
+});
+
+function addRuleErrorMsg(msg) {
+    // Put a message in the firewall rules box
+    // Console for now
+    console.log(msg);
+}
+
+function buildRequest(target, chain, address) {
+    var url = "http://10.10.7.84:7390/"
+
+    if ( target === "target" || chain === "chain" ) {
+        return addRuleErrorMsg("Specify target and chain");        
+    } else {
+        var path = url + target + "/" + chain + "/any/" + address;
+        return addNewRule(path);
+    }
+}
+
+function addNewRule(URL) {
+    $.ajax({
+            url: URL,
+            type: 'PUT',
+            success: function() {
+                return refreshFirewall();
+            },
+            error: function() {
+                return addRuleErrorMsg("Invalid request");
+            }
+        });
+}
+
+

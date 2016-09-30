@@ -17,6 +17,7 @@
     <!-- Custom Theme Style -->
     <link href="../build/css/custom.min.css" rel="stylesheet">
 
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="js/firewall.js"></script>
 
   </head>
@@ -195,38 +196,28 @@
                   </div>
                   <div class="x_content">
                       <div class="input-group">
-                        <div class="input-group-btn">
-                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Target <span class="caret"></span></button>
+                        <div class="input-group-btn" id="target-dropdown">
+                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="target-title">Target </span><span class="caret"></span></button>
                           <ul class="dropdown-menu">
-                            <li><a href="#">Accept</a></li>
-                            <li><a href="#">Drop</a></li>
-                            <li><a href="#">Reject</a></li>
+                            <li><a href="#">Accept </a></li>
+                            <li><a href="#">Drop </a></li>
+                            <li><a href="#">Reject </a></li>
                           </ul>
                         </div>
-                        <div class="input-group-btn">
-                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Chain <span class="caret"></span></button>
+                        <div class="input-group-btn" id="chain-dropdown">
+                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id="chain-title">Chain </span><span class="caret"></span></button>
                           <ul class="dropdown-menu">
-                            <li><a href="#">Input</a></li>
-                            <li><a href="#">Output</a></li>
-                            <li><a href="#">Forward</a></li>
+                            <li><a href="#">Input </a></li>
+                            <li><a href="#">Output </a></li>
                           </ul>
                         </div>
-                        <div class="input-group-btn">
-                          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Protocol <span class="caret"></span></button>
-                          <ul class="dropdown-menu">
-                            <li><a href="#">All</a></li>
-                            <li><a href="#">TCP</a></li>
-                            <li><a href="#">UDP</a></li>
-                            <li><a href="#">SSH</a></li>
-                          </ul>
-                        </div>      
                         <div class="">
-                           <input type="text" class="form-control" placeholder="IP addresses">
+                           <input type="text" id="address" class="form-control" placeholder="IP addresses">
                         </div>   
                       </div>
                       <br>
                       <div class="input-group-btn">
-                        <button class="btn btn-primary" type="button">Add rule (put)</button>
+                        <button id="add-rule" class="btn btn-primary" type="button">Add rule (put)</button>
                       </div>      
                   </div>
                </div>
