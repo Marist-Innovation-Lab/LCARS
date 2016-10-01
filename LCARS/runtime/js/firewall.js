@@ -56,34 +56,50 @@ $(document).ready(function() {
         var protocol = $(this).text();
         $("#protocol-title").text(protocol);
     });
-    $("#interface-dropdown").on("click", "li a", function() {
-        var interface = $(this).text();
-        $("#interface-title").text(interface);
-    });
+//  $("#interface-dropdown").on("click", "li a", function() {
+//      var interface = $(this).text();
+//      $("#interface-title").text(interface);
+//  });
 
     $("#add-rule").on("click", function() {
         var target = $("#target-title").text().toLowerCase().trim();
         var chain = $("#chain-title").text().toLowerCase().trim();
         var protocol = $("#protocol-title").text().toLowerCase().trim();
-        var interface = $("#interface-title").text().toLowerCase().trim();
+//      var interface = $("#interface-title").text().toLowerCase().trim();
         var addr = $("#address").val();
-        buildRequest(target, chain, protocol, interface, addr);
+//      buildRequest(target, chain, protocol, interface, addr);
+        buildRequest(target, chain, protocol, addr);
+    });
+
+    $("#firewall-rules").on("click", "td button", function() {
+        var button = $(this).text().toLowerCase();
+        var row = $(this).closest("tr").find("td").map(function() {
+                      return $(this).text()
+                  }).get();
+
+        if (button === "delete") {
+            deleteRule(row);
+        }
     });
  
 
 });
 
+
 function addRuleErrorMsg() {
     $("#addrule-error").text("Invalid Request");
 }
 
-function buildRequest(target, chain, protocol, interface, address) {
+//function buildRequest(target, chain, protocol, interface, address) {
+function buildRequest(target, chain, protocol, address) {
     var url = "http://10.10.7.84:7390/"
 
-    if ( target === "target" || chain === "chain" || protocol === "protocol" || interface === "interface" ) {
+//  if ( target === "target" || chain === "chain" || protocol === "protocol" || interface === "interface" ) {
+    if ( target === "target" || chain === "chain" || protocol === "protocol" ) {
         return addRuleErrorMsg();        
     } else {
-        var path = url + target + "/" + chain + "/" + interface + "/" + protocol + "/" + address;
+//      var path = url + target + "/" + chain + "/" + interface + "/" + protocol + "/" + address;
+        var path = url + target + "/" + chain + "/any/" + protocol + "/" + address;
         return addNewRule(path);
     }
 }
@@ -99,6 +115,25 @@ function addNewRule(URL) {
                 return addRuleErrorMsg();
             }
     });
+}
+
+function deleteRule(rule) {
+    var url = "http://10.10.7.84:7390/"
+    var target = rule[0].toLowerCase();
+    var chain = rule[1].toLowerCase();
+    var prot = rule[2].toLowerCase();
+    var source = rule[3].toLowerCase();
+    var dest = rule[4].toLowerCase();
+
+    if (chain === "input") {
+        var path = url + target + "/" + chain + "/any/" + prot + "/" + source;
+    } else {
+        var path = url + target + "/" + chain + "/any/" + prot + "/" + dest;
+    }
+    
+    console.log(path);
+    return path;
+
 }
 
 
