@@ -22,7 +22,7 @@ var serverURL = "http://10.10.7.84:7390/"
 
 // This will not work if your IP is not whitelisted
 // The entire marist network: 10.0.0.0/8 is currently whitelisted for testing
-function getData() {
+function getFirewallData() {
     $.getJSON(
       serverURL + "list",
       function (data, status) {
@@ -42,8 +42,22 @@ function getData() {
       });
 }
 
+
+function getWhitelist() {
+    $.getJSON(
+      serverURL + "whitelist",
+      function (data, status) {
+         if (status === "success") {
+             $.each(data, function(i, item) {
+                 $("#whitelist").append('<tr><th scope="row">' + data[i] + '</th></tr>');
+             });
+         }
+      });
+}
+
+
 function refreshFirewall() {
-    getData();   
+    getFirewallData();   
 }
 
 $(document).ready(function() {
@@ -85,9 +99,8 @@ $(document).ready(function() {
         }
     });
  
-
+    getWhitelist();
 });
-
 
 function addRuleErrorMsg() {
     $("#addrule-error").text("Invalid Request");
