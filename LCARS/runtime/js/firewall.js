@@ -17,11 +17,14 @@ String.prototype.formatProtocol = function () {
     return result;
 }
 
+
+var serverURL = "http://10.10.7.84:7390/"
+
 // This will not work if your IP is not whitelisted
 // The entire marist network: 10.0.0.0/8 is currently whitelisted for testing
 function getData() {
     $.getJSON(
-      "http://10.10.7.84:7390/list",
+      serverURL + "list",
       function (data, status) {
          if (status === "success") {
              $("#firewall-rules").empty();
@@ -67,8 +70,8 @@ $(document).ready(function() {
         var protocol = $("#protocol-title").text().toLowerCase().trim();
 //      var interface = $("#interface-title").text().toLowerCase().trim();
         var addr = $("#address").val();
-//      buildRequest(target, chain, protocol, interface, addr);
-        buildRequest(target, chain, protocol, addr);
+//      buildAddRequest(target, chain, protocol, interface, addr);
+        buildAddRequest(target, chain, protocol, addr);
     });
 
     $("#firewall-rules").on("click", "td button", function() {
@@ -78,7 +81,7 @@ $(document).ready(function() {
                   }).get();
 
         if (button === "delete") {
-            deleteRule(row);
+            buildDeleteRequest(row);
         }
     });
  
@@ -91,15 +94,14 @@ function addRuleErrorMsg() {
 }
 
 //function buildRequest(target, chain, protocol, interface, address) {
-function buildRequest(target, chain, protocol, address) {
-    var url = "http://10.10.7.84:7390/"
+function buildAddRequest(target, chain, protocol, address) {
 
 //  if ( target === "target" || chain === "chain" || protocol === "protocol" || interface === "interface" ) {
     if ( target === "target" || chain === "chain" || protocol === "protocol" ) {
         return addRuleErrorMsg();        
     } else {
-//      var path = url + target + "/" + chain + "/" + interface + "/" + protocol + "/" + address;
-        var path = url + target + "/" + chain + "/any/" + protocol + "/" + address;
+//      var path = serverURL + target + "/" + chain + "/" + interface + "/" + protocol + "/" + address;
+        var path = serverURL + target + "/" + chain + "/any/" + protocol + "/" + address;
         return addNewRule(path);
     }
 }
@@ -117,8 +119,7 @@ function addNewRule(URL) {
     });
 }
 
-function deleteRule(rule) {
-    var url = "http://10.10.7.84:7390/"
+function buildDeleteRequest(rule) {
     var target = rule[0].toLowerCase();
     var chain = rule[1].toLowerCase();
     var prot = rule[2].toLowerCase();
@@ -126,13 +127,22 @@ function deleteRule(rule) {
     var dest = rule[4].toLowerCase();
 
     if (chain === "input") {
-        var path = url + target + "/" + chain + "/any/" + prot + "/" + source;
+        var path = serverURL + target + "/" + chain + "/any/" + prot + "/" + source;
     } else {
-        var path = url + target + "/" + chain + "/any/" + prot + "/" + dest;
+        var path = serverURL + target + "/" + chain + "/any/" + prot + "/" + dest;
     }
     
-    console.log(path);
-    return path;
+   return deleteRule(path);
+}
+
+function deleteRule(URL) {
+    $.ajax({
+            url: URL,
+            type: 'DELETE',
+            success: function() {
+                return location.reload();
+            }
+    });
 
 }
 
