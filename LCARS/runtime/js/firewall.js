@@ -47,7 +47,27 @@ function getDropdownSelection(attribute) {
     $("#"+attribute+"-dropdown").on("click", "li a", function() {
         var attr = $(this).text();
         $("#"+attribute+"-title").text(attr);
+        
+        if (attribute === "chain") {
+            if (attr === "Forward ") {
+                addressBoxes(2);
+            } else {
+                addressBoxes(1);
+            }
+        }
     });
+}
+
+// Reconfigures IP address input boxes if forward chain is selected
+function addressBoxes(num) {
+    if (num === 2) {
+        $("#address-inputs").empty();
+        $("#address-inputs").append('<input type="text" id="address" class="form-control" placeholder="Source IP">');
+        $("#address-inputs").append('<input type="text" id="address2" class="form-control" placeholder="Destination IP">');
+    } else {
+        $("#address-inputs").empty();
+        $("#address-inputs").append('<input type="text" id="address" class="form-control" placeholder="IP address">');
+    }
 }
 
 // Determines if "Add rule" button was clicked, and gets the values to build rule
@@ -58,9 +78,14 @@ function addButtonClicked() {
         var protocol = $("#protocol-title").text().toLowerCase().trim();
 //      var interface = $("#interface-title").text().toLowerCase().trim();
         var addr = $("#address").val();
+        var addr2 = null;        
+
+        if (chain === "forward") {
+            addr2 = $("#address2").val();
+        }
 
 //      buildAddRequest(target, chain, protocol, interface, addr);
-        buildAddRequest(target, chain, protocol, addr);
+        buildAddRequest(target, chain, protocol, addr, addr2);
     });
 }
 
@@ -71,11 +96,14 @@ function addRuleErrorMsg() {
 
 // Builds request URL to add new rule
 //function buildAddRequest(target, chain, protocol, interface, address) {
-function buildAddRequest(target, chain, protocol, address) {
+function buildAddRequest(target, chain, protocol, address, address2) {
 
 //  if ( target === "target" || chain === "chain" || protocol === "protocol" || interface === "interface" ) {
     if ( target === "target" || chain === "chain" || protocol === "protocol" || address === "") {
-        return addRuleErrorMsg();        
+        return addRuleErrorMsg();
+    } else if ( chain === "forward" ) {
+        var forwardPath = serverURL + target + "/forward/any/" + protocol + "/" + address + "/any/" + address2;
+        return addNewRule(forwardPath);                
     } else {
 //      var path = serverURL + target + "/" + chain + "/" + interface + "/" + protocol + "/" + address;
         var path = serverURL + target + "/" + chain + "/any/" + protocol + "/" + address;
@@ -119,11 +147,18 @@ function buildDeleteRequest(rule) {
     var prot   = rule[2].toLowerCase();
     var source = rule[3].toLowerCase();
     var dest   = rule[4].toLowerCase();
+    var path;
 
     if (chain === "input") {
-        var path = serverURL + target + "/" + chain + "/any/" + prot + "/" + source;
-    } else {  // chain === "output"
-        var path = serverURL + target + "/" + chain + "/any/" + prot + "/" + dest;
+        path = serverURL + target + "/input/any/" + prot + "/" + source;
+    } else if (chain === "output") { 
+        path = serverURL + target + "/output/any/" + prot + "/" + dest;
+    } else {   // chain === "forward"
+        if (dest === "0.0.0.0/0") {
+            path = serverURL + target + "/forward/any/" + prot + "/" + source + "/any/"
+        } else {
+            path = serverURL + target + "/forward/any/" + prot + "/" + source + "/any/" + dest;
+        }
     }
     
    return deleteRule(path);

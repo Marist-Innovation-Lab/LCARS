@@ -22,7 +22,7 @@
 
   </head>
 
-  <body class="nav-md" onload="javascript:refreshFirewall();">
+  <body class="nav-md">
     <div class="container body">
       <div class="main_container">
         <div class="col-md-3 left_col">
@@ -209,6 +209,7 @@
                           <ul class="dropdown-menu">
                             <li><a>Input </a></li>
                             <li><a>Output </a></li>
+                            <li><a>Forward </a></li>
                           </ul>
                         </div>
                         <div class="input-group-btn" id="protocol-dropdown">
@@ -229,7 +230,7 @@
                           </ul>
                         </div>
                         -->
-                        <div class="">
+                        <div class="" id="address-inputs">
                            <input type="text" id="address" class="form-control" placeholder="IP address">
                         </div>   
                       </div>
@@ -259,7 +260,7 @@
                     <h2>
                        Firewall State
                        &nbsp;&nbsp;
-                       <a href="#" onclick="javascript:refreshFirewall();">
+                       <a href="#" onclick="javascript:getFirewallData();">
                           <i class="fa fa-refresh"></i>
                        </a>
                     </h2>
