@@ -1,0 +1,14 @@
+#target-dropdown>.btn {
+   border-radius: 3px;
+   margin-right: 4px;
+}
+
+#address-inputs>.col-lg-6 {
+   padding-left: 0px;
+   padding-right: 5px;
+}
+
+
+#address, #address2 {
+   border-radius: 3px;
+}

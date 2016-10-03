@@ -62,8 +62,8 @@ function getDropdownSelection(attribute) {
 function addressBoxes(num) {
     if (num === 2) {
         $("#address-inputs").empty();
-        $("#address-inputs").append('<input type="text" id="address" class="form-control" placeholder="Source IP">');
-        $("#address-inputs").append('<input type="text" id="address2" class="form-control" placeholder="Destination IP">');
+        $("#address-inputs").append('<div class="col-lg-6"><input type="text" id="address" class="form-control" placeholder="Source IP"></div>');
+        $("#address-inputs").append('<div class="col-lg-6"><input type="text" id="address2" class="form-control" placeholder="Destination IP"></div>');
     } else {
         $("#address-inputs").empty();
         $("#address-inputs").append('<input type="text" id="address" class="form-control" placeholder="IP address">');
