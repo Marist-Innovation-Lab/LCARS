@@ -7,8 +7,8 @@ function convertToGstar() {
 	var jsonLine;
 	var srcIpColor = "red";
 	var destIpColor = "blue";
-	var srcPortColor = "yellow";
-	var destPortColor = "green";
+	var srcPortColor = "orange";
+	var destPortColor = "teal";
 
 	output.innerHTML = "";
 	output.innerHTML = output.innerHTML + "new graph\n";
@@ -39,7 +39,7 @@ function convertToGstar() {
 		} else {
 			output.innerHTML = output.innerHTML + "add edge ip" + jsonLine.src + " - ip" + jsonLine.dest + "\n";
 			output.innerHTML = output.innerHTML + "add edge ip" + jsonLine.src + " - " + jsonLine.src_port + "\n";
-			output.innerHTML = output.innerHTML + "add edge ip" + jsonLine.dest + " - " + jsonLine.dest_port + "\n";
+			output.innerHTML = output.innerHTML + "add edge ip" + jsonLine.src + " - " + jsonLine.dest_port + "\n";
 		}
 	}
 }
