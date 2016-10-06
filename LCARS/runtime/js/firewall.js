@@ -22,8 +22,7 @@ function getFirewallData() {
                                            + '<td>' + data[i].prot.formatProtocol() + '</td>'
                                            + '<td>' + data[i].source + '</td>'
                                            + '<td>' + data[i].destination + '</td>'
-                                           + '<td><button type="button" class="btn btn-primary btn-xs">Edit</button>'
-                                           + '<button type="button" class="btn btn-primary btn-xs">Delete</button></td></tr>');
+                                           + '<td><button type="button" class="btn btn-primary btn-xs">Delete</button></td></tr>');
              });
          }
       });
@@ -56,6 +55,16 @@ function getDropdownSelection(attribute) {
             }
         }
     });
+}
+
+// Resets Firewall Rules panel inputs to default values
+function resetDropdownSelections() {
+    $("#target-title").text("Title ");
+    $("#chain-title").text("Chain ");
+    $("#protocol-title").text("Protocol ");
+    $("#address").val("");
+    $("#address2").val("");
+    $("#addrule-error").text("");    
 }
 
 // Reconfigures IP address input boxes if forward chain is selected
@@ -102,13 +111,14 @@ function buildAddRequest(target, chain, protocol, address, address2) {
     if ( target === "target" || chain === "chain" || protocol === "protocol" || address === "") {
         return addRuleErrorMsg();
     } else if ( chain === "forward" ) {
-        var forwardPath = serverURL + target + "/forward/any/" + protocol + "/" + address + "/any/" + address2;
-        return addNewRule(forwardPath);                
+        var path = serverURL + target + "/forward/any/" + protocol + "/" + address + "/any/" + address2;
+        return addNewRule(path);                
     } else {
 //      var path = serverURL + target + "/" + chain + "/" + interface + "/" + protocol + "/" + address;
         var path = serverURL + target + "/" + chain + "/any/" + protocol + "/" + address;
         return addNewRule(path);
     }
+    updateLog(path);
 }
 
 // Sends ajax request to add new rule
@@ -117,12 +127,25 @@ function addNewRule(URL) {
             url: URL,
             type: 'PUT',
             success: function() {
-                return location.reload();
+                updateLog("ADD", URL);
+                resetDropdownSelections();
+                return getFirewallData();
             },
             error: function() {
                 return addRuleErrorMsg();
             }
     });
+}
+
+function updateLog(action, update) {
+    var formattedUpdate = formatLogData(update);
+    $("#reconf-log").append(action + " " + formattedUpdate + "<br>");
+
+}
+
+function formatLogData(entry) {
+    var formattedData = entry.substring(23, entry.length);
+    return formattedData;
 }
 
 // Determines if the "Edit" or "Delete" button in the Firewall Rules section was pressed and performs the appropriate action
@@ -170,7 +193,8 @@ function deleteRule(URL) {
             url: URL,
             type: 'DELETE',
             success: function() {
-                return location.reload();
+                updateLog("DELETE", URL);
+                return getFirewallData();
             }
     });
 }

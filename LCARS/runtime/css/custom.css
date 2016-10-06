@@ -8,7 +8,13 @@
    padding-right: 5px;
 }
 
-
 #address, #address2 {
    border-radius: 3px;
+}
+
+#reconf-log-jtron {
+   max-height: 400px;
+   overflow: auto;
+   padding: 20px;
+   margin-bottom: 10px;
 }
