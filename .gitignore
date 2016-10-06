@@ -8,3 +8,10 @@ TSWLatexianTemp_*
 *.log
 LCARS/template/*
 LCARS/vendors/*
+
+LCARS/db/ApiCore/build/*
+LCARS/db/ApiCore/nbproject/*
+LCARS/db/ApiCore/test/*
+LCARS/db/ApiCore/build.xml
+LCARS/db/ApiCore/dbinfo.txt
+LCARS/db/ApiCore/manifest.mf
