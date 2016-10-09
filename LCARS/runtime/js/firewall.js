@@ -127,7 +127,7 @@ function addNewRule(URL) {
             url: URL,
             type: 'PUT',
             success: function() {
-                updateLog("ADD", URL);
+                updateLog("Add", URL);
                 resetDropdownSelections();
                 return getFirewallData();
             },
@@ -139,12 +139,27 @@ function addNewRule(URL) {
 
 function updateLog(action, update) {
     var formattedUpdate = formatLogData(update);
-    $("#reconf-log").append(action + " " + formattedUpdate + "<br>");
+    var date = (new Date()).toString().split(' ').splice(1,4).join(' ');
+    $("#reconf-log").append("[" + date + "] Action: " + action + "; " + formattedUpdate + "<br>");
 
 }
 
 function formatLogData(entry) {
-    var formattedData = entry.substring(23, entry.length);
+    var rawAPIStr = entry.substring(23, entry.length);
+    var splitStr = rawAPIStr.split("/");
+    var target = splitStr[0].capitalize();
+    var chain = splitStr[1].capitalize();
+    var protocol = splitStr[3].formatProtocol();
+    var ip = splitStr[4];
+
+    if (chain === "Input") {
+        var formattedData = "Target: " + target + "; Chain: " + chain + "; Protocol: " + protocol + "; Source: " + ip + "; Destination: 0.0.0.0/0";
+    } else if (chain === "Output") {
+        var formattedData = "Target: " + target + "; Chain: " + chain + "; Protocol: " + protocol + "; Source: 0.0.0.0/0; Destination: " + ip;
+    } else if (chain === "Forward") {
+        var ip2 = splitStr[6];
+        var formattedData = "Target: " + target + "; Chain: " + chain + "; Protocol: " + protocol + "; Source: " + ip + "; Destination: " + ip2;
+    }
     return formattedData;
 }
 
@@ -193,7 +208,7 @@ function deleteRule(URL) {
             url: URL,
             type: 'DELETE',
             success: function() {
-                updateLog("DELETE", URL);
+                updateLog("Delete", URL);
                 return getFirewallData();
             }
     });
