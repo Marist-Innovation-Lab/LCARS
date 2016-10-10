@@ -45,6 +45,25 @@ public class ApiCore {
         
         return responseRecipes;
     }
+    /**
+     * Insert a new response recipe into the database
+     * 
+     * @param c Connection object for database
+     * @param name String The name of the response recipe
+     */
+    public static void insertResponseRecipe(Connection c, String name) { 
+        try {
+            Statement stmt = c.createStatement();
+            String sql = "INSERT INTO ResponseRecipes (name) "
+                    + "VALUES ('" + name + "');";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            c.commit();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);            
+        }
+    }
     
     /**
      * Retrieve profiles from the database
@@ -100,6 +119,76 @@ public class ApiCore {
             System.exit(0);            
         }
     }
+
+    /**
+     * Retrieve response details from database
+     * 
+     * @param c Connection object for database
+     * @return responseDetails String (JSON-like) representing response details
+     */
+    public static String getResponseDetails(Connection c) {
+        String responseDetails = "";
+        
+        try {
+            Statement stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM ResponseDetails");
+            
+            while(rs.next()) {
+                int rrid = rs.getInt("rrid");
+                int rulenum = rs.getInt("rulenum");
+                String target = rs.getString("target");
+                String chain = rs.getString("chain");
+                String protocol = rs.getString("protocol");
+                String source = rs.getString("source");
+                String destination = rs.getString("destination");
+                
+                responseDetails += "{\"rrid\": " + rrid + ", ";
+                responseDetails += "\"rulenum\": " + rulenum + ", ";
+                responseDetails += "\"target\": \"" + target + "\", ";
+                responseDetails += "\"chain\": \"" + chain + "\", ";
+                responseDetails += "\"protocol\": \"" + protocol + "\", ";
+                responseDetails += "\"source\": \"" + source + "\", ";
+                responseDetails += "\"destination\": \"" + destination + "\"}\n";
+            }
+            rs.close();
+            stmt.close();           
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);            
+        }
+        
+        return responseDetails;
+    }
+
+    /**
+     * Retrieve orchestration information from the database
+     * 
+     * @param c Connection object for database
+     * @return orchestration String (JSON-like) representing orchestration
+     */
+    public static String getOrchestration(Connection c) {
+        String orchestration = "";
+        
+        try {
+            Statement stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM Orchestration");
+            
+            while(rs.next()) {
+                int pid = rs.getInt("pid");
+                int rrid = rs.getInt("rrid");
+                
+                orchestration += "{\"pid\": " + pid + ", ";
+                orchestration += "\"rrid\": " + rrid + "}\n";
+            }
+            rs.close();
+            stmt.close();           
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);            
+        }
+        
+        return orchestration;
+    }
     
     /**
      * Test database interactions
@@ -139,10 +228,15 @@ public class ApiCore {
         
         // Test some database stuff       
         // insertProfile(c, "test", "test");
+        // insertResponseRecipe(c, "test");
         System.out.println();
         System.out.print(getProfiles(c));
         System.out.println();
         System.out.print(getResponseRecipes(c));
+        System.out.println();
+        System.out.print(getResponseDetails(c));
+        System.out.println();
+        System.out.print(getOrchestration(c));
         
         
         
