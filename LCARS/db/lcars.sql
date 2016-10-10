@@ -1,32 +1,32 @@
 DROP TABLE IF EXISTS Profiles;
 
 CREATE TABLE Profiles (
-    pid         integer not null,
+    pid         serial,
     name        text    not null,
     details     text,
     createdate  date,
    primary key(pid)
 );
 
-INSERT INTO Profiles (pid, name, details, createdate) values
-    (1, 'Profile in Courage', 'Profile summary', now()),
-    (2, 'Profile in Lameness', 'Profile summary', now()),
-    (3, 'Profile in Sarcasm', 'Profile summary', now()),
-    (4, 'Profile in Dude-ness', 'Profile summary', now());
+INSERT INTO Profiles (name, details, createdate) values
+    ('Profile in Courage', 'Profile summary', now()),
+    ('Profile in Lameness', 'Profile summary', now()),
+    ('Profile in Sarcasm', 'Profile summary', now()),
+    ('Profile in Dude-ness', 'Profile summary', now());
 
 DROP TABLE IF EXISTS ResponseRecipes;
 
 CREATE TABLE ResponseRecipes (
-    rrid integer not null,
+    rrid serial,
     name text    not null,
    primary key(rrid)
 );
 
-INSERT INTO ResponseRecipes (rrid, name) values
-    (1, 'Close the Doors'),
-    (2, 'Turn Out the Lights'),
-    (3, 'Cower in Fear'),
-    (4, 'Fight the Power');
+INSERT INTO ResponseRecipes (name) values
+    ('Close the Doors'),
+    ('Turn Out the Lights'),
+    ('Cower in Fear'),
+    ('Fight the Power');
 
 DROP TABLE IF EXISTS ResponseDetails;
 

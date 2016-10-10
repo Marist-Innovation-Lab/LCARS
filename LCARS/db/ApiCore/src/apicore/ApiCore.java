@@ -36,9 +36,11 @@ public class ApiCore {
                 responseRecipes += "{\"rrid\": " + rrid + ", ";
                 responseRecipes += "\"name\": \"" + name + "\"}\n";
             }
+            rs.close();
+            stmt.close();
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);           
+            System.exit(0);
         }
         
         return responseRecipes;
@@ -68,6 +70,8 @@ public class ApiCore {
                 profiles += "\"details\": \"" + details + "\", ";
                 profiles += "\"createdate\": \"" + createDate + "\"}\n";
             }
+            rs.close();
+            stmt.close();
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);           
@@ -77,6 +81,28 @@ public class ApiCore {
     }
     
     /**
+     * Insert a new profile into the database
+     * 
+     * @param c Connection object for database
+     * @param name String The name of the profile
+     * @param details String A description of the profile
+     */
+    public static void insertProfile(Connection c, String name, String details) { 
+        try {
+            Statement stmt = c.createStatement();
+            String sql = "INSERT INTO Profiles (name, details, createdate) "
+                    + "VALUES ('" + name + "', '" + details + "', now() );";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            c.commit();
+        } catch (Exception e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);            
+        }
+    }
+    
+    /**
+     * Test database interactions
      * 
      * @param args the command line arguments
      */
@@ -111,11 +137,13 @@ public class ApiCore {
             System.exit(0);
         }
         
-        // Test some database stuff
+        // Test some database stuff       
+        // insertProfile(c, "test", "test");
         System.out.println();
         System.out.print(getProfiles(c));
         System.out.println();
         System.out.print(getResponseRecipes(c));
+        
         
         
     }
