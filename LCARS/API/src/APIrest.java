@@ -207,7 +207,7 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
       
       //
-      // profiles - GET only
+      // profiles - GET only - Get everything in Profiles table
       //
       } else if (methodIsGET && command.equals("profiles")) {
          sb = responseGetProfiles();
@@ -215,7 +215,7 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
          
       //
-      // responserecipes - GET only
+      // responserecipes - GET only - Get everything in ResponseRecipes table
       //
       } else if (methodIsGET && command.equals("responserecipes")) {
          sb = responseGetResponseRecipes();
@@ -223,7 +223,7 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
 
       //
-      // responsedetails - GET only
+      // responsedetails - GET only - Get everything in ResponseDetails table
       //
       } else if (methodIsGET && command.equals("responsedetails")) {
          sb = responseGetResponseDetails();
@@ -231,7 +231,16 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
          
       //
-      // orchestration - GET only
+      // responserrecipe/<rrid> - GET only - Get all response details associated
+      //                                     with a particular response recipe
+      //
+      } else if (methodIsGET && command.equals("responserecipe")) {
+         sb = responseGetResponseRecipe(Integer.parseInt(commands[2]));
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+         
+      //
+      // orchestration - GET only - Get everything in Orchestration table
       //
       } else if (methodIsGET && command.equals("orchestration")) {
          sb = responseGetOrchestration();
@@ -394,6 +403,16 @@ public class APIrest extends NanoHTTPD {
    
    private StringBuilder responseGetOrchestration() {
        return runSelectQuery("SELECT * FROM Orchestration");       
+   }
+   
+   private StringBuilder responseGetResponseRecipe(int rrid) {
+       String query = "SELECT rd.rulenum, rd.target, rd.chain, "
+               + "rd.protocol, rd.source, rd.destination "
+               + "FROM ResponseRecipes AS rr "
+               + "INNER JOIN ResponseDetails AS rd ON rr.rrid = rd.rrid "
+               + "WHERE rr.rrid=" + rrid + " "
+               + "ORDER BY rd.rulenum";
+       return runSelectQuery(query);
    }
 
 
