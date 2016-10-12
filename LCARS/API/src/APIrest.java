@@ -1,4 +1,3 @@
-
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.ServerRunner;
 
@@ -20,20 +19,22 @@ public class APIrest extends NanoHTTPD {
    public static final String apiVersion = "0.07";
    public static final String apiName    = "LCARS API version " + apiVersion;
    
-   public static final String databaseRemoteURL = "//somewhere.rds.amazonaws.com:5432";
+   public static final String databaseRemoteURL = "//10.10.7.84:5432";
    public static final String databaseLocalURL  = "//localhost:5432";
    public static String databaseURL = databaseLocalURL; // Either databaseRemoteURL or databaseLocalURL, default to databaseLocalURL.
+   public static String databaseName = "lcars";
    public static String databaseUser     = "gstar";
    public static String databasePassword = "alpacaalpaca";          // TODO: Obfuscate these somehow.
 
    public static final String messageKey = "message";  // This is the key in our JSON key-value objects for messages.
 
    public APIrest() {
-      super(8080);  // call the NanoHTTPD constructor.
+      super(8081);  // call the NanoHTTPD constructor.
       try {
          // Set up the (relational) database connection, which can be used anywhere in our API.
          // Begin by determining whether or not we're running on an AWS server or locally somewhere else. Assume local.
-         databaseURL = databaseLocalURL;
+         // databaseURL = databaseLocalURL;
+         databaseURL = databaseRemoteURL;
          try {
             // Ask the OS to resolve our host name and IP address.
             String host = InetAddress.getLocalHost().toString();
@@ -52,7 +53,7 @@ public class APIrest extends NanoHTTPD {
             // The Driver is automatically registered with DriverManager for our later use.
             Class.forName("org.postgresql.Driver");
             // Construct the URL for access to our database.
-            String url = "jdbc:postgresql:" + databaseURL + "/" + databaseUser ;
+            String url = "jdbc:postgresql:" + databaseURL + "/" + databaseName ;
             // Set the connection properties.
             Properties props = new Properties();
             props.setProperty("user", databaseUser);       
@@ -69,6 +70,7 @@ public class APIrest extends NanoHTTPD {
                                 DriverManager.getDriver(url).getMinorVersion());
          } catch (SQLException e) {
             System.out.println("Driver loaded, but unable to connect to: " + databaseURL);
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
             if (this.databaseConnection != null) {
                this.databaseConnection.close();
             }
@@ -203,7 +205,39 @@ public class APIrest extends NanoHTTPD {
          sb = responseGetDateTime();
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
+      
+      //
+      // profiles - GET only
+      //
+      } else if (methodIsGET && command.equals("profiles")) {
+         sb = responseGetProfiles();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+         
+      //
+      // responserecipes - GET only
+      //
+      } else if (methodIsGET && command.equals("responserecipes")) {
+         sb = responseGetResponseRecipes();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
 
+      //
+      // responsedetails - GET only
+      //
+      } else if (methodIsGET && command.equals("responsedetails")) {
+         sb = responseGetResponseDetails();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+         
+      //
+      // orchestration - GET only
+      //
+      } else if (methodIsGET && command.equals("orchestration")) {
+         sb = responseGetOrchestration();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+         
       //
       // anything not matching above - GET and others
       //
@@ -344,6 +378,22 @@ public class APIrest extends NanoHTTPD {
       String dateTimeStr = dateFormat.format(date);            
       sb.append("{ " + "\"currentDateTime\" : " + "\"" + dateTimeStr + "\"}");
       return sb;
+   }
+   
+   private StringBuilder responseGetProfiles() {
+       return runSelectQuery("SELECT * FROM Profiles");       
+   }
+   
+   private StringBuilder responseGetResponseRecipes() {
+       return runSelectQuery("SELECT * FROM ResponseRecipes");       
+   }
+   
+   private StringBuilder responseGetResponseDetails() {
+       return runSelectQuery("SELECT * FROM ResponseDetails");       
+   }
+   
+   private StringBuilder responseGetOrchestration() {
+       return runSelectQuery("SELECT * FROM Orchestration");       
    }
 
 
