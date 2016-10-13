@@ -6,6 +6,8 @@ TSWLatexianTemp_*
 *.aux
 *.dvi
 *.log
+*.class
+
 LCARS/template/*
 LCARS/vendors/*
 

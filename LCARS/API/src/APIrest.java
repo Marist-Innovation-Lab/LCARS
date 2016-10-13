@@ -429,7 +429,7 @@ public class APIrest extends NanoHTTPD {
            "<script src='//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'></script>"
          + "<script type='text/javascript'>"
          + "function sendIt(method) {"
-         + "   addressToUse = window.location.hostname + ':8080';"
+         + "   addressToUse = window.location.hostname + ':8081';"
          + "   var url = 'http:' + String.fromCharCode(47,47) + addressToUse + '/';"
          + "   if (method === 'GET') {"
          + "      var commandText = document.getElementById('txt2get').value;"
