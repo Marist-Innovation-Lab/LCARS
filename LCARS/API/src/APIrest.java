@@ -215,29 +215,25 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
          
       //
-      // responserecipes - GET only - Get everything in ResponseRecipes table
+      // response recipes - GET only - Get everything in ResponseRecipes table
+      // responserecipes/<rrid> - GET only - Get all details of a recipe
       //
       } else if (methodIsGET && command.equals("responserecipes")) {
-         sb = responseGetResponseRecipes();
+         if(commands.length > 2) {
+            sb = responseGetResponseRecipe(Integer.parseInt(commands[2]));
+         } else {
+            sb = responseGetResponseRecipes();            
+         }
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
-
+         
       //
       // responsedetails - GET only - Get everything in ResponseDetails table
       //
       } else if (methodIsGET && command.equals("responsedetails")) {
          sb = responseGetResponseDetails();
          response = new NanoHTTPD.Response(sb.toString());
-         addApiResponseHeaders(response);
-         
-      //
-      // responserrecipe/<rrid> - GET only - Get all response details associated
-      //                                     with a particular response recipe
-      //
-      } else if (methodIsGET && command.equals("responserecipe")) {
-         sb = responseGetResponseRecipe(Integer.parseInt(commands[2]));
-         response = new NanoHTTPD.Response(sb.toString());
-         addApiResponseHeaders(response);
+         addApiResponseHeaders(response);        
          
       //
       // orchestration - GET only - Get everything in Orchestration table
@@ -406,7 +402,8 @@ public class APIrest extends NanoHTTPD {
    }
    
    private StringBuilder responseGetResponseRecipe(int rrid) {
-       String query = "SELECT rd.rulenum, rd.target, rd.chain, "
+       // Returns a list of response details with the name of the recipe
+       String query = "SELECT rr.name, rd.rulenum, rd.target, rd.chain, "
                + "rd.protocol, rd.source, rd.destination "
                + "FROM ResponseRecipes AS rr "
                + "INNER JOIN ResponseDetails AS rd ON rr.rrid = rd.rrid "
