@@ -13,9 +13,10 @@
 }
 
 #reconf-log-jtron {
-   max-height: 400px;
+   height: 100%;
    overflow: auto;
    white-space: nowrap;
    padding: 20px;
    margin-bottom: 10px;
 }
+

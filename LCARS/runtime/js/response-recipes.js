@@ -1,7 +1,7 @@
 
 // rules is an array of JSON objects used to simulate data that will eventually be drawn from the database
 // Format is like this: rules = [ {"rulenum": 1, "target": "drop", "chain": "input", "protocol": "tcp", "source": "1.2.3.4", "destination": "0.0.0.0"}, {"rulenum": 2, "target": "drop", "chain": "input", "protocol": "icmp", "source": "4.3.2.1", "destination": "0.0.0.0"} ] 
-rules = randomRuleGenerator(5);
+//rules = randomRuleGenerator(5);
 
 // Gets the recipe associated with button clicked
 function getRecipe() {
@@ -17,6 +17,7 @@ function getRecipe() {
 // Deploys selected recipe
 function deployRecipe(recipe) {
     if (recipe === "Close the Doors") {
+       rules = randomRuleGenerator(5);
        getRules(rules);
     }
 }
