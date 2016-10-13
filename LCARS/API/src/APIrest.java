@@ -1,3 +1,5 @@
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.ServerRunner;
 
@@ -7,7 +9,8 @@ import java.net.*;
 import java.util.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The LCARS API.
@@ -101,7 +104,7 @@ public class APIrest extends NanoHTTPD {
    public Response serve(IHTTPSession session) {
        
       Map<String, String> headers = session.getHeaders();   // We'll likely need this later.
-
+      
       // Note what method (GET, POST, PUT, DELETE, OPTIONS) got us here.
       // We'll use this to short-circuit the rather lengthy evaluation coming up.
       boolean methodIsGET     = false;
@@ -110,12 +113,23 @@ public class APIrest extends NanoHTTPD {
       boolean methodIsDELETE  = false;
       boolean methodIsOPTIONS = false;
       Method method = session.getMethod();
+      String reqBody = "";
+      JsonObject reqJSON = new JsonObject();
       if (Method.GET.equals(method)) {
          methodIsGET = true;
       } else if (Method.POST.equals(method)) {
          methodIsPOST = true;
       } else if (Method.PUT.equals(method)) {
          methodIsPUT = true;
+         Integer contentLength = Integer.parseInt(headers.get("content-length"));
+         byte[] buf = new byte[contentLength];
+         try {
+             session.getInputStream().read(buf, 0, contentLength);
+             reqBody = new String(buf);
+             reqJSON = new JsonParser().parse(reqBody).getAsJsonObject();
+         } catch (Exception e) {
+             // Do something if fails
+         }
       } else if (Method.DELETE.equals(method)) {
          methodIsDELETE = true;
       } else if (Method.OPTIONS.equals(method)) {
@@ -207,7 +221,7 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
       
       //
-      // profiles - GET only - Get everything in Profiles table
+      // profiles - GET/PUT - Get everything in Profiles table, insert new profile
       // profiles/<pid> - GET only - Get all recipes associated with a particular profile
       //
       } else if (methodIsGET && command.equals("profiles")) {
@@ -218,7 +232,11 @@ public class APIrest extends NanoHTTPD {
          }
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
-         
+      } else if (methodIsPUT && command.equals("profiles")) {
+          sb = responsePutProfile(reqJSON);
+          response = new NanoHTTPD.Response(sb.toString());
+          addApiResponseHeaders(response);
+          
       //
       // responserecipes - GET only - Get everything in ResponseRecipes table
       // responserecipes/<rrid> - GET only - Get all details of a particular recipe
@@ -401,6 +419,21 @@ public class APIrest extends NanoHTTPD {
                + "INNER JOIN ResponseRecipes AS rr ON rr.rrid = o.rrid "
                + "WHERE p.pid =" + pid + " ";
        return runSelectQuery(query);
+   }
+   
+   private StringBuilder responsePutProfile(JsonObject reqJSON) {
+       StringBuilder sb = new StringBuilder();
+       
+       String name = reqJSON.get("name").getAsString();
+       String details = reqJSON.get("details").getAsString();
+       
+       String query = "INSERT INTO Profiles (name, details) VALUES "
+               + "('" + name + "', '" + details + "')";
+       dbCommand(query);
+       
+       sb.append("Added.");
+       
+       return sb;
    }
    
    private StringBuilder responseGetResponseRecipes() {
