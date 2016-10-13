@@ -208,15 +208,20 @@ public class APIrest extends NanoHTTPD {
       
       //
       // profiles - GET only - Get everything in Profiles table
+      // profiles/<pid> - GET only - Get all recipes associated with a particular profile
       //
       } else if (methodIsGET && command.equals("profiles")) {
-         sb = responseGetProfiles();
+         if(commands.length > 2) {
+             sb = responseGetProfile(Integer.parseInt(commands[2]));
+         } else {
+             sb = responseGetProfiles();
+         }
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
          
       //
-      // response recipes - GET only - Get everything in ResponseRecipes table
-      // responserecipes/<rrid> - GET only - Get all details of a recipe
+      // responserecipes - GET only - Get everything in ResponseRecipes table
+      // responserecipes/<rrid> - GET only - Get all details of a particular recipe
       //
       } else if (methodIsGET && command.equals("responserecipes")) {
          if(commands.length > 2) {
@@ -387,6 +392,15 @@ public class APIrest extends NanoHTTPD {
    
    private StringBuilder responseGetProfiles() {
        return runSelectQuery("SELECT * FROM Profiles");       
+   }
+   
+   private StringBuilder responseGetProfile(int pid) {
+       // Return list of response recipes with the name of the profile
+       String query = "SELECT p.name, rr.rrid, rr.name "
+               + "FROM Profiles AS p INNER JOIN Orchestration AS o ON p.pid = o.pid "
+               + "INNER JOIN ResponseRecipes AS rr ON rr.rrid = o.rrid "
+               + "WHERE p.pid =" + pid + " ";
+       return runSelectQuery(query);
    }
    
    private StringBuilder responseGetResponseRecipes() {
