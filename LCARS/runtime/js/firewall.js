@@ -41,6 +41,33 @@ function getWhitelist() {
       });
 }
 
+// Sends a request to the server for the whitelist and firewall rules (getWhitelist() & getFirewallRules())
+// Used when page is reloaded-- server was having trouble handling the two separate getJSON requests at once, but handles them fine when nested
+function initPage() {
+    $.getJSON(
+      serverURL + "list",
+      function (listData) {
+          $.getJSON(
+             serverURL + "whitelist",
+             function (whitelistData) {
+                 $.each(whitelistData, function(i, item) {
+                     $("#whitelist").append('<tr><th scope="row">' + whitelistData[i] + '</th></tr>');
+                 });
+              
+                 $("#firewall-rules").empty();
+                 $.each(listData, function(i, item) {
+                     $("#firewall-rules").append('<tr><th scope="row">' + listData[i].num + '</th>'
+                                           + '<td>' + listData[i].target.capitalize() + '</td>'
+                                           + '<td>' + listData[i].chain.capitalize() + '</td>'
+                                           + '<td>' + listData[i].prot.formatProtocol() + '</td>'
+                                           + '<td>' + listData[i].source + '</td>'
+                                           + '<td>' + listData[i].destination + '</td>'
+                                           + '<td><button type="button" class="btn btn-primary btn-xs">Delete</button></td></tr>');
+                 });
+             })
+      });
+}
+
 // Gets the selected value of the rule attribute dropdowns menus
 function getDropdownSelection(attribute) {
     $("#"+attribute+"-dropdown").on("click", "li a", function() {
@@ -225,10 +252,11 @@ $(document).ready(function() {
     addButtonClicked();
 
     getRuleAction();
-    
-    getFirewallData();
-    getWhitelist();
-    
+
+//  getFirewallData();
+//  getWhitelist();
+    initPage();
+ 
 });
 
 
