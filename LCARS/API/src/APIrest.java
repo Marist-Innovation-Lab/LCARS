@@ -367,10 +367,16 @@ public class APIrest extends NanoHTTPD {
     */
    private String APIHelp() {
       return "API commands: GET [action], POST [action], PUT [action], DELETE [action]\n\n" +
-             "+- GET /ver[sion] - API version\n"  +
-             "+- GET /date      - current date\n" +             
-             "+- GET /time      - current time\n" +
-             "+- GET /datetime  - current date and time\n" +             
+             "+-- GET /ver[sion]                - API version\n"  +
+             "+-- GET /date                     - current date\n" +             
+             "+-- GET /time                     - current time\n" +
+             "+-- GET /datetime                 - current date and time\n" +
+             "+-- GET /profiles                 - all profiles\n" +
+             " +- GET /profiles/[pid]           - all recipes associated with a particular profile [pid]\n" +
+             "+-- GET /responserecipes          - names and ids of all response recipes\n" +
+             " +- GET /responserecipes/[rrid]   - all response details of a specified recipe [rrid]\n" +
+             "+-- GET /responsedetails          - all response details and recipe association\n" +
+             "+-- GET /orchestration            - everything from the Orchestration table\n" +              
              "";
    }
 
