@@ -1,11 +1,13 @@
 
+var lcarsAPI = "http://10.10.7.84:8081/"
+
 // rules is an array of JSON objects used to simulate data that will eventually be drawn from the database
 // Format is like this: rules = [ {"rulenum": 1, "target": "drop", "chain": "input", "protocol": "tcp", "source": "1.2.3.4", "destination": "0.0.0.0"}, {"rulenum": 2, "target": "drop", "chain": "input", "protocol": "icmp", "source": "4.3.2.1", "destination": "0.0.0.0"} ] 
 //rules = randomRuleGenerator(5);
 
 // Gets the recipe associated with button clicked
 function getRecipe() {
-    $("#response-recipes").on("click", "td button", function() {
+    $("#deploy-response-recipes").on("click", "td button", function() {
         var row = $(this).closest("tr").find("td").map(function() {
                       return $(this).text()
                   }).get();
@@ -41,6 +43,44 @@ function getRules(rules) {
            console.log("Something went wrong");
         }
    }
+}
+
+
+// Populates Response Recipes tables in Threat Intel and Reconfigurator pages with data from the database
+function populateRecipes() {
+    $.getJSON(
+      lcarsAPI + "responserecipes",
+      function (data, status) {
+         if (status === "success") {
+            $.each(data, function(i, item) {
+               $("#response-recipes").append('<tr><th scope="row">' + data[i].responserecipes__rrid + '</th>'
+                                           + '<td>' + data[i].responserecipes__name + '</td>'
+                                           + '<td>date</td>'
+                                           + '<td><button type="button" class="btn btn-primary btn-xs">Edit</button></td></tr>');
+               $("#deploy-response-recipes").append('<tr><th scope="row">' + data[i].responserecipes__rrid + '</th>'
+                                                  + '<td>' + data[i].responserecipes__name + '</td>'
+                                                  + '<td><button type="button" class="btn btn-primary btn-xs">Deploy</button></td></tr>');
+            });
+         }
+      });    
+
+}
+
+// Populates Profiles table in Threat Intel page with data from the database
+function populateProfiles() {
+    $.getJSON(
+      lcarsAPI + "profiles",
+      function (data, status) {
+         if (status === "success") {
+            $.each(data, function(i, item) {
+               $("#profiles").append('<tr><th scope="row">' + data[i].profiles__pid + '</th>'
+                                   + '<td>' + data[i].profiles__name + '</td>'
+                                   + '<td>' + data[i].profiles__details + '</td>'
+                                   + '<td>' + data[i].profiles__createdate + '</td>'
+                                   + '<td><button type="button" class="btn btn-primary btn-xs">Edit</button></td></tr>');
+            });
+         }
+      });
 }
 
 // Basically useless function used to generate array of JSON objects used for testing
@@ -80,5 +120,7 @@ function randomRuleGenerator(num) {
 
 $(document).ready(function() {
     getRecipe();
+    populateRecipes();
+    populateProfiles();
 });
 
