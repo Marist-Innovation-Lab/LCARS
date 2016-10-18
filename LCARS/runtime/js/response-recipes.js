@@ -73,6 +73,39 @@ function getRules(rules) {
    }
 }
 
+function viewRecipeDetails() {
+    $("#response-recipes").on("click", "td button", function() {
+        var button = $(this).text().toLowerCase();
+        var rrid = $(this).closest("tr").find("th").text();
+
+        if (button === "view details") {
+           getRecipeDetails(rrid);
+        }
+    });
+}    
+
+
+function getRecipeDetails(rrid) {
+    $.getJSON(
+      lcarsAPI + "responserecipes/" + rrid,
+      function (data, status) {
+         if (status === "success") {
+           $("#recipe-details").find("tbody").html("");
+           $("#recipe-details").find("h4").text("Response Details: " + data[0].responserecipes__name);
+           $.each(data, function(i, item) {
+              $("#recipe-details").find("tbody").append('<tr><th scope="row">' + data[i].responsedetails__rulenum + '</th>'
+                                                      + '<td>' + data[i].responsedetails__target + '</td>'
+                                                      + '<td>' + data[i].responsedetails__chain + '</td>'
+                                                      + '<td>' + data[i].responsedetails__protocol + '</td>'
+                                                      + '<td>' + data[i].responsedetails__source + '</td>'
+                                                      + '<td>' + data[i].responsedetails__destination + '</td>');
+           });
+           $("#recipe-details").modal("show"); 
+         }
+      });
+}
+
+
 // Populates Response Recipes tables in Threat Intel and Reconfigurator pages with data from the database
 function populateRecipes() {
     $.getJSON(
@@ -117,5 +150,6 @@ $(document).ready(function() {
     getButtonClicked();
     populateRecipes();
     populateProfiles();
+    viewRecipeDetails();
 });
 
