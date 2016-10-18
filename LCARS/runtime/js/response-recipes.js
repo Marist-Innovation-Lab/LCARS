@@ -1,6 +1,38 @@
 
 var lcarsAPI = "http://10.10.7.84:8081/"
 
+function getButtonClicked() {
+   clearModal();
+   $("#create-profile").on("click", function() {
+      var name = $("#profile-name").val();
+      var det = $("#profile-details").val();
+      console.log(name,det);
+      if (name === "" || det === "") {
+         console.log("open");
+      } else {
+         createProfile(name, det);
+         $(".modal").modal("hide");
+      }
+   });
+}
+
+function clearModal() {
+   $(".modal").on("hidden.bs.modal", function() {
+      $("#profile-name").val("");
+      $("#profile-details").val("");
+   });
+}
+
+function createProfile(name, details) {
+   console.log(lcarsAPI + "profiles/" + name + "/" + details); 
+   /*$.ajax({
+           url: lcarsAPI + "profiles/" + name + "/" + details,
+           type: 'PUT',
+           success: function() { return populateProfiles(); }
+   });*/
+}
+
+
 // Gets the recipe to deploy
 function getRecipe() {
     $("#deploy-response-recipes").on("click", "td button", function() {
@@ -41,7 +73,6 @@ function getRules(rules) {
    }
 }
 
-
 // Populates Response Recipes tables in Threat Intel and Reconfigurator pages with data from the database
 function populateRecipes() {
     $.getJSON(
@@ -52,7 +83,8 @@ function populateRecipes() {
                $("#response-recipes").append('<tr><th scope="row">' + data[i].responserecipes__rrid + '</th>'
                                            + '<td>' + data[i].responserecipes__name + '</td>'
                                            + '<td>date</td>'
-                                           + '<td><button type="button" class="btn btn-primary btn-xs">Edit</button></td></tr>');
+                                           + '<td><button type="button" class="btn btn-primary btn-xs">View Details</button>'
+                                           + '<button type="button" class="btn btn-primary btn-xs">Edit</button></td></tr>');
                $("#deploy-response-recipes").append('<tr><th scope="row">' + data[i].responserecipes__rrid + '</th>'
                                                   + '<td>' + data[i].responserecipes__name + '</td>'
                                                   + '<td><button type="button" class="btn btn-primary btn-xs">Deploy</button></td></tr>');
@@ -82,6 +114,7 @@ function populateProfiles() {
 
 $(document).ready(function() {
     getRecipe();
+    getButtonClicked();
     populateRecipes();
     populateProfiles();
 });
