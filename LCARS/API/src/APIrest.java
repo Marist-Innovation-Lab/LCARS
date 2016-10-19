@@ -119,8 +119,19 @@ public class APIrest extends NanoHTTPD {
          methodIsGET = true;
       } else if (Method.POST.equals(method)) {
          methodIsPOST = true;
+         // Read JSON string from request body and parse it 
+         Integer contentLength = Integer.parseInt(headers.get("content-length"));
+         byte[] buf = new byte[contentLength];
+         try {
+             session.getInputStream().read(buf, 0, contentLength);
+             reqBody = new String(buf);
+             reqJSON = new JsonParser().parse(reqBody).getAsJsonObject();
+         } catch (Exception e) {
+             // Do something if fails
+         }
       } else if (Method.PUT.equals(method)) {
          methodIsPUT = true;
+         // Read JSON string from request body and parse it 
          Integer contentLength = Integer.parseInt(headers.get("content-length"));
          byte[] buf = new byte[contentLength];
          try {
@@ -221,9 +232,14 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
       
       //
-      // profiles - GET/PUT - Get everything in Profiles table, insert new profile
-      // profiles/<pid> - GET only - Get all recipes associated with a particular profile
-      //
+      // profiles - GET/PUT - Get everything in Profiles table / Insert new profile
+      //    Example PUT: 
+      //        URL - localhost:8081/profiles
+      //        HTTP PUT Body (JSON) - {"name" : "New Profile", "details" : "Profile details"}
+      // profiles/<pid> - GET/POST - Get all recipes associated with a particular profile / Update existing profile
+      //    Example POST: 
+      //        URL - localhost:8081/profiles/1
+      //        HTTP POST Body (JSON) - {"name" : "Updated Name", "details" : "Updated details"}
       } else if (methodIsGET && command.equals("profiles")) {
          if(commands.length > 2) {
              sb = responseGetProfile(Integer.parseInt(commands[2]));
@@ -232,6 +248,14 @@ public class APIrest extends NanoHTTPD {
          }
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
+      } else if (methodIsPOST && command.equals("profiles")) {
+          if(commands.length > 2) {
+              sb = responseUpdateProfile(Integer.parseInt(commands[2]), reqJSON);
+          } else {
+              sb.append("Please specify a profile ID."); 
+          }
+          response = new NanoHTTPD.Response(sb.toString());
+          addApiResponseHeaders(response);
       } else if (methodIsPUT && command.equals("profiles")) {
           sb = responsePutProfile(reqJSON);
           response = new NanoHTTPD.Response(sb.toString());
@@ -415,7 +439,7 @@ public class APIrest extends NanoHTTPD {
    }
    
    private StringBuilder responseGetProfiles() {
-       return runSelectQuery("SELECT * FROM Profiles");       
+       return runSelectQuery("SELECT * FROM Profiles ORDER BY pid");       
    }
    
    private StringBuilder responseGetProfile(int pid) {
@@ -425,6 +449,22 @@ public class APIrest extends NanoHTTPD {
                + "INNER JOIN ResponseRecipes AS rr ON rr.rrid = o.rrid "
                + "WHERE p.pid =" + pid + " ";
        return runSelectQuery(query);
+   }
+   
+   private StringBuilder responseUpdateProfile(int pid, JsonObject reqJSON) {
+       StringBuilder sb = new StringBuilder();
+       
+       String name = reqJSON.get("name").getAsString();
+       String details = reqJSON.get("details").getAsString();
+       
+       String query = "UPDATE Profiles SET name = '" + name + "', "
+               + "details = '" + details + "', "
+               + "updatedate = now()::timestamp(0)"
+               + "WHERE pid = " + pid;
+       dbCommand(query);
+       
+       sb.append("Update successful.");
+       return sb;
    }
    
    private StringBuilder responsePutProfile(JsonObject reqJSON) {
@@ -437,7 +477,7 @@ public class APIrest extends NanoHTTPD {
                + "('" + name + "', '" + details + "')";
        dbCommand(query);
        
-       sb.append("Added.");
+       sb.append("Insertion successful.");
        
        return sb;
    }
