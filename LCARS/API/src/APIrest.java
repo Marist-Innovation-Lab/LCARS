@@ -240,6 +240,7 @@ public class APIrest extends NanoHTTPD {
       //    Example POST: 
       //        URL - localhost:8081/profiles/1
       //        HTTP POST Body (JSON) - {"name" : "Updated Name", "details" : "Updated details"}
+      //
       } else if (methodIsGET && command.equals("profiles")) {
          if(commands.length > 2) {
              sb = responseGetProfile(Integer.parseInt(commands[2]));
@@ -262,8 +263,14 @@ public class APIrest extends NanoHTTPD {
           addApiResponseHeaders(response);
           
       //
-      // responserecipes - GET only - Get everything in ResponseRecipes table
-      // responserecipes/<rrid> - GET only - Get all details of a particular recipe
+      // responserecipes - GET/PUT - Get everything in ResponseRecipes table / Insert new response recipe
+      //    Example PUT: 
+      //        URL - localhost:8081/responserecipes
+      //        HTTP PUT Body (JSON) - {"name" : "New Recipe"} 
+      // responserecipes/<rrid> - GET/POST - Get all details of a particular recipe / Update existing response recipe
+      //    Example POST: 
+      //        URL - localhost:8081/profiles/1
+      //        HTTP PUT Body (JSON) - {"name" : "Updated Name"}
       //
       } else if (methodIsGET && command.equals("responserecipes")) {
          if(commands.length > 2) {
@@ -273,6 +280,18 @@ public class APIrest extends NanoHTTPD {
          }
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
+      } else if (methodIsPOST && command.equals("responserecipes")) {
+          if(commands.length > 2) {
+              sb = responseUpdateResponseRecipe(Integer.parseInt(commands[2]), reqJSON);
+          } else {
+              sb.append("Please specify an RRID."); 
+          }
+          response = new NanoHTTPD.Response(sb.toString());
+          addApiResponseHeaders(response);
+      } else if (methodIsPUT && command.equals("responserecipes")) {
+          sb = responsePutResponseRecipe(reqJSON);
+          response = new NanoHTTPD.Response(sb.toString());
+          addApiResponseHeaders(response);
          
       //
       // responsedetails - GET only - Get everything in ResponseDetails table
@@ -359,7 +378,11 @@ public class APIrest extends NanoHTTPD {
       sb.append("<br>");
       sb.append("<input type='button' value='POST' style='width:64px;' onclick='sendIt(\"POST\");'>&nbsp;/<input type='text' id='txt2post' size='48' onkeydown='javascript:if(event.keyCode === 13) sendIt(\"POST\");'>");
       sb.append("<br>");
-      sb.append("<textarea id='taDisplay' rows='2' cols='64'></textarea>");
+      sb.append("<input type='button' value='PUT' style='width:64px;' onclick='sendIt(\"PUT\");'>&nbsp;/<input type='text' id='txt2put' size='48' onkeydown='javascript:if(event.keyCode === 13) sendIt(\"PUT\");'>");
+      sb.append("<br>");
+      sb.append("<label>Request Body: <br><textarea id='requestBody' rows='2' cols='64'></textarea></label>");
+      sb.append("<br>");
+      sb.append("<label>Response: <br><textarea id='taDisplay' rows='2' cols='64'></textarea>");
       // JavaScript functions getIt(), postIt() and display() are defined in the header.
 
       // HTTP Headers
@@ -391,16 +414,20 @@ public class APIrest extends NanoHTTPD {
     */
    private String APIHelp() {
       return "API commands: GET [action], POST [action], PUT [action], DELETE [action]\n\n" +
-             "+-- GET /ver[sion]                - API version\n"  +
-             "+-- GET /date                     - current date\n" +             
-             "+-- GET /time                     - current time\n" +
-             "+-- GET /datetime                 - current date and time\n" +
-             "+-- GET /profiles                 - all profiles\n" +
-             " +- GET /profiles/[pid]           - all recipes associated with a particular profile [pid]\n" +
-             "+-- GET /responserecipes          - names and ids of all response recipes\n" +
-             " +- GET /responserecipes/[rrid]   - all response details of a specified recipe [rrid]\n" +
-             "+-- GET /responsedetails          - all response details and recipe association\n" +
-             "+-- GET /orchestration            - everything from the Orchestration table\n" +              
+             "+-- GET  /ver[sion]                - API version\n"  +
+             "+-- GET  /date                     - current date\n" +             
+             "+-- GET  /time                     - current time\n" +
+             "+-- GET  /datetime                 - current date and time\n" +
+             "+-- GET  /profiles                 - get all profiles\n" +
+             " +- GET  /profiles/[pid]           - get all recipes associated with a particular profile [pid]\n" +
+             "+-- PUT  /profiles                 - create a new profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
+             "+-- POST /profiles/[pid]           - update existing profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" + 
+             "+-- GET  /responserecipes          - get names and ids of all response recipes\n" +
+             " +- GET  /responserecipes/[rrid]   - get all response details of a specified recipe [rrid]\n" +
+             "+-- PUT  /responserecipes          - create a new response recipe using body JSON: {\"name\": \"Recipe Name\"}\n" +
+             "+-- POST /responserecipes/[rrid]   - update existing recipe using body JSON: {\"name\": \"Profile Name\"}\n" + 
+             "+-- GET  /responsedetails          - get all response details and recipe association\n" +
+             "+-- GET  /orchestration            - get everything from the Orchestration table\n" +              
              "";
    }
 
@@ -459,11 +486,11 @@ public class APIrest extends NanoHTTPD {
        
        String query = "UPDATE Profiles SET name = '" + name + "', "
                + "details = '" + details + "', "
-               + "updatedate = now()::timestamp(0)"
+               + "updatedate = now()::timestamp(0) "
                + "WHERE pid = " + pid;
        dbCommand(query);
        
-       sb.append("Update successful.");
+       sb.append(makeJSON(messageKey, "200 OK"));
        return sb;
    }
    
@@ -477,7 +504,7 @@ public class APIrest extends NanoHTTPD {
                + "('" + name + "', '" + details + "')";
        dbCommand(query);
        
-       sb.append("Insertion successful.");
+       sb.append(makeJSON(messageKey, "200 OK"));
        
        return sb;
    }
@@ -504,6 +531,34 @@ public class APIrest extends NanoHTTPD {
                + "ORDER BY rd.rulenum";
        return runSelectQuery(query);
    }
+   
+   private StringBuilder responseUpdateResponseRecipe(int rrid, JsonObject reqJSON) {
+       StringBuilder sb = new StringBuilder();
+       
+       String name = reqJSON.get("name").getAsString();
+       
+       String query = "UPDATE ResponseRecipes SET name = '" + name + "', "
+               + "updatedate = now()::timestamp(0) "
+               + "WHERE pid = " + rrid;
+       dbCommand(query);
+       
+       sb.append(makeJSON(messageKey, "200 OK"));
+       return sb;
+   }
+   
+   private StringBuilder responsePutResponseRecipe(JsonObject reqJSON) {
+       StringBuilder sb = new StringBuilder();
+       
+       String name = reqJSON.get("name").getAsString();
+       
+       String query = "INSERT INTO ResponseRecipes (name) VALUES "
+               + "('" + name + "')";
+       dbCommand(query);
+       
+       sb.append(makeJSON(messageKey, "200 OK"));
+       
+       return sb;
+   }
 
 
    //
@@ -524,6 +579,7 @@ public class APIrest extends NanoHTTPD {
          + "function sendIt(method) {"
          + "   addressToUse = window.location.hostname + ':8081';"
          + "   var url = 'http:' + String.fromCharCode(47,47) + addressToUse + '/';"
+         + "   var reqJSON = document.getElementById('requestBody').value;"
          + "   if (method === 'GET') {"
          + "      var commandText = document.getElementById('txt2get').value;"
          + "      url = url + commandText;"
@@ -532,7 +588,7 @@ public class APIrest extends NanoHTTPD {
          + "      var commandText = document.getElementById('txt2post').value;"
          + "      url = url + commandText;"
          + "      $.ajax(url, {"
-         + "         'data': '',"
+         + "         'data': reqJSON,"
          + "         'type': 'POST',"
          + "         'processData': false,"
          + "         'contentType': 'application/json',"
@@ -553,6 +609,32 @@ public class APIrest extends NanoHTTPD {
          + "         })"
          + "         .fail(function () {"
          + "             display('Error: POST failure.');"
+         + "         });"
+         + "   } else if (method === 'PUT') {"
+         + "      var commandText = document.getElementById('txt2put').value;"
+         + "      url = url + commandText;"
+         + "      $.ajax(url, {"
+         + "         'data': reqJSON,"
+         + "         'type': 'PUT',"
+         + "         'processData': false,"
+         + "         'contentType': 'application/json',"
+         + "         'crossDomain': true"
+         + "      })"
+         + "         .success(function (data, status) {"
+         + "            var msg = 'status: ' + status + '\\n';"
+         + "            if (data.message) {"
+         + "               msg += data.message;"
+         + "            } else {"
+         + "               try {"
+         + "                  msg += JSON.parse(data).message;"
+         + "               } catch (ex) {"
+         + "                  msg += ex.message + ' data = ' + 'data.message = ' + data.message;"
+         + "               }"
+         + "            }"
+         + "            display(msg);"
+         + "         })"
+         + "         .fail(function () {"
+         + "             display('Error: PUT failure.');"
          + "         });"
          + "   } else {"
          + "      alert(method + ' is not defined.');"
