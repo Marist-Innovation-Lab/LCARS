@@ -24,12 +24,14 @@ function clearModal() {
 }
 
 function createProfile(name, details) {
-   console.log(lcarsAPI + "profiles/" + name + "/" + details); 
-   /*$.ajax({
-           url: lcarsAPI + "profiles/" + name + "/" + details,
+   var dataObject = { 'name': name, 'details': details }; 
+   $.ajax({
+           url: lcarsAPI + "profiles/",
            type: 'PUT',
+           contentType: 'application/json',
+           data: JSON.stringify(dataObject),
            success: function() { return populateProfiles(); }
-   });*/
+   });
 }
 
 
@@ -84,7 +86,6 @@ function viewRecipeDetails() {
     });
 }    
 
-
 function getRecipeDetails(rrid) {
     $.getJSON(
       lcarsAPI + "responserecipes/" + rrid,
@@ -115,7 +116,7 @@ function populateRecipes() {
             $.each(data, function(i, item) {
                $("#response-recipes").append('<tr><th scope="row">' + data[i].responserecipes__rrid + '</th>'
                                            + '<td>' + data[i].responserecipes__name + '</td>'
-                                           + '<td>date</td>'
+                                           + '<td>' + data[i].responserecipes__updatedate + '</td>'
                                            + '<td><button type="button" class="btn btn-primary btn-xs">View Details</button>'
                                            + '<button type="button" class="btn btn-primary btn-xs">Edit</button></td></tr>');
                $("#deploy-response-recipes").append('<tr><th scope="row">' + data[i].responserecipes__rrid + '</th>'
@@ -137,7 +138,7 @@ function populateProfiles() {
                $("#profiles").append('<tr><th scope="row">' + data[i].profiles__pid + '</th>'
                                    + '<td>' + data[i].profiles__name + '</td>'
                                    + '<td>' + data[i].profiles__details + '</td>'
-                                   + '<td>' + data[i].profiles__createdate + '</td>'
+                                   + '<td>' + data[i].profiles__updatedate + '</td>'
                                    + '<td><button type="button" class="btn btn-primary btn-xs">Edit</button></td></tr>');
             });
          }

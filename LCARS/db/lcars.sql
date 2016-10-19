@@ -2,23 +2,26 @@ DROP TABLE IF EXISTS Profiles;
 
 CREATE TABLE Profiles (
     pid         serial,
-    name        text    not null,
+    name        text       not null,
     details     text,
-    createdate  date,
+    createdate  timestamp  default now()::timestamp(0),
+    updatedate  timestamp  default now()::timestamp(0),
    primary key(pid)
 );
 
-INSERT INTO Profiles (name, details, createdate) values
-    ('Profile in Courage', 'Profile summary', now()),
-    ('Profile in Lameness', 'Profile summary', now()),
-    ('Profile in Sarcasm', 'Profile summary', now()),
-    ('Profile in Dude-ness', 'Profile summary', now());
+INSERT INTO Profiles (name, details) values
+    ('Profile in Courage', 'Profile summary'),
+    ('Profile in Lameness', 'Profile summary'),
+    ('Profile in Sarcasm', 'Profile summary'),
+    ('Profile in Dude-ness', 'Profile summary');
 
 DROP TABLE IF EXISTS ResponseRecipes;
 
 CREATE TABLE ResponseRecipes (
-    rrid serial,
-    name text    not null,
+    rrid        serial,
+    name        text       not null,
+    createdate  timestamp  default now()::timestamp(0),
+    updatedate  timestamp  default now()::timestamp(0),
    primary key(rrid)
 );
 
