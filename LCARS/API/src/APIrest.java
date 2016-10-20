@@ -485,10 +485,10 @@ public class APIrest extends NanoHTTPD {
              "                                                                                                             \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
              "                                                                                                             \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
              "\n" +
-             "+-- DELETE /responserecipes/[rrid]           - delete an existing response recipe" +
-             "+-- DELETE /responserecipes                  - delete all existing response recipes" +
+             "+-- DELETE /responserecipes/[rrid]           - delete an existing response recipe\n" +
+             "+-- DELETE /responserecipes                  - delete all existing response recipes\n" +
              "+-- DELETE /responsedetails/[rrid]/[rulenum] - delete an existing response detail\n" +
-             "+-- DELETE /responsedetails - delete all existing response details\n" +
+             "+-- DELETE /responsedetails                  - delete all existing response details\n" +
              "";
    }
 
@@ -721,12 +721,14 @@ public class APIrest extends NanoHTTPD {
    private StringBuilder responseDeleteResponseRecipes() {
        StringBuilder sb = new StringBuilder();
        
-       // Delete all of the response recipes (also deletes all recipedetails).
-       String query1 = "DELETE FROM ResponseDetails WHERE TRUE";
-       String query2 = "DELETE FROM ResponseRecipes WHERE TRUE";
+       // Delete all of the response recipes (also deletes all recipedetails, and orchestration information).
+       String deleteDetails = "DELETE FROM ResponseDetails WHERE TRUE";
+       String deleteOrchestrations = "DELETE FROM Orchestration WHERE TRUE";
+       String deleteRecipes = "DELETE FROM ResponseRecipes WHERE TRUE";
        
-       dbCommand(query1);
-       dbCommand(query2);
+       dbCommand(deleteDetails);
+       dbCommand(deleteOrchestrations);
+       dbCommand(deleteRecipes);
        
        sb.append(makeJSON(messageKey, "200 OK"));
        
@@ -736,21 +738,24 @@ public class APIrest extends NanoHTTPD {
    private StringBuilder responseDeleteResponseRecipe(int rrid){
        StringBuilder sb = new StringBuilder();
        
-       // Delete a particular response recipe (also deletes its associated response detail).
-       String query1 = "DELETE FROM ResponseDetails"
-               + "WHERE rrid = " + rrid;
+       // Delete a particular response recipe (also deletes its associated response detail, and orchestration information).
+       String deleteDetail = "DELETE FROM ResponseDetails"
+               + " WHERE rrid = " + rrid;
        
-       String query2 = "DELETE FROM ResponseRecipes "
-               + "WHERE rrid = " + rrid;
+       String deleteOrchestration = "DELETE FROM Orchestration"
+               + " WHERE rrid = " + rrid;
        
-       dbCommand(query1);
-       dbCommand(query2);
+       String deleteRecipe = "DELETE FROM ResponseRecipes "
+               + " WHERE rrid = " + rrid;
+       
+       dbCommand(deleteDetail);
+       dbCommand(deleteOrchestration);
+       dbCommand(deleteRecipe);
        
        sb.append(makeJSON(messageKey, "200 OK"));
        
        return sb;
    }
-
 
    //
    // HTML utility routines
