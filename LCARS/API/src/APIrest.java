@@ -302,6 +302,8 @@ public class APIrest extends NanoHTTPD {
           } else {
               sb = responseDeleteResponseRecipes();
           }
+          response = new NanoHTTPD.Response(sb.toString());
+          addApiResponseHeaders(response);
           
       //
       // responsedetails - GET only - Get everything in ResponseDetails table
@@ -477,6 +479,8 @@ public class APIrest extends NanoHTTPD {
              "                                                                                                             \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
              "                                                                                                             \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
              "\n" +
+             "+-- DELETE /responserecipes/[rrid]           - delete an existing response recipe" +
+             "+-- DELETE /responserecipes                  - delete all existing response recipes" +
              "+-- DELETE /responsedetails/[rrid]/[rulenum] - delete an existing response detail\n" +
              "";
    }
