@@ -713,13 +713,13 @@ public class APIrest extends NanoHTTPD {
        
        // Delete a particular response recipe (also deletes its associated response detail, and orchestration information).
        String deleteDetail = "DELETE FROM ResponseDetails"
-               + "WHERE rrid = " + rrid;
+               + " WHERE rrid = " + rrid;
        
        String deleteOrchestration = "DELETE FROM Orchestration"
-               + "WHERE rrid = " + rrid;
+               + " WHERE rrid = " + rrid;
        
        String deleteRecipe = "DELETE FROM ResponseRecipes "
-               + "WHERE rrid = " + rrid;
+               + " WHERE rrid = " + rrid;
        
        dbCommand(deleteDetail);
        dbCommand(deleteOrchestration);
