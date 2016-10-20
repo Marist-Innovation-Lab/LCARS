@@ -253,7 +253,7 @@ public class APIrest extends NanoHTTPD {
           if(commands.length > 2) {
               sb = responseUpdateProfile(Integer.parseInt(commands[2]), reqJSON);
           } else {
-              sb.append("Please specify a profile ID."); 
+              sb.append(makeJSON(messageKey, "Please specify a pid.")); 
           }
           response = new NanoHTTPD.Response(sb.toString());
           addApiResponseHeaders(response);
@@ -284,7 +284,7 @@ public class APIrest extends NanoHTTPD {
           if(commands.length > 2) {
               sb = responseUpdateResponseRecipe(Integer.parseInt(commands[2]), reqJSON);
           } else {
-              sb.append("Please specify an RRID."); 
+              sb.append(makeJSON(messageKey, "Please specify a pid.")); 
           }
           response = new NanoHTTPD.Response(sb.toString());
           addApiResponseHeaders(response);
@@ -295,11 +295,24 @@ public class APIrest extends NanoHTTPD {
          
       //
       // responsedetails - GET only - Get everything in ResponseDetails table
+      // responsedetails/<rrid> - POST only - Add a response detail to an existing recipe
+      //     Example POST:
+      //         URL - localhost:8081/responsedetails/1
+      //         HTTP POST Body (JSON) - {"rulenum" : "5", "target" : "drop", "chain" : "input", 
+      //                                  "protocol" : "tcp", "source" : "1.2.3.4", "destination" : "2.3.4.5"}
       //
       } else if (methodIsGET && command.equals("responsedetails")) {
          sb = responseGetResponseDetails();
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);        
+      } else if (methodIsPOST && command.equals("responsedetails")) {
+         if(commands.length > 2) {
+              sb = responseAddResponseDetail(Integer.parseInt(commands[2]), reqJSON);
+          } else {
+              sb.append(makeJSON(messageKey, "Please specify a pid.")); 
+          }
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
          
       //
       // orchestration - GET only - Get everything in Orchestration table
@@ -427,6 +440,9 @@ public class APIrest extends NanoHTTPD {
              "+-- PUT  /responserecipes          - create a new response recipe using body JSON: {\"name\": \"Recipe Name\"}\n" +
              "+-- POST /responserecipes/[rrid]   - update existing recipe using body JSON: {\"name\": \"Profile Name\"}\n" + 
              "+-- GET  /responsedetails          - get all response details and recipe association\n" +
+             "+-- POST /responsedetails/[rrid]   - add a response detail to an existing recipe using body JSON: {\"rulenum\" : \"Rule Number\", \"target\" : \"[drop, accept, reject]\",\n" +
+             "                                                                                                   \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
+             "                                                                                                   \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
              "+-- GET  /orchestration            - get everything from the Orchestration table\n" +              
              "";
    }
@@ -515,6 +531,25 @@ public class APIrest extends NanoHTTPD {
    
    private StringBuilder responseGetResponseDetails() {
        return runSelectQuery("SELECT * FROM ResponseDetails");       
+   }
+   
+   private StringBuilder responseAddResponseDetail(int rrid, JsonObject reqJSON) {
+       StringBuilder sb = new StringBuilder();
+       
+       int rulenum        = reqJSON.get("rulenum").getAsInt();
+       String target      = reqJSON.get("target").getAsString();
+       String chain       = reqJSON.get("chain").getAsString();
+       String protocol    = reqJSON.get("protocol").getAsString();
+       String source      = reqJSON.get("source").getAsString();
+       String destination = reqJSON.get("destination").getAsString();
+       
+       String query = "INSERT INTO ResponseDetails (rrid, rulenum, target, chain, protocol, source, destination) VALUES "
+               + "(" + rrid + ", " + rulenum + ", '" + target + "', '" + chain + "', '" + protocol + "', '" + source + "', "
+               + "'" + destination + "')";
+       dbCommand(query);
+       
+       sb.append(makeJSON(messageKey, "200 OK"));
+       return sb;
    }
    
    private StringBuilder responseGetOrchestration() {
