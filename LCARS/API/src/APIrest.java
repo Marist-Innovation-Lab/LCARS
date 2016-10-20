@@ -263,15 +263,19 @@ public class APIrest extends NanoHTTPD {
           addApiResponseHeaders(response);
           
       //
-      // responserecipes - GET/PUT - Get everything in ResponseRecipes table / Insert new response recipe
+      // responserecipes - GET/PUT/DELETE - Get everything in ResponseRecipes table / Insert new response recipe / Delete all response recipes
       //    Example PUT: 
       //        URL - localhost:8081/responserecipes
-      //        HTTP PUT Body (JSON) - {"name" : "New Recipe"} 
-      // responserecipes/<rrid> - GET/POST - Get all details of a particular recipe / Update existing response recipe
-      //    Example POST: 
-      //        URL - localhost:8081/profiles/1
-      //        HTTP PUT Body (JSON) - {"name" : "Updated Name"}
+      //        HTTP PUT Body (JSON) - {"name" : "New Recipe"}
+      //    Example DELETE:
+      //        URL - localhost:8081/responserecipes
       //
+      // responserecipes/<rrid> - GET/POST/DELETE - Get all details of a particular recipe / Update existing response recipe / Delete a specific response recipe
+      //    Example POST: 
+      //        URL - localhost:8081/responserecipes/1
+      //        HTTP PUT Body (JSON) - {"name" : "Updated Name"}
+      //    Example DELETE:
+      //        URL - localhost:8081/responserecipes/1
       } else if (methodIsGET && command.equals("responserecipes")) {
          if(commands.length > 2) {
             sb = responseGetResponseRecipe(Integer.parseInt(commands[2]));
@@ -292,10 +296,16 @@ public class APIrest extends NanoHTTPD {
           sb = responsePutResponseRecipe(reqJSON);
           response = new NanoHTTPD.Response(sb.toString());
           addApiResponseHeaders(response);
-         
+      } else if(methodIsDELETE && command.equals("responserecipes")){
+          if(commands.length > 2){
+              sb = responseDeleteResponseRecipe(Integer.parseInt(commands[2]));
+          } else {
+              sb = responseDeleteResponseRecipes();
+          }
+          
       //
       // responsedetails - GET only - Get everything in ResponseDetails table
-      //
+      //  
       } else if (methodIsGET && command.equals("responsedetails")) {
          sb = responseGetResponseDetails();
          response = new NanoHTTPD.Response(sb.toString());
@@ -311,7 +321,7 @@ public class APIrest extends NanoHTTPD {
          
       //
       // anything not matching above - GET and others
-      //
+      // 
       } else {
          // If someone is trying to run a wrong command, log their IP address and the current date and time.
          // Then enter it into the database.
@@ -553,6 +563,33 @@ public class APIrest extends NanoHTTPD {
        
        String query = "INSERT INTO ResponseRecipes (name) VALUES "
                + "('" + name + "')";
+       dbCommand(query);
+       
+       sb.append(makeJSON(messageKey, "200 OK"));
+       
+       return sb;
+   }
+   
+   private StringBuilder responseDeleteResponseRecipes() {
+       StringBuilder sb = new StringBuilder();
+       
+       // Delete all of the response recipes.
+       String query = "DELETE FROM ResponseRecipes WHERE TRUE";
+       
+       dbCommand(query);
+       
+       sb.append(makeJSON(messageKey, "200 OK"));
+       
+       return sb; 
+   }
+   
+   private StringBuilder responseDeleteResponseRecipe(int rrid){
+       StringBuilder sb = new StringBuilder();
+       
+       // Delete a particular response recipe.
+       String query = "DELETE FROM ResponseRecipes "
+               + "WHERE rrid = " + rrid;
+       
        dbCommand(query);
        
        sb.append(makeJSON(messageKey, "200 OK"));

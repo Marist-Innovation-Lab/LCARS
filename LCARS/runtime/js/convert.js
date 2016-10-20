@@ -2,7 +2,7 @@ function convertToGstar() {
 	
 	var logData = document.getElementById("logData");
 	var output = document.getElementById("logDataOutput");
-	var data = logData.value;
+	var data = logData.value.trim();
 	var line = data.split("\n");
 	var jsonLine;
 	var srcIpColor = "red";
@@ -37,9 +37,10 @@ function convertToGstar() {
 		   typeof jsonLine.dest_port == 'undefined'){
 			output.innerHTML = output.innerHTML + "One or more of src, src_port, dest, dest_port are undefined in: " + JSON.stringify(jsonLine) + "\n";
 		} else {
+			output.innerHTML = output.innerHTML + "add edge " + jsonLine.src_port + " - " + jsonLine.dest_port + "\n";
 			output.innerHTML = output.innerHTML + "add edge ip" + jsonLine.src + " - ip" + jsonLine.dest + "\n";
 			output.innerHTML = output.innerHTML + "add edge ip" + jsonLine.src + " - " + jsonLine.src_port + "\n";
-			output.innerHTML = output.innerHTML + "add edge ip" + jsonLine.src + " - " + jsonLine.dest_port + "\n";
+			output.innerHTML = output.innerHTML + "add edge ip" + jsonLine.dest + " - " + jsonLine.dest_port + "\n";
 		}
 	}
 }

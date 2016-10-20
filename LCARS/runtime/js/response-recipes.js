@@ -42,7 +42,7 @@ function clearModal() {
 }
 
 
-// Determines which Action button was clicked in the Response Recipes section and executes the appropriate action
+// Determines which Action button or link was clicked in the Response Recipes section and executes the appropriate action
 function getRecipesActionButton() {
     $("#response-recipes").on("click", "td button", function() {
         // Gets the text of the button that was clicked to determine which it was
@@ -54,7 +54,8 @@ function getRecipesActionButton() {
  
         function editMode() {
            name.html('<input value="' + name.html() + '"></input>');
-           actions.html('<button type="button" class="btn btn-primary btn-xs">Submit</button><button type="button" class="btn btn-primary btn-xs">Cancel</button>');
+           actions.html('<button type="button" class="btn btn-primary btn-xs">Submit</button><button type="button" class="btn btn-primary btn-xs">Delete</button>'
+            + '<button type="button" class="btn btn-primary btn-xs">Cancel</button>');
         }
 
         if (button === "view details") {
@@ -66,6 +67,8 @@ function getRecipesActionButton() {
         } else if (button === "submit") {
            editedName = name.find("input").val();
            editRecipe(rrid, editedName);
+        } else if (button === "delete") {
+          deleteRecipe(rrid);
         }
     });
 }    
@@ -125,6 +128,16 @@ function editRecipe(rrid, name) {
             data: JSON.stringify(dataObject),
             success: function() { return populateRecipes(); }
     });
+}
+
+// Deletes a specified response recipe 
+function deleteRecipe(rrid) {
+  $.ajax({
+          url: lcarsAPI + "responserecipes/" + rrid,
+          type: 'DELETE',
+          contentType: 'application/json',
+          success: function() { return populateRecipes(); }
+  });
 }
 
 
