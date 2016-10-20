@@ -300,15 +300,22 @@ public class APIrest extends NanoHTTPD {
       //         URL - localhost:8081/responsedetails/1
       //         HTTP POST Body (JSON) - {"rulenum" : "5", "target" : "drop", "chain" : "input", 
       //                                  "protocol" : "tcp", "source" : "1.2.3.4", "destination" : "2.3.4.5"}
+      // responsedetails/<rrid>/<rulenum> - POST only - Update an existing response detail
+      //     Example POST:
+      //         URL - localhost:8081/responsedetails/1/4
+      //         HTTP POST Body (JSON) - {"rulenum" : "3", "target" : "drop", "chain" : "input", 
+      //                                  "protocol" : "tcp", "source" : "1.2.3.4", "destination" : "2.3.4.5"}
       //
       } else if (methodIsGET && command.equals("responsedetails")) {
          sb = responseGetResponseDetails();
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);        
       } else if (methodIsPOST && command.equals("responsedetails")) {
-         if(commands.length > 2) {
+         if(commands.length == 3) { // Add new detail
               sb = responseAddResponseDetail(Integer.parseInt(commands[2]), reqJSON);
-          } else {
+         } else if(commands.length > 3) { // Edit existing detail
+              sb = responseUpdateResponseDetail(Integer.parseInt(commands[2]), Integer.parseInt(commands[3]), reqJSON);
+         } else {
               sb.append(makeJSON(messageKey, "Please specify a pid.")); 
           }
          response = new NanoHTTPD.Response(sb.toString());
@@ -427,25 +434,28 @@ public class APIrest extends NanoHTTPD {
     */
    private String APIHelp() {
       return "API commands: GET [action], POST [action], PUT [action], DELETE [action]\n\n" +
-             "+-- GET  /ver[sion]                - API version\n"  +
-             "+-- GET  /date                     - current date\n" +             
-             "+-- GET  /time                     - current time\n" +
-             "+-- GET  /datetime                 - current date and time\n" +
-             "+-- GET  /profiles                 - get all profiles\n" +
-             " +- GET  /profiles/[pid]           - get all recipes associated with a particular profile [pid]\n" +
-             "+-- GET  /responserecipes          - get names and ids of all response recipes\n" +
-             " +- GET  /responserecipes/[rrid]   - get all response details of a specified recipe [rrid]\n" +
-             "+-- GET  /responsedetails          - get all response details and recipe association\n" +
-             "+-- GET  /orchestration            - get everything from the Orchestration table\n" + 
+             "+-- GET  /ver[sion]                          - API version\n"  +
+             "+-- GET  /date                               - current date\n" +             
+             "+-- GET  /time                               - current time\n" +
+             "+-- GET  /datetime                           - current date and time\n" +
+             "+-- GET  /profiles                           - get all profiles\n" +
+             " +- GET  /profiles/[pid]                     - get all recipes associated with a particular profile [pid]\n" +
+             "+-- GET  /responserecipes                    - get names and ids of all response recipes\n" +
+             " +- GET  /responserecipes/[rrid]             - get all response details of a specified recipe [rrid]\n" +
+             "+-- GET  /responsedetails                    - get all response details and recipe association\n" +
+             "+-- GET  /orchestration                      - get everything from the Orchestration table\n" + 
              "\n" +
-             "+-- PUT  /profiles                 - create a new profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
-             "+-- PUT  /responserecipes          - create a new response recipe using body JSON: {\"name\": \"Recipe Name\"}\n" +
+             "+-- PUT  /profiles                           - create a new profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
+             "+-- PUT  /responserecipes                    - create a new response recipe using body JSON: {\"name\": \"Recipe Name\"}\n" +
              "\n" +
-             "+-- POST /profiles/[pid]           - update existing profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
-             "+-- POST /responserecipes/[rrid]   - update existing recipe using body JSON: {\"name\": \"Profile Name\"}\n" +
-             "+-- POST /responsedetails/[rrid]   - add a response detail to an existing recipe using body JSON: {\"rulenum\" : \"Rule Number\", \"target\" : \"[drop, accept, reject]\",\n" +
-             "                                                                                                   \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
-             "                                                                                                   \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
+             "+-- POST /profiles/[pid]                     - update existing profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
+             "+-- POST /responserecipes/[rrid]             - update existing recipe using body JSON: {\"name\": \"Profile Name\"}\n" +
+             "+-- POST /responsedetails/[rrid]             - add a response detail to an existing recipe using body JSON: {\"rulenum\" : \"Rule Number\", \"target\" : \"[drop, accept, reject]\",\n" +
+             "                                                                                                             \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
+             "                                                                                                             \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
+             "+-- POST /responsedetails/[rrid]/[rulenum]   - add a response detail to an existing recipe using body JSON: {\"rulenum\" : \"Rule Number\", \"target\" : \"[drop, accept, reject]\",\n" +
+             "                                                                                                             \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
+             "                                                                                                             \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
              "";
    }
 
@@ -548,6 +558,27 @@ public class APIrest extends NanoHTTPD {
        String query = "INSERT INTO ResponseDetails (rrid, rulenum, target, chain, protocol, source, destination) VALUES "
                + "(" + rrid + ", " + rulenum + ", '" + target + "', '" + chain + "', '" + protocol + "', '" + source + "', "
                + "'" + destination + "')";
+       dbCommand(query);
+       
+       sb.append(makeJSON(messageKey, "200 OK"));
+       return sb;
+   }
+   
+   private StringBuilder responseUpdateResponseDetail(int rrid, int rulenum, JsonObject reqJSON) {
+       StringBuilder sb = new StringBuilder();
+       
+       int newrulenum     = reqJSON.get("rulenum").getAsInt();
+       String target      = reqJSON.get("target").getAsString();
+       String chain       = reqJSON.get("chain").getAsString();
+       String protocol    = reqJSON.get("protocol").getAsString();
+       String source      = reqJSON.get("source").getAsString();
+       String destination = reqJSON.get("destination").getAsString();
+       
+       String query = "UPDATE ResponseDetails SET rulenum = " + newrulenum + ", "
+               + "target = '" + target + "', chain = '" + chain + "', "
+               + "protocol = '" + protocol + "', source = '" + source + "', "
+               + "destination = '" + destination + "' "
+               + "WHERE rrid = " + rrid + " AND rulenum = " + rulenum;
        dbCommand(query);
        
        sb.append(makeJSON(messageKey, "200 OK"));
