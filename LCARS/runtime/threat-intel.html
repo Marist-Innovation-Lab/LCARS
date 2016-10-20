@@ -18,6 +18,7 @@
     <link href="../build/css/custom.min.css" rel="stylesheet">
 
     <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="js/firewall.js"></script>
     <script src="js/response-recipes.js"></script>
    
   </head>
@@ -116,7 +117,8 @@
                   </div>
                </div>
             </div>
- 
+             
+             <!-- Modal window for creating a new attack profile  -->
              <div class="modal fade" id="add-profile" tabindex="-1" role="dialog" aria-hidden="true">
                <div class="modal-dialog">
                  <div class="modal-content">
@@ -162,7 +164,7 @@
                         </tr>
                       </thead>
                       <tbody id="profiles">
-                        <tr>
+                     <!--   <tr>
                           <th scope="row">1</th>
                           <td>Profile in Courage</td>                          
                           <td>
@@ -213,7 +215,7 @@
                           <td>
                              <button type="button" class="btn btn-primary btn-xs">Edit</button>
                           </td>
-                        </tr>
+                        </tr> -->
                       </tbody>
                     </table>
                   </div>
@@ -263,6 +265,7 @@
                </div>
             </div>
 
+             <!-- Modal window for viewing the response recipe details  -->
              <div class="modal fade" id="recipe-details" tabindex="-1" role="dialog" aria-hidden="true">
                <div class="modal-dialog">
                  <div class="modal-content">
