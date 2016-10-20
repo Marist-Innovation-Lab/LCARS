@@ -460,7 +460,7 @@ public class APIrest extends NanoHTTPD {
     * @return API help sting
     */
    private String APIHelp() {
-      return "API commands: GET [action], POST [action], PUT [action], DELETE [action]\n\n" +
+      return "API commands: GET [action], PUT [action], POST [action], DELETE [action]\n\n" +
              "+-- GET  /ver[sion]                          - API version\n"  +
              "+-- GET  /date                               - current date\n" +             
              "+-- GET  /time                               - current time\n" +
@@ -471,7 +471,7 @@ public class APIrest extends NanoHTTPD {
              " +- GET  /responserecipes/[rrid]             - get all response details of a specified recipe [rrid]\n" +
              "+-- GET  /responsedetails                    - get all response details and recipe association\n" +
              "+-- GET  /orchestration                      - get orchestration for all profiles\n" + 
-             "+-- GET  /orchestration/[pid]                - get orchestration for one profile\n" + 
+             " +- GET  /orchestration/[pid]                - get orchestration for one profile\n" + 
              "\n" +
              "+-- PUT  /profiles                           - create a new profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
              "+-- PUT  /responserecipes                    - create a new response recipe using body JSON: {\"name\": \"Recipe Name\"}\n" +
@@ -481,14 +481,14 @@ public class APIrest extends NanoHTTPD {
              "+-- POST /responsedetails/[rrid]             - add a response detail to an existing recipe using body JSON: {\"rulenum\" : \"Rule Number\", \"target\" : \"[drop, accept, reject]\",\n" +
              "                                                                                                             \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
              "                                                                                                             \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
-             "+-- POST /responsedetails/[rrid]/[rulenum]   - add a response detail to an existing recipe using body JSON: {\"rulenum\" : \"Rule Number\", \"target\" : \"[drop, accept, reject]\",\n" +
+             " +- POST /responsedetails/[rrid]/[rulenum]   - add a response detail to an existing recipe using body JSON: {\"rulenum\" : \"Rule Number\", \"target\" : \"[drop, accept, reject]\",\n" +
              "                                                                                                             \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
              "                                                                                                             \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
              "\n" +
-             "+-- DELETE /responserecipes/[rrid]           - delete an existing response recipe\n" +
              "+-- DELETE /responserecipes                  - delete all existing response recipes\n" +
-             "+-- DELETE /responsedetails/[rrid]/[rulenum] - delete an existing response detail\n" +
+             " +- DELETE /responserecipes/[rrid]           - delete an existing response recipe\n" +
              "+-- DELETE /responsedetails                  - delete all existing response details\n" +
+             " +- DELETE /responsedetails/[rrid]/[rulenum] - delete an existing response detail\n" +
              "";
    }
 
