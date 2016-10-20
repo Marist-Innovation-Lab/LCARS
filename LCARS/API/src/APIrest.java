@@ -295,12 +295,12 @@ public class APIrest extends NanoHTTPD {
          
       //
       // responsedetails - GET only - Get everything in ResponseDetails table
-      // responsedetails/<rrid> - POST only - Add a response detail to an existing recipe
+      // responsedetails/<rrid> - POST - Add a response detail to an existing recipe
       //     Example POST:
       //         URL - localhost:8081/responsedetails/1
       //         HTTP POST Body (JSON) - {"rulenum" : "5", "target" : "drop", "chain" : "input", 
       //                                  "protocol" : "tcp", "source" : "1.2.3.4", "destination" : "2.3.4.5"}
-      // responsedetails/<rrid>/<rulenum> - POST only - Update an existing response detail
+      // responsedetails/<rrid>/<rulenum> - POST / DELETE - Update an existing response detail / Delete an existing response detail
       //     Example POST:
       //         URL - localhost:8081/responsedetails/1/4
       //         HTTP POST Body (JSON) - {"rulenum" : "3", "target" : "drop", "chain" : "input", 
@@ -316,11 +316,18 @@ public class APIrest extends NanoHTTPD {
          } else if(commands.length > 3) { // Edit existing detail
               sb = responseUpdateResponseDetail(Integer.parseInt(commands[2]), Integer.parseInt(commands[3]), reqJSON);
          } else {
-              sb.append(makeJSON(messageKey, "Please specify a pid.")); 
+              sb.append(makeJSON(messageKey, "Please specify rrid and/or rule number.")); 
           }
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
-         
+      } else if (methodIsDELETE && command.equals("responsedetails")) {
+          if(commands.length > 3) {
+              sb = responseDeleteResponseDetail(Integer.parseInt(commands[2]), Integer.parseInt(commands[3]));
+          } else {
+              sb.append(makeJSON(messageKey, "Please specify rrid and rule number"));
+          }
+          response = new NanoHTTPD.Response(sb.toString());
+          addApiResponseHeaders(response);
       //
       // orchestration - GET only - Get everything in Orchestration table
       //
@@ -400,6 +407,8 @@ public class APIrest extends NanoHTTPD {
       sb.append("<br>");
       sb.append("<input type='button' value='POST' style='width:64px;' onclick='sendIt(\"POST\");'>&nbsp;/<input type='text' id='txt2post' size='48' onkeydown='javascript:if(event.keyCode === 13) sendIt(\"POST\");'>");
       sb.append("<br>");
+      sb.append("<input type='button' value='DELETE' style='width:64px;' onclick='sendIt(\"DELETE\");'>&nbsp;/<input type='text' id='txt2delete' size='48' onkeydown='javascript:if(event.keyCode === 13) sendIt(\"DELETE\");'>");
+      sb.append("<br>");
       sb.append("<label>Request Body: <br><textarea id='requestBody' rows='2' cols='64'></textarea></label>");
       sb.append("<br>");
       sb.append("<label>Response: <br><textarea id='taDisplay' rows='2' cols='64'></textarea>");
@@ -456,6 +465,8 @@ public class APIrest extends NanoHTTPD {
              "+-- POST /responsedetails/[rrid]/[rulenum]   - add a response detail to an existing recipe using body JSON: {\"rulenum\" : \"Rule Number\", \"target\" : \"[drop, accept, reject]\",\n" +
              "                                                                                                             \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
              "                                                                                                             \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
+             "\n" +
+             "+-- DELETE /responsedetails/[rrid]/[rulenum] - delete an existing response detail\n" +
              "";
    }
 
@@ -585,6 +596,17 @@ public class APIrest extends NanoHTTPD {
        return sb;
    }
    
+   private StringBuilder responseDeleteResponseDetail(int rrid, int rulenum) {
+       StringBuilder sb = new StringBuilder();
+       
+       String query = "DELETE FROM ResponseDetails WHERE "
+               + "rrid = " + rrid + " AND rulenum = " + rulenum;
+       dbCommand(query);
+       
+       sb.append(makeJSON(messageKey, "200 OK"));
+       return sb;
+   }
+   
    private StringBuilder responseGetOrchestration() {
        return runSelectQuery("SELECT * FROM Orchestration");       
    }
@@ -703,6 +725,32 @@ public class APIrest extends NanoHTTPD {
          + "         })"
          + "         .fail(function () {"
          + "             display('Error: PUT failure.');"
+         + "         });"
+         + "   } else if (method === 'DELETE') {"
+         + "      var commandText = document.getElementById('txt2delete').value;"
+         + "      url = url + commandText;"
+         + "      $.ajax(url, {"
+         + "         'data': '',"
+         + "         'type': 'DELETE',"
+         + "         'processData': false,"
+         + "         'contentType': 'application/json',"
+         + "         'crossDomain': true"
+         + "      })"
+         + "         .success(function (data, status) {"
+         + "            var msg = 'status: ' + status + '\\n';"
+         + "            if (data.message) {"
+         + "               msg += data.message;"
+         + "            } else {"
+         + "               try {"
+         + "                  msg += JSON.parse(data).message;"
+         + "               } catch (ex) {"
+         + "                  msg += ex.message + ' data = ' + 'data.message = ' + data.message;"
+         + "               }"
+         + "            }"
+         + "            display(msg);"
+         + "         })"
+         + "         .fail(function () {"
+         + "             display('Error: DELETE failure.');"
          + "         });"
          + "   } else {"
          + "      alert(method + ' is not defined.');"
