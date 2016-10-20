@@ -376,9 +376,9 @@ public class APIrest extends NanoHTTPD {
       sb.append("<h3>API Testers</h3>");
       sb.append("<input type='button' value='GET'  style='width:64px;' onclick='sendIt(\"GET\");'>&nbsp;/<input type='text' id='txt2get' size='48' onkeydown='javascript:if(event.keyCode === 13) sendIt(\"GET\");'>");
       sb.append("<br>");
-      sb.append("<input type='button' value='POST' style='width:64px;' onclick='sendIt(\"POST\");'>&nbsp;/<input type='text' id='txt2post' size='48' onkeydown='javascript:if(event.keyCode === 13) sendIt(\"POST\");'>");
-      sb.append("<br>");
       sb.append("<input type='button' value='PUT' style='width:64px;' onclick='sendIt(\"PUT\");'>&nbsp;/<input type='text' id='txt2put' size='48' onkeydown='javascript:if(event.keyCode === 13) sendIt(\"PUT\");'>");
+      sb.append("<br>");
+      sb.append("<input type='button' value='POST' style='width:64px;' onclick='sendIt(\"POST\");'>&nbsp;/<input type='text' id='txt2post' size='48' onkeydown='javascript:if(event.keyCode === 13) sendIt(\"POST\");'>");
       sb.append("<br>");
       sb.append("<label>Request Body: <br><textarea id='requestBody' rows='2' cols='64'></textarea></label>");
       sb.append("<br>");
@@ -420,14 +420,16 @@ public class APIrest extends NanoHTTPD {
              "+-- GET  /datetime                 - current date and time\n" +
              "+-- GET  /profiles                 - get all profiles\n" +
              " +- GET  /profiles/[pid]           - get all recipes associated with a particular profile [pid]\n" +
-             "+-- PUT  /profiles                 - create a new profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
-             "+-- POST /profiles/[pid]           - update existing profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" + 
              "+-- GET  /responserecipes          - get names and ids of all response recipes\n" +
              " +- GET  /responserecipes/[rrid]   - get all response details of a specified recipe [rrid]\n" +
-             "+-- PUT  /responserecipes          - create a new response recipe using body JSON: {\"name\": \"Recipe Name\"}\n" +
-             "+-- POST /responserecipes/[rrid]   - update existing recipe using body JSON: {\"name\": \"Profile Name\"}\n" + 
              "+-- GET  /responsedetails          - get all response details and recipe association\n" +
-             "+-- GET  /orchestration            - get everything from the Orchestration table\n" +              
+             "+-- GET  /orchestration            - get everything from the Orchestration table\n" + 
+             "\n" +
+             "+-- PUT  /profiles                 - create a new profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
+             "+-- PUT  /responserecipes          - create a new response recipe using body JSON: {\"name\": \"Recipe Name\"}\n" +
+             "\n" +
+             "+-- POST /profiles/[pid]           - update existing profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
+             "+-- POST /responserecipes/[rrid]   - update existing recipe using body JSON: {\"name\": \"Profile Name\"}\n" +
              "";
    }
 
