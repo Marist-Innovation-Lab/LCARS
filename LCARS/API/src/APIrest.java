@@ -510,7 +510,7 @@ public class APIrest extends NanoHTTPD {
    }
    
    private StringBuilder responseGetResponseRecipes() {
-       return runSelectQuery("SELECT * FROM ResponseRecipes");       
+       return runSelectQuery("SELECT * FROM ResponseRecipes ORDER BY rrid");       
    }
    
    private StringBuilder responseGetResponseDetails() {
@@ -539,7 +539,7 @@ public class APIrest extends NanoHTTPD {
        
        String query = "UPDATE ResponseRecipes SET name = '" + name + "', "
                + "updatedate = now()::timestamp(0) "
-               + "WHERE pid = " + rrid;
+               + "WHERE rrid = " + rrid;
        dbCommand(query);
        
        sb.append(makeJSON(messageKey, "200 OK"));

@@ -45,11 +45,27 @@ function clearModal() {
 // Determines which Action button was clicked in the Response Recipes section and executes the appropriate action
 function getRecipesActionButton() {
     $("#response-recipes").on("click", "td button", function() {
+        // Gets the text of the button that was clicked to determine which it was
         var button = $(this).text().toLowerCase();
+ 
         var rrid = $(this).closest("tr").find("th").text();
+        var name = $(this).closest("tr").find("td:nth-child(2)"); 
+        var actions = $(this).closest("tr").find("td:nth-child(4)");
+ 
+        function editMode() {
+           name.html('<input value="' + name.html() + '"></input>');
+           actions.html('<button type="button" class="btn btn-primary btn-xs">Submit</button><button type="button" class="btn btn-primary btn-xs">Cancel</button>');
+        }
 
         if (button === "view details") {
            getRecipeDetails(rrid);
+        } else if (button === "edit") {
+           editMode();
+        } else if (button === "cancel") {
+           populateRecipes();
+        } else if (button === "submit") {
+           editedName = name.find("input").val();
+           editRecipe(rrid, editedName);
         }
     });
 }    
@@ -61,7 +77,7 @@ function getProfilesActionButton() {
         // Gets the text of the button that was clicked to determine which it was
         var button = $(this).text().toLowerCase();
         
-        var pid = $(this).closest("tr").find("th").html();
+        var pid = $(this).closest("tr").find("th").text();
         var name = $(this).closest("tr").find("td:nth-child(2)");
         var details = $(this).closest("tr").find("td:nth-child(3)");
         var actions = $(this).closest("tr").find("td:nth-child(5)");
@@ -89,14 +105,26 @@ function getProfilesActionButton() {
 
 // Edits Attack Profile based on the user inputs
 function editProfile(pid, name, details) { 
-   var dataObject = { 'name': name, 'details': details };
-   $.ajax({
-           url: lcarsAPI + "profiles/" + pid,
-           type: 'POST',
-           contentType: 'application/json',
-           data: JSON.stringify(dataObject),
-           success: populateProfiles()
-   });
+    var dataObject = { 'name': name, 'details': details };
+    $.ajax({
+            url: lcarsAPI + "profiles/" + pid,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(dataObject),
+            success: function() { return populateProfiles(); }
+    });
+}
+
+// Edits response recipe based on the user inputs, can only edit Name at this time
+function editRecipe(rrid, name) {
+    var dataObject = { 'name': name };
+    $.ajax({
+            url: lcarsAPI + "responserecipes/" + rrid,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(dataObject),
+            success: function() { return populateRecipes(); }
+    });
 }
 
 
@@ -128,6 +156,7 @@ function populateRecipes() {
       lcarsAPI + "responserecipes",
       function (data, status) {
          if (status === "success") {
+            $("#response-recipes").empty();
             $.each(data, function(i, item) {
                $("#response-recipes").append('<tr><th scope="row">' + data[i].responserecipes__rrid + '</th>'
                                            + '<td>' + data[i].responserecipes__name + '</td>'
