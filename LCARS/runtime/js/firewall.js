@@ -22,7 +22,7 @@ function getFirewallData() {
                                            + '<td>' + data[i].prot.formatProtocol() + '</td>'
                                            + '<td>' + data[i].source + '</td>'
                                            + '<td>' + data[i].destination + '</td>'
-                                           + '<td><button type="button" class="btn btn-primary btn-xs">Delete</button></td></tr>');
+                                           + '<td style="text-align: center;"><button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-trash"></span><span class="sr-only">Delete</span></button></td></tr>');
              });
          }
       });
@@ -243,7 +243,6 @@ function deleteRule(URL) {
 
 
 $(document).ready(function() {
-
     getDropdownSelection("target");
     getDropdownSelection("chain");
     getDropdownSelection("protocol");   
@@ -253,9 +252,9 @@ $(document).ready(function() {
 
     getRuleAction();
 
-//  getFirewallData();
-//  getWhitelist();
-    initPage();
+    getFirewallData();
+    getWhitelist();
+//    initPage();
  
 });
 

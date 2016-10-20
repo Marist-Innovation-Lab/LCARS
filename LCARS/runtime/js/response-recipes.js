@@ -46,7 +46,7 @@ function clearModal() {
 function getRecipesActionButton() {
     $("#response-recipes").on("click", "td button", function() {
         // Gets the text of the button that was clicked to determine which it was
-        var button = $(this).text().toLowerCase();
+        var button = $(this).children("span").attr("title").toLowerCase();
  
         var rrid = $(this).closest("tr").find("th").text();
         var name = $(this).closest("tr").find("td:nth-child(2)"); 
@@ -54,8 +54,8 @@ function getRecipesActionButton() {
  
         function editMode() {
            name.html('<input value="' + name.html() + '"></input>');
-           actions.html('<button type="button" class="btn btn-primary btn-xs">Submit</button>'
-            + '<button type="button" class="btn btn-primary btn-xs">Cancel</button>');
+           actions.html('<button type="button" class="btn btn-default btn-xs"><span title="Submit" class="glyphicon glyphicon-ok"></button>'
+                      + '<button type="button" class="btn btn-default btn-xs"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button>');
         }
 
         if (button === "view details") {
@@ -68,7 +68,7 @@ function getRecipesActionButton() {
            editedName = name.find("input").val();
            editRecipe(rrid, editedName);
         } else if (button === "delete") {
-           //deleteRecipe(rrid);
+           deleteRecipe(rrid);
         }
     });
 }    
@@ -78,7 +78,7 @@ function getRecipesActionButton() {
 function getProfilesActionButton() {
     $("#profiles").on("click", "td button", function() {
         // Gets the text of the button that was clicked to determine which it was
-        var button = $(this).text().toLowerCase();
+        var button = $(this).children("span").attr("title").toLowerCase();     
         
         var pid = $(this).closest("tr").find("th").text();
         var name = $(this).closest("tr").find("td:nth-child(2)");
@@ -90,7 +90,8 @@ function getProfilesActionButton() {
         function editMode() {
            name.html('<input value="' + name.html() + '"></input>');
            details.html('<input value="' + details.html() + '"></input>');
-           actions.html('<button type="button" class="btn btn-primary btn-xs">Submit</button><button type="button" class="btn btn-primary btn-xs">Cancel</button>');
+           actions.html('<button type="button" class="btn btn-default btn-xs"><span title="Submit" class="glyphicon glyphicon-ok"></span></button>'
+                      + '<button type="button" class="btn btn-default btn-xs"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button>');
         }
 
         if (button === "edit") {
@@ -169,7 +170,8 @@ function getRecipeDetails(rrid) {
                                                       + '<td>' + data[i].responsedetails__chain.capitalize() + '</td>'
                                                       + '<td>' + data[i].responsedetails__protocol.formatProtocol() + '</td>'
                                                       + '<td>' + data[i].responsedetails__source + '</td>'
-                                                      + '<td>' + data[i].responsedetails__destination + '</td>');
+                                                      + '<td>' + data[i].responsedetails__destination + '</td>'
+                                                      + '<td style="text-align: right; border-width:0px;"><button type="button" class="btn btn-default btn-xs"><span title="Edit" class="glyphicon glyphicon-pencil"></span></button></td></tr>');
            });
            $("#recipe-details").modal("show"); 
          }
@@ -188,12 +190,12 @@ function populateRecipes() {
                $("#response-recipes").append('<tr><th scope="row">' + data[i].responserecipes__rrid + '</th>'
                                            + '<td>' + data[i].responserecipes__name + '</td>'
                                            + '<td>' + data[i].responserecipes__updatedate + '</td>'
-                                           + '<td><button type="button" class="btn btn-primary btn-xs">View Details</button>'
-                                           + '<button type="button" class="btn btn-primary btn-xs">Edit</button>'
-                                           + '<button type="button" class="btn btn-primary btn-xs">Delete</button></td></tr>');
+                                           + '<td><button type="button" class="btn btn-default btn-xs"><span title="View Details" class="glyphicon glyphicon-list"></span></button>'
+                                           + '<button type="button" class="btn btn-default btn-xs"><span title="Edit" class="glyphicon glyphicon-pencil"></span></button>'
+                                           + '<button type="button" class="btn btn-default btn-xs"><span title="Delete" class="glyphicon glyphicon-trash"></span></button></td></tr>');
                $("#deploy-response-recipes").append('<tr><th scope="row">' + data[i].responserecipes__rrid + '</th>'
                                                   + '<td>' + data[i].responserecipes__name + '</td>'
-                                                  + '<td><button type="button" class="btn btn-primary btn-xs">Deploy</button></td></tr>');
+                                                  + '<td style="text-align: center;"><button type="button" class="btn btn-default btn-xs"><span title="Deploy" class="glyphicon glyphicon-new-window"></span></button></td></tr>');
             });
          }
       });    
@@ -213,8 +215,8 @@ function populateProfiles() {
                                    + '<td>' + data[i].profiles__name + '</td>'
                                    + '<td>' + data[i].profiles__details + '</td>'
                                    + '<td>' + data[i].profiles__updatedate + '</td>'
-                                   + '<td><button type="button" class="btn btn-primary btn-xs">Edit</button>'
-                                   + '<button type="button" class="btn btn-primary btn-xs">Delete</button></td></tr>');
+                                   + '<td><button type="button" class="btn btn-default btn-xs"><span title="Edit" class="glyphicon glyphicon-pencil"></span></button>'
+                                   + '<button type="button" class="btn btn-default btn-xs"><span title="Delete" class="glyphicon glyphicon-trash"></span></button></td></tr>');
             });
          }
       });
