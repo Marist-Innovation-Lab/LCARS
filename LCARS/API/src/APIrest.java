@@ -236,7 +236,7 @@ public class APIrest extends NanoHTTPD {
       //    Example PUT: 
       //        URL - localhost:8081/profiles
       //        HTTP PUT Body (JSON) - {"name" : "New Profile", "details" : "Profile details"}
-      // profiles/<pid> - GET/POST - Get all recipes associated with a particular profile / Update existing profile
+      // profiles/<pid> - GET/POST - Get a single profile / Update existing profile
       //    Example POST: 
       //        URL - localhost:8081/profiles/1
       //        HTTP POST Body (JSON) - {"name" : "Updated Name", "details" : "Updated details"}
@@ -302,7 +302,6 @@ public class APIrest extends NanoHTTPD {
           } else {
               sb = responseDeleteResponseRecipes();
           }
-          
       //
       // responsedetails - GET only - Get everything in ResponseDetails table
       //  
@@ -340,10 +339,15 @@ public class APIrest extends NanoHTTPD {
           response = new NanoHTTPD.Response(sb.toString());
           addApiResponseHeaders(response);
       //
-      // orchestration - GET only - Get everything in Orchestration table
+      // orchestration - GET only - Get orchestration for every profile
+      // orchestration/<pid> - GET only - Get orchestration for single profile
       //
       } else if (methodIsGET && command.equals("orchestration")) {
-         sb = responseGetOrchestration();
+         if(commands.length > 2) {
+             sb = responseGetSingleOrchestration(Integer.parseInt(commands[2]));
+         } else {
+             sb = responseGetOrchestration();
+         }
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
          
@@ -459,11 +463,12 @@ public class APIrest extends NanoHTTPD {
              "+-- GET  /time                               - current time\n" +
              "+-- GET  /datetime                           - current date and time\n" +
              "+-- GET  /profiles                           - get all profiles\n" +
-             " +- GET  /profiles/[pid]                     - get all recipes associated with a particular profile [pid]\n" +
+             " +- GET  /profiles/[pid]                     - get a single profile\n" +
              "+-- GET  /responserecipes                    - get names and ids of all response recipes\n" +
              " +- GET  /responserecipes/[rrid]             - get all response details of a specified recipe [rrid]\n" +
              "+-- GET  /responsedetails                    - get all response details and recipe association\n" +
-             "+-- GET  /orchestration                      - get everything from the Orchestration table\n" + 
+             "+-- GET  /orchestration                      - get orchestration for all profiles\n" + 
+             "+-- GET  /orchestration/[pid]                - get orchestration for one profile\n" + 
              "\n" +
              "+-- PUT  /profiles                           - create a new profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
              "+-- PUT  /responserecipes                    - create a new response recipe using body JSON: {\"name\": \"Recipe Name\"}\n" +
@@ -521,10 +526,7 @@ public class APIrest extends NanoHTTPD {
    
    private StringBuilder responseGetProfile(int pid) {
        // Return list of response recipes with the name of the profile
-       String query = "SELECT p.name, rr.rrid, rr.name "
-               + "FROM Profiles AS p INNER JOIN Orchestration AS o ON p.pid = o.pid "
-               + "INNER JOIN ResponseRecipes AS rr ON rr.rrid = o.rrid "
-               + "WHERE p.pid =" + pid + " ";
+       String query = "SELECT * FROM Profiles WHERE pid = " + pid;
        return runSelectQuery(query);
    }
    
@@ -619,7 +621,20 @@ public class APIrest extends NanoHTTPD {
    }
    
    private StringBuilder responseGetOrchestration() {
-       return runSelectQuery("SELECT * FROM Orchestration");       
+       String query = "SELECT p.pid, p.name, rr.rrid, rr.name "
+               + "FROM Profiles AS p INNER JOIN Orchestration AS o ON p.pid = o.pid "
+               + "                   INNER JOIN ResponseRecipes AS rr ON o.rrid = rr.rrid ";
+       
+       return runSelectQuery(query);       
+   }
+   
+   private StringBuilder responseGetSingleOrchestration(int pid) {
+       String query = "SELECT p.name, rr.rrid, rr.name "
+               + "FROM Profiles AS p INNER JOIN Orchestration AS o ON p.pid = o.pid "
+               + "                   INNER JOIN ResponseRecipes AS rr ON o.rrid = rr. rrid "
+               + "WHERE o.pid = " + pid;
+       
+       return runSelectQuery(query);
    }
    
    private StringBuilder responseGetResponseRecipe(int rrid) {
