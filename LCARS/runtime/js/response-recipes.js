@@ -35,10 +35,26 @@ function createProfile() {
 
 // Clears the input boxes in the modal because they do not automatically clear on close 
 function clearModal() {
-   $(".modal").on("hidden.bs.modal", function() {
-      $("#profile-name").val("");
-      $("#profile-details").val("");
-   });
+    $(".modal").on("hidden.bs.modal", function() {
+       $("#profile-name").val("");
+       $("#profile-details").val("");
+    });
+}
+
+
+function addRecipeDetail() {
+    $("#add-detail").on("click", function () {
+       var lastRuleNum =  $("#recipe-details tbody tr:last th:first").html();
+       var newRuleNum = Number(lastRuleNum) + 1;
+       $("#recipe-details").find("tbody").append('<tr><th>' + newRuleNum + '</th>'
+                                               + '<td><select><option value="Accept">Accept</option><option value="Drop">Drop</option><option value="Reject">Reject</option></select></td>'
+                                               + '<td><select><option value="Input">Input</option><option value="Output">Output</option><option value="Forward">Forward</option></select></td>'
+                                               + '<td><select><option value="All">All</option><option value="TCP">TCP</option><option value="UDP">UDP</option><option value="ICMP">ICMP</option></select></td>'
+                                               + '<td><input></input</td>'
+                                               + '<td>0.0.0.0</td>'
+                                               + '<td style="text-align: right; border-width: 0px;"><button type="button" class="btn btn-default btn-xs"><span title="Submit" class="glyphicon glyphicon-ok"></button>'
+                                               + '<button type="button" class="btn btn-default btn-xs"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button></td></tr>');
+    });
 }
 
 
@@ -144,8 +160,8 @@ function getRecipeDetailsActionButton() {
                    source.text('0.0.0.0');
                    chain.find("select").on("change", function() { checkChainSelection(); }); 
                 } else if (chain.find("select").val() === 'Forward') {
-                   source.html('<input style="display:block; width:100%;"></input>');
-                   dest.html('<input style="display:block; width:100%;"></input>');
+                   source.html('<input></input>');
+                   dest.html('<input></input>');
                    chain.find("select").on("change", function() { checkChainSelection(); }); 
                 } 
             }
@@ -397,6 +413,7 @@ $(document).ready(function() {
    getRecipesActionButton();
    getRecipeDetailsActionButton();   
 
+   addRecipeDetail();
    deployResponseRecipe();
 
 });
