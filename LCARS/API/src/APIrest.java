@@ -609,8 +609,11 @@ public class APIrest extends NanoHTTPD {
                + "protocol = '" + protocol + "', source = '" + source + "', "
                + "destination = '" + destination + "' "
                + "WHERE rrid = " + rrid + " AND rulenum = " + rulenum;
+       String query2 = "UPDATE ResponseRecipes SET updatedate = now()::timestamp(0) "
+               + "WHERE rrid = " + rrid;
        dbCommand(query);
-       
+       dbCommand(query2);
+
        sb.append(makeJSON(messageKey, "200 OK"));
        return sb;
    }

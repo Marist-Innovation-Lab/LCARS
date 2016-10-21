@@ -60,7 +60,6 @@ function getRecipesActionButton() {
 
         if (button === "view details") {
            getRecipeDetails(rrid);
-           getRecipeDetailsActionButton(rrid);
         } else if (button === "edit") {
            editMode();
         } else if (button === "cancel") {
@@ -111,11 +110,12 @@ function getProfilesActionButton() {
 }
 
 
-function getRecipeDetailsActionButton(rrid) {
+function getRecipeDetailsActionButton() {
     $("#recipe-details").on("click", "td button", function() {
         // Gets the title of the button that was clicked to determine which it was
         var button = $(this).children("span").attr("title").toLowerCase();
         
+        var rrid = $("#rrid").attr("title");
         var rulenum = $(this).closest("tr").find("th").text();
         var target = $(this).closest("tr").find("td:nth-child(2)");
         var chain = $(this).closest("tr").find("td:nth-child(3)");
@@ -123,7 +123,7 @@ function getRecipeDetailsActionButton(rrid) {
         var source = $(this).closest("tr").find("td:nth-child(5)");
         var dest = $(this).closest("tr").find("td:nth-child(6)");
         var actions = $(this).closest("tr").find("td:nth-child(7)");
-
+        
         function editMode() {
 
             target.html(buildSelect({Accept:'Accept',Drop:'Drop',Reject:'Reject'}, target.html()));
@@ -175,6 +175,7 @@ function getRecipeDetailsActionButton(rrid) {
         // Apply action based on which button was clicked
         if (button === "edit") { 
            editMode();
+        
         } else if (button === "cancel") {
            getRecipeDetails(rrid);
         } else if (button === "submit") {
@@ -198,7 +199,7 @@ function getRecipeDetailsActionButton(rrid) {
            // Check that the IPs entered are valid IP addresses
            var ipRegex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g;
            if (editedSource.match(ipRegex) && editedDest.match(ipRegex)) {
-              editResponseDetail(rrid, rulenum, editedTarget, editedChain, editedProtocol, editedSource, editedDest);
+               editResponseDetail(rrid, rulenum, editedTarget, editedChain, editedProtocol, editedSource, editedDest);
            } else { 
               $(this).closest("tr").find("input").css("border", "1.5px solid red"); 
            } 
@@ -206,7 +207,7 @@ function getRecipeDetailsActionButton(rrid) {
         } else if (button === "delete") {
            deleteResponseDetail(rrid, rulenum);
         }
-        
+         
     });
 }
 
@@ -245,7 +246,7 @@ function editResponseDetail(rrid, rulenum, target, chain, protocol, source, dest
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(dataObject),
-            success: function() { return getRecipeDetails(rrid); }
+            success: function() { populateRecipes(); getRecipeDetails(rrid); }
     });
 }
 
@@ -287,6 +288,7 @@ function getRecipeDetails(rrid) {
          if (status === "success") {
            $("#recipe-details").find("tbody").html("");
            $("#recipe-details").find("h4").text("Response Details: " + data[0].responserecipes__name);
+           $("#recipe-details").find("h4").append('<span id="rrid" title="' + rrid + '"></span>');
            $.each(data, function(i, item) {
               $("#recipe-details").find("tbody").append('<tr><th scope="row">' + data[i].responsedetails__rulenum + '</th>'
                                                       + '<td>' + data[i].responsedetails__target.capitalize() + '</td>'
@@ -322,7 +324,7 @@ function populateRecipes() {
             });
          }
       });    
-
+    getRecipesActionButton();
 }
 
 
@@ -393,7 +395,8 @@ $(document).ready(function() {
    createProfile();
    getProfilesActionButton();
    getRecipesActionButton();
-   
+   getRecipeDetailsActionButton();   
+
    deployResponseRecipe();
 
 });

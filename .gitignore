@@ -17,3 +17,5 @@ LCARS/db/ApiCore/test/*
 LCARS/db/ApiCore/build.xml
 LCARS/db/ApiCore/dbinfo.txt
 LCARS/db/ApiCore/manifest.mf
+
+LCARS/API/src/logs.txt
