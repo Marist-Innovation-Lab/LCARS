@@ -204,7 +204,7 @@ function getRecipeDetailsActionButton(rrid) {
            } 
  
         } else if (button === "delete") {
-           //deleteResponseDetail();
+           deleteResponseDetail(rrid, rulenum);
         }
         
     });
@@ -268,7 +268,16 @@ function deleteProfile(pid) {
             success: function() { return populateProfiles(); }
     });
 }
-            
+
+
+// Deletes a response detail
+function deleteResponseDetail(rrid, rulenum) {
+    $.ajax({
+           url: lcarsAPI + "responsedetails/" + rrid + "/" + rulenum,
+           type: 'DELETE',
+           success: function() { return getRecipeDetails(rrid); }
+    });
+}            
 
 // Gets the response recipe details for the selected response recipe
 function getRecipeDetails(rrid) {
