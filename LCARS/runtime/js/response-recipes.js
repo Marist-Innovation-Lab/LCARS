@@ -18,11 +18,11 @@ function createProfile() {
          var dataObject = { 'name': name, 'details': details };
         
          $.ajax({
-                 url: lcarsAPI + "profiles/",
+                 url: lcarsAPI + "profiles",
                  type: 'PUT',
                  contentType: 'application/json',
                  data: JSON.stringify(dataObject),
-                 success: populateProfiles()
+                 success: function() { return populateProfiles(); }
          });
          
          // Close the modal window
@@ -60,6 +60,7 @@ function getRecipesActionButton() {
 
         if (button === "view details") {
            getRecipeDetails(rrid);
+           getRecipeDetailsActionButton(rrid);
         } else if (button === "edit") {
            editMode();
         } else if (button === "cancel") {
@@ -70,6 +71,7 @@ function getRecipesActionButton() {
         } else if (button === "delete") {
            deleteRecipe(rrid);
         }
+        
     });
 }    
 
@@ -109,6 +111,106 @@ function getProfilesActionButton() {
 }
 
 
+function getRecipeDetailsActionButton(rrid) {
+    $("#recipe-details").on("click", "td button", function() {
+        // Gets the title of the button that was clicked to determine which it was
+        var button = $(this).children("span").attr("title").toLowerCase();
+        
+        var rulenum = $(this).closest("tr").find("th").text();
+        var target = $(this).closest("tr").find("td:nth-child(2)");
+        var chain = $(this).closest("tr").find("td:nth-child(3)");
+        var protocol = $(this).closest("tr").find("td:nth-child(4)");
+        var source = $(this).closest("tr").find("td:nth-child(5)");
+        var dest = $(this).closest("tr").find("td:nth-child(6)");
+        var actions = $(this).closest("tr").find("td:nth-child(7)");
+
+        function editMode() {
+
+            target.html(buildSelect({Accept:'Accept',Drop:'Drop',Reject:'Reject'}, target.html()));
+            chain.html(buildSelect({Input:'Input',Output:'Output',Forward:'Forward'}, chain.html()));
+            protocol.html(buildSelect({All:'All',TCP:'TCP',UDP:'UDP',ICMP:'ICMP'}, protocol.html()));
+            actions.html('<button type="button" class="btn btn-default btn-xs"><span title="Submit" class="glyphicon glyphicon-ok"></span></button>'
+                      + '<button type="button" class="btn btn-default btn-xs"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button>');
+            checkChainSelection(); 
+            
+            // Checks the selected chain value and decides which IP area to make editable
+            function checkChainSelection() {
+                if (chain.find("select").val() === 'Input') {
+                   source.html('<input></input>');
+                   dest.text('0.0.0.0');
+                   chain.find("select").on("change", function () { checkChainSelection(); });
+                } else if (chain.find("select").val() === 'Output') {
+                   dest.html('<input></input>');
+                   source.text('0.0.0.0');
+                   chain.find("select").on("change", function() { checkChainSelection(); }); 
+                } else if (chain.find("select").val() === 'Forward') {
+                   source.html('<input style="display:block; width:100%;"></input>');
+                   dest.html('<input style="display:block; width:100%;"></input>');
+                   chain.find("select").on("change", function() { checkChainSelection(); }); 
+                } 
+            }
+       
+            // Dynamically sets the selected option value based on text that was previously there
+            // http://stackoverflow.com/questions/2315879/how-do-i-dynamically-set-the-selected-option-of-a-drop-down-list-using-jquery-j
+            function buildSelect(options, def) {
+            // assume options = { value1 : 'Name 1', value2 : 'Name 2', ... }
+            //        default = 'value1'
+
+                var $select = $('<select></select>');
+                var $option;
+
+                for (var val in options) {
+                   $option = $('<option value="' + val + '">' + options[val] + '</option>');
+                   if (val == def) {
+                      $option.attr('selected', 'selected');
+                   }
+                   $select.append($option);
+                }
+
+                return $select;
+            } 
+        
+        }
+
+        // Apply action based on which button was clicked
+        if (button === "edit") { 
+           editMode();
+        } else if (button === "cancel") {
+           getRecipeDetails(rrid);
+        } else if (button === "submit") {
+
+           editedTarget = target.find("select").val();
+           editedChain = chain.find("select").val();
+           editedProtocol = protocol.find("select").val();
+           
+           // Determine if the user inputted Source and/or Destination and get the values
+           if (editedChain === 'Input') {
+              editedSource = source.find("input").val();
+              editedDest = '0.0.0.0';
+           } else if (editedChain === 'Output') {
+              editedSource = '0.0.0.0';
+              editedDest = dest.find("input").val();
+           } else if (editedChain === 'Forward') {
+              editedSource = source.find("input").val();
+              editedDest = dest.find("input").val();
+           }
+           
+           // Check that the IPs entered are valid IP addresses
+           var ipRegex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g;
+           if (editedSource.match(ipRegex) && editedDest.match(ipRegex)) {
+              editResponseDetail(rrid, rulenum, editedTarget, editedChain, editedProtocol, editedSource, editedDest);
+           } else { 
+              $(this).closest("tr").find("input").css("border", "1.5px solid red"); 
+           } 
+ 
+        } else if (button === "delete") {
+           //deleteResponseDetail();
+        }
+        
+    });
+}
+
+
 // Edits Attack Profile based on the user inputs
 function editProfile(pid, name, details) { 
     var dataObject = { 'name': name, 'details': details };
@@ -134,6 +236,18 @@ function editRecipe(rrid, name) {
     });
 }
 
+
+// Edits a response detail for a particular recipe based on the user inputs
+function editResponseDetail(rrid, rulenum, target, chain, protocol, source, dest) {
+    var dataObject = { 'rulenum': rulenum, 'target': target, 'chain': chain, 'protocol': protocol, 'source': source, 'destination': dest };
+    $.ajax({
+            url: lcarsAPI + "responsedetails/" + rrid + "/" + rulenum,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(dataObject),
+            success: function() { return getRecipeDetails(rrid); }
+    });
+}
 
 // Deletes a specified response recipe 
 function deleteRecipe(rrid) {
@@ -171,7 +285,7 @@ function getRecipeDetails(rrid) {
                                                       + '<td>' + data[i].responsedetails__protocol.formatProtocol() + '</td>'
                                                       + '<td>' + data[i].responsedetails__source + '</td>'
                                                       + '<td>' + data[i].responsedetails__destination + '</td>'
-                                                      + '<td style="text-align: right; border-width:0px;"><button type="button" class="btn btn-default btn-xs"><span title="Edit" class="glyphicon glyphicon-pencil"></span></button></td></tr>');
+                                                      + '<td style="text-align: right; border-width:0px;"><button type="button" class="btn btn-default btn-xs"><span title="Edit" class="glyphicon glyphicon-pencil"></span></button><button type="button" class="btn btn-default btn-xs"><span title="Delete" class="glyphicon glyphicon-trash"></span></button></td></tr>');
            });
            $("#recipe-details").modal("show"); 
          }
@@ -270,7 +384,7 @@ $(document).ready(function() {
    createProfile();
    getProfilesActionButton();
    getRecipesActionButton();
-
+   
    deployResponseRecipe();
 
 });

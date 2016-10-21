@@ -481,9 +481,9 @@ public class APIrest extends NanoHTTPD {
              "+-- POST /responsedetails/[rrid]             - add a response detail to an existing recipe using body JSON: {\"rulenum\" : \"Rule Number\", \"target\" : \"[drop, accept, reject]\",\n" +
              "                                                                                                             \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
              "                                                                                                             \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
-             " +- POST /responsedetails/[rrid]/[rulenum]   - add a response detail to an existing recipe using body JSON: {\"rulenum\" : \"Rule Number\", \"target\" : \"[drop, accept, reject]\",\n" +
-             "                                                                                                             \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
-             "                                                                                                             \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
+             " +- POST /responsedetails/[rrid]/[rulenum]   - update an existing response detail in a recipe using body JSON: {\"rulenum\" : \"Rule Number\", \"target\" : \"[drop, accept, reject]\",\n" +
+             "                                                                                                                \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
+             "                                                                                                                \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
              "\n" +
              "+-- DELETE /responserecipes                  - delete all existing response recipes\n" +
              " +- DELETE /responserecipes/[rrid]           - delete an existing response recipe\n" +
