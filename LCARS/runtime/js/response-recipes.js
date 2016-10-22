@@ -48,12 +48,35 @@ function addRecipeDetail() {
        var newRuleNum = Number(lastRuleNum) + 1;
        $("#recipe-details").find("tbody").append('<tr><th>' + newRuleNum + '</th>'
                                                + '<td><select><option value="Accept">Accept</option><option value="Drop">Drop</option><option value="Reject">Reject</option></select></td>'
-                                               + '<td><select><option value="Input">Input</option><option value="Output">Output</option><option value="Forward">Forward</option></select></td>'
+                                               + '<td id="chn"><select><option value="Input">Input</option><option value="Output">Output</option><option value="Forward">Forward</option></select></td>'
                                                + '<td><select><option value="All">All</option><option value="TCP">TCP</option><option value="UDP">UDP</option><option value="ICMP">ICMP</option></select></td>'
-                                               + '<td><input></input</td>'
-                                               + '<td>0.0.0.0</td>'
+                                               + '<td id="src"><input></input</td>'
+                                               + '<td id="dest">0.0.0.0</td>'
                                                + '<td style="text-align: right; border-width: 0px;"><button type="button" class="btn btn-default btn-xs"><span title="Submit" class="glyphicon glyphicon-ok"></button>'
                                                + '<button type="button" class="btn btn-default btn-xs"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button></td></tr>');
+   
+       var row = $("#recipe-details tbody tr:last");
+       var chain = row.find("#chn");
+       var source = row.find("#src");
+       var dest = row.find("#dest");
+       checkChainSelection();
+
+       function checkChainSelection() {
+           if (chain.find("select").val() === 'Input') {
+               source.html('<input></input>');
+               dest.text('0.0.0.0');
+               chain.find("select").on("change", function () { checkChainSelection(); });
+           } else if (chain.find("select").val() === 'Output') {
+               dest.html('<input></input>');
+               source.text('0.0.0.0');
+               chain.find("select").on("change", function() { checkChainSelection(); });
+           } else if (chain.find("select").val() === 'Forward') {
+               source.html('<input></input>');
+               dest.html('<input></input>');
+               chain.find("select").on("change", function() { checkChainSelection(); });
+           }  
+       }
+        
     });
 }
 
@@ -139,7 +162,9 @@ function getRecipeDetailsActionButton() {
         var source = $(this).closest("tr").find("td:nth-child(5)");
         var dest = $(this).closest("tr").find("td:nth-child(6)");
         var actions = $(this).closest("tr").find("td:nth-child(7)");
+        var oldrule = $(this).closest("tr").hasClass("old-rule");
         
+
         function editMode() {
 
             target.html(buildSelect({Accept:'Accept',Drop:'Drop',Reject:'Reject'}, target.html()));
@@ -184,14 +209,13 @@ function getRecipeDetailsActionButton() {
                 }
 
                 return $select;
-            } 
-        
+            }
         }
 
+
         // Apply action based on which button was clicked
-        if (button === "edit") { 
+        if (button === "edit") {
            editMode();
-        
         } else if (button === "cancel") {
            getRecipeDetails(rrid);
         } else if (button === "submit") {
@@ -215,7 +239,11 @@ function getRecipeDetailsActionButton() {
            // Check that the IPs entered are valid IP addresses
            var ipRegex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g;
            if (editedSource.match(ipRegex) && editedDest.match(ipRegex)) {
-               editResponseDetail(rrid, rulenum, editedTarget, editedChain, editedProtocol, editedSource, editedDest);
+               if (oldrule) {
+                   editResponseDetail(rrid, rulenum, editedTarget, editedChain, editedProtocol, editedSource, editedDest);
+               } else {
+                   addResponseDetail(rrid, rulenum, editedTarget, editedChain, editedProtocol, editedSource, editedDest);
+               }
            } else { 
               $(this).closest("tr").find("input").css("border", "1.5px solid red"); 
            } 
@@ -224,6 +252,19 @@ function getRecipeDetailsActionButton() {
            deleteResponseDetail(rrid, rulenum);
         }
          
+    });
+}
+
+
+// Adds new response detail to a response recipe
+function addResponseDetail(rrid, rulenum, target, chain, protocol, source, dest) {
+    var dataObject = { 'rulenum': rulenum, 'target': target, 'chain': chain, 'protocol': protocol, 'source': source, 'destination': dest };
+    $.ajax({
+            url: lcarsAPI + "responsedetails/" + rrid + "/",
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(dataObject),
+            success: function() { populateRecipes(); getRecipeDetails(rrid); }
     });
 }
 
@@ -306,7 +347,7 @@ function getRecipeDetails(rrid) {
            $("#recipe-details").find("h4").text("Response Details: " + data[0].responserecipes__name);
            $("#recipe-details").find("h4").append('<span id="rrid" title="' + rrid + '"></span>');
            $.each(data, function(i, item) {
-              $("#recipe-details").find("tbody").append('<tr><th scope="row">' + data[i].responsedetails__rulenum + '</th>'
+              $("#recipe-details").find("tbody").append('<tr class="old-rule"><th scope="row">' + data[i].responsedetails__rulenum + '</th>'
                                                       + '<td>' + data[i].responsedetails__target.capitalize() + '</td>'
                                                       + '<td>' + data[i].responsedetails__chain.capitalize() + '</td>'
                                                       + '<td>' + data[i].responsedetails__protocol.formatProtocol() + '</td>'

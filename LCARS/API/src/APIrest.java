@@ -585,10 +585,13 @@ public class APIrest extends NanoHTTPD {
        String source      = reqJSON.get("source").getAsString();
        String destination = reqJSON.get("destination").getAsString();
        
-       String query = "INSERT INTO ResponseDetails (rrid, rulenum, target, chain, protocol, source, destination) VALUES "
+       String addDetail = "INSERT INTO ResponseDetails (rrid, rulenum, target, chain, protocol, source, destination) VALUES "
                + "(" + rrid + ", " + rulenum + ", '" + target + "', '" + chain + "', '" + protocol + "', '" + source + "', "
                + "'" + destination + "')";
-       dbCommand(query);
+       String updateRecipeDate = "UPDATE ResponseRecipes SET updatedate = now()::timestamp(0) "
+               + "WHERE rrid = " + rrid;
+       dbCommand(addDetail);
+       dbCommand(updateRecipeDate);
        
        sb.append(makeJSON(messageKey, "200 OK"));
        return sb;
@@ -604,15 +607,15 @@ public class APIrest extends NanoHTTPD {
        String source      = reqJSON.get("source").getAsString();
        String destination = reqJSON.get("destination").getAsString();
        
-       String query = "UPDATE ResponseDetails SET rulenum = " + newrulenum + ", "
+       String updateDetail = "UPDATE ResponseDetails SET rulenum = " + newrulenum + ", "
                + "target = '" + target + "', chain = '" + chain + "', "
                + "protocol = '" + protocol + "', source = '" + source + "', "
                + "destination = '" + destination + "' "
                + "WHERE rrid = " + rrid + " AND rulenum = " + rulenum;
-       String query2 = "UPDATE ResponseRecipes SET updatedate = now()::timestamp(0) "
+       String updateRecipeDate = "UPDATE ResponseRecipes SET updatedate = now()::timestamp(0) "
                + "WHERE rrid = " + rrid;
-       dbCommand(query);
-       dbCommand(query2);
+       dbCommand(updateDetail);
+       dbCommand(updateRecipeDate);
 
        sb.append(makeJSON(messageKey, "200 OK"));
        return sb;
