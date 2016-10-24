@@ -352,8 +352,12 @@ public class APIrest extends NanoHTTPD {
           response = new NanoHTTPD.Response(sb.toString());
           addApiResponseHeaders(response);
       //
-      // orchestration - GET only - Get orchestration for every profile
-      // orchestration/<pid> - GET only - Get orchestration for single profile
+      // orchestration - GET/PUT/DELETE - Get orchestration for every profile / Insert new orchestration record / Delete all records
+      //    Example PUT:
+      //        URL - localhost:8081/orchestration
+      //        HTTP PUT Body (JSON) - {"pid" : "1", "rrid" : "1"}
+      // orchestration/<pid> - GET  - Get orchestration for single profile
+      // orchestration/<pid>/<rrid> - DELETE - Delete single orchestration record
       //
       } else if (methodIsGET && command.equals("orchestration")) {
          if(commands.length > 2) {
@@ -363,7 +367,18 @@ public class APIrest extends NanoHTTPD {
          }
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
-         
+      } else if (methodIsPUT && command.equals("orchestration")) {
+         sb = responsePutOrchestration(reqJSON);
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+      } else if (methodIsDELETE && command.equals("orchestration")) {
+         if(commands.length > 3) {
+             sb = responseDeleteSingleOrchestration(Integer.parseInt(commands[2]), Integer.parseInt(commands[3]));
+         } else {
+             sb = responseDeleteOrchestration();
+         }
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
       //
       // anything not matching above - GET and others
       // 
@@ -488,6 +503,7 @@ public class APIrest extends NanoHTTPD {
              "+-- PUT  /responsedetails                    - add a response detail to an existing recipe using body JSON: {\"rrid\" : \"Recipe ID\", \"ruleorder\" : \"Order Number\", \"target\" : \"[drop, accept, reject]\",\n" +
              "                                                                                                            \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
              "                                                                                                            \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
+             "+-- PUT  /orchestration                      - create a new profile using body JSON: {\"pid\" : \"Profile ID\", \"rrid\" : \"Recipe ID\"}\n" +
              "\n" +
              "+-- POST /profiles/[pid]                     - update existing profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
              "+-- POST /responserecipes/[rrid]             - update existing recipe using body JSON: {\"name\": \"Profile Name\"}\n" +
@@ -501,6 +517,8 @@ public class APIrest extends NanoHTTPD {
              " +- DELETE /responserecipes/[rrid]           - delete an existing response recipe\n" +
              "+-- DELETE /responsedetails                  - delete all existing response details\n" +
              " +- DELETE /responsedetails/[rdid]           - delete an existing response detail\n" +
+             "+-- DELETE /orchestration                    - delete all existing orchestration records\n" +
+             " +- DELETE /orchestration/[pid]/[rrid]       - delete an existing orchestration record\n" +
              "";
    }
 
@@ -710,9 +728,44 @@ public class APIrest extends NanoHTTPD {
        return runSelectQuery(query);
    }
    
+   private StringBuilder responsePutOrchestration(JsonObject reqJSON) {
+       StringBuilder sb = new StringBuilder();
+       
+       int pid  = reqJSON.get("pid").getAsInt();
+       int rrid = reqJSON.get("rrid").getAsInt();
+       
+       String query = "INSERT INTO Orchestration (pid, rrid) VALUES "
+               + "('" + pid + "', '" + rrid + "')";
+       dbCommand(query);
+       
+       sb.append(makeJSON(messageKey, "200 OK"));
+       
+       return sb;
+   }
+   
+   private StringBuilder responseDeleteOrchestration(){
+       StringBuilder sb = new StringBuilder();
+       
+       String query = "DELETE FROM Orchestration WHERE TRUE";
+       dbCommand(query);
+       
+       sb.append(makeJSON(messageKey, "200 OK"));
+       return sb;
+   }
+   
+   private StringBuilder responseDeleteSingleOrchestration(int pid, int rrid){
+       StringBuilder sb = new StringBuilder();
+       
+       String query = "DELETE FROM Orchestration WHERE pid = " + pid + " AND rrid = " + rrid;
+       dbCommand(query);
+       
+       sb.append(makeJSON(messageKey, "200 OK"));
+       return sb;
+   }
+   
    private StringBuilder responseGetResponseRecipe(int rrid) {
        // Returns a list of response details with the name of the recipe
-       String query = "SELECT rr.name, rd.ruleorder, rd.target, rd.chain, "
+       String query = "SELECT rr.name, rd.rdid, rd.ruleorder, rd.target, rd.chain, "
                + "rd.protocol, rd.source, rd.destination "
                + "FROM ResponseRecipes AS rr "
                + "INNER JOIN ResponseDetails AS rd ON rr.rrid = rd.rrid "
