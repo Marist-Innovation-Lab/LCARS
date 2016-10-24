@@ -154,7 +154,7 @@ function getProfilesActionButton() {
            editedDetails = details.find("input").val();
            editProfile(pid, editedName, editedDetails);
         } else if (button === "delete") {
-           //deleteProfile(pid);
+           deleteProfile(pid);
         }
     });
 }
@@ -165,14 +165,15 @@ function getRecipeDetailsActionButton() {
         // Gets the title of the button that was clicked to determine which it was
         var button = $(this).children("span").attr("title").toLowerCase();
         
+        var rdid = $(this).closest("tr").find("th:nth-child(1)").text();
         var rrid = $("#rrid").attr("title");
-        var rulenum = $(this).closest("tr").find("th").text();
-        var target = $(this).closest("tr").find("td:nth-child(2)");
-        var chain = $(this).closest("tr").find("td:nth-child(3)");
-        var protocol = $(this).closest("tr").find("td:nth-child(4)");
-        var source = $(this).closest("tr").find("td:nth-child(5)");
-        var dest = $(this).closest("tr").find("td:nth-child(6)");
-        var actions = $(this).closest("tr").find("td:nth-child(7)");
+        var ruleorder = $(this).closest("tr").find("th:nth-child(2)").text();
+        var target = $(this).closest("tr").find("td:nth-child(3)");
+        var chain = $(this).closest("tr").find("td:nth-child(4)");
+        var protocol = $(this).closest("tr").find("td:nth-child(5)");
+        var source = $(this).closest("tr").find("td:nth-child(6)");
+        var dest = $(this).closest("tr").find("td:nth-child(7)");
+        var actions = $(this).closest("tr").find("td:nth-child(8)");
         var oldrule = $(this).closest("tr").hasClass("old-rule");
         
 
@@ -215,16 +216,17 @@ function getRecipeDetailsActionButton() {
            var ipRegex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g;
            if (editedSource.match(ipRegex) && editedDest.match(ipRegex)) {
                if (oldrule) {
-                   editResponseDetail(rrid, rulenum, editedTarget, editedChain, editedProtocol, editedSource, editedDest);
+                   console.log(rdid, rulenum);
+                   editResponseDetail(rdid, rrid, ruleorder, editedTarget, editedChain, editedProtocol, editedSource, editedDest);
                } else {
-                   addResponseDetail(rrid, rulenum, editedTarget, editedChain, editedProtocol, editedSource, editedDest);
+                   //addResponseDetail(rrid, rulenum, editedTarget, editedChain, editedProtocol, editedSource, editedDest);
                }
            } else { 
               $(this).closest("tr").find("input").css("border", "1.5px solid red"); 
            } 
  
         } else if (button === "delete") {
-           deleteResponseDetail(rrid, rulenum);
+           //deleteResponseDetail(rrid, rulenum);
         }
          
     });
@@ -271,10 +273,10 @@ function editRecipe(rrid, name) {
 
 
 // Edits a response detail for a particular recipe based on the user inputs
-function editResponseDetail(rrid, rulenum, target, chain, protocol, source, dest) {
-    var dataObject = { 'rulenum': rulenum, 'target': target, 'chain': chain, 'protocol': protocol, 'source': source, 'destination': dest };
+function editResponseDetail(rdid, rrid, ruleorder, target, chain, protocol, source, dest) {
+    var dataObject = { 'rrid': rrid, 'ruleorder': ruleorder, 'target': target, 'chain': chain, 'protocol': protocol, 'source': source, 'destination': dest };
     $.ajax({
-            url: lcarsAPI + "responsedetails/" + rrid + "/" + rulenum,
+            url: lcarsAPI + "responsedetails/" + rdid,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(dataObject),
@@ -323,7 +325,7 @@ function getRecipeDetails(rrid) {
            $("#recipe-details").find("h4").append('<span id="rrid" title="' + rrid + '"></span>');
            $.each(data, function(i, item) {
                $("#recipe-details").find("tbody")
-                   .append('<tr class="old-rule"><th scope="row">' + data[i].responsedetails__rulenum + '</th>'
+                   .append('<tr class="old-rule"><th scope="row" style="display:none;">' + data[i].responsedetails__rdid + '</th><th scope="row">' + data[i].responsedetails__ruleorder + '</th>'
                          + '<td>' + data[i].responsedetails__target.capitalize() + '</td>'
                          + '<td>' + data[i].responsedetails__chain.capitalize() + '</td>'
                          + '<td>' + data[i].responsedetails__protocol.formatProtocol() + '</td>'
@@ -347,13 +349,13 @@ function populateRecipes() {
          if (status === "success") {
             $("#response-recipes").empty();
             $.each(data, function(i, item) {
-               $("#response-recipes").append('<tr><th scope="row">' + data[i].responserecipes__rrid + '</th>'
+               $("#response-recipes").append('<tr><th scope="row" style="display:none;">' + data[i].responserecipes__rrid + '</th>'
                                            + '<td>' + data[i].responserecipes__name + '</td>'
                                            + '<td>' + data[i].responserecipes__updatedate + '</td>'
                                            + '<td><button type="button" class="btn btn-default btn-xs"><span title="View Details" class="glyphicon glyphicon-list"></span></button>'
                                            + '<button type="button" class="btn btn-default btn-xs"><span title="Edit" class="glyphicon glyphicon-pencil"></span></button>'
                                            + '<button type="button" class="btn btn-default btn-xs"><span title="Delete" class="glyphicon glyphicon-trash"></span></button></td></tr>');
-               $("#deploy-response-recipes").append('<tr><th scope="row">' + data[i].responserecipes__rrid + '</th>'
+               $("#deploy-response-recipes").append('<tr><th scope="row" style="display:none;">' + data[i].responserecipes__rrid + '</th>'
                                                   + '<td>' + data[i].responserecipes__name + '</td>'
                                                   + '<td style="text-align: center;"><button type="button" class="btn btn-default btn-xs"><span title="Deploy" class="glyphicon glyphicon-new-window"></span></button></td></tr>');
             });
@@ -371,7 +373,7 @@ function populateProfiles() {
          if (status === "success") {
             $("#profiles").empty();
             $.each(data, function(i, item) {
-               $("#profiles").append('<tr><th scope="row">' + data[i].profiles__pid + '</th>'
+               $("#profiles").append('<tr><th scope="row" style="display:none;">' + data[i].profiles__pid + '</th>'
                                    + '<td>' + data[i].profiles__name + '</td>'
                                    + '<td>' + data[i].profiles__details + '</td>'
                                    + '<td>' + data[i].profiles__updatedate + '</td>'
