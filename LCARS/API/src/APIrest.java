@@ -308,36 +308,38 @@ public class APIrest extends NanoHTTPD {
       //
       // responsedetails - GET / DELETE - Get everything in ResponseDetails table / Delete everything in ResponseDetails table
       //  
-      // responsedetails/<rrid> - POST - Add a response detail to an existing recipe
+      // responsedetails - PUT - Add a response detail to an existing recipe
+      //     Example PUT:
+      //         URL - localhost:8081/responsedetails
+      //         HTTP PUT Body (JSON) - {"rrid" : "1", "ruleorder" : "2", "target" : "drop", "chain" : "input", 
+      //                                  "protocol" : "tcp", "source" : "1.2.3.4", "destination" : "2.3.4.5"}
+      // responsedetails/<rdid> - POST / DELETE - Update an existing response detail / Delete an existing response detail
       //     Example POST:
       //         URL - localhost:8081/responsedetails/1
-      //         HTTP POST Body (JSON) - {"rulenum" : "5", "target" : "drop", "chain" : "input", 
-      //                                  "protocol" : "tcp", "source" : "1.2.3.4", "destination" : "2.3.4.5"}
-      // responsedetails/<rrid>/<rulenum> - POST / DELETE - Update an existing response detail / Delete an existing response detail
-      //     Example POST:
-      //         URL - localhost:8081/responsedetails/1/4
-      //         HTTP POST Body (JSON) - {"rulenum" : "3", "target" : "drop", "chain" : "input", 
+      //         HTTP POST Body (JSON) - {"rrid" : "1", "ruleorder" : "2", "target" : "drop", "chain" : "input", 
       //                                  "protocol" : "tcp", "source" : "1.2.3.4", "destination" : "2.3.4.5"}
       //
       } else if (methodIsGET && command.equals("responsedetails")) {
          sb = responseGetResponseDetails();
          response = new NanoHTTPD.Response(sb.toString());
-         addApiResponseHeaders(response);        
+         addApiResponseHeaders(response);
+      } else if (methodIsPUT && command.equals("responsedetails")) {
+         sb = responsePutResponseDetail(reqJSON);
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
       } else if (methodIsPOST && command.equals("responsedetails")) {
-         if(commands.length == 3) { // Add new detail
-              sb = responseAddResponseDetail(Integer.parseInt(commands[2]), reqJSON);
-         } else if(commands.length > 3) { // Edit existing detail
-              sb = responseUpdateResponseDetail(Integer.parseInt(commands[2]), Integer.parseInt(commands[3]), reqJSON);
+         if(commands.length > 2) {
+              sb = responseUpdateResponseDetail(Integer.parseInt(commands[2]), reqJSON);
          } else {
-              sb.append(makeJSON(messageKey, "Please specify rrid and/or rule number.")); 
+              sb.append(makeJSON(messageKey, "Please specify RDID.")); 
           }
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
       } else if (methodIsDELETE && command.equals("responsedetails")) {
-          if(commands.length > 3) {
-              sb = responseDeleteResponseDetail(Integer.parseInt(commands[2]), Integer.parseInt(commands[3]));
+          if(commands.length > 2) {
+              sb = responseDeleteResponseDetail(Integer.parseInt(commands[2]));
           } else {
-              sb = responseDeleteResponseDetails();
+              sb.append(makeJSON(messageKey, "Please specify RDID."));
           }
           response = new NanoHTTPD.Response(sb.toString());
           addApiResponseHeaders(response);
@@ -475,20 +477,20 @@ public class APIrest extends NanoHTTPD {
              "\n" +
              "+-- PUT  /profiles                           - create a new profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
              "+-- PUT  /responserecipes                    - create a new response recipe using body JSON: {\"name\": \"Recipe Name\"}\n" +
+             "+-- PUT  /responsedetails                    - add a response detail to an existing recipe using body JSON: {\"rrid\" : \"Recipe ID\", \"ruleorder\" : \"Order Number\", \"target\" : \"[drop, accept, reject]\",\n" +
+             "                                                                                                            \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
+             "                                                                                                            \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
              "\n" +
              "+-- POST /profiles/[pid]                     - update existing profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
              "+-- POST /responserecipes/[rrid]             - update existing recipe using body JSON: {\"name\": \"Profile Name\"}\n" +
-             "+-- POST /responsedetails/[rrid]             - add a response detail to an existing recipe using body JSON: {\"rulenum\" : \"Rule Number\", \"target\" : \"[drop, accept, reject]\",\n" +
-             "                                                                                                             \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
-             "                                                                                                             \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
-             " +- POST /responsedetails/[rrid]/[rulenum]   - update an existing response detail in a recipe using body JSON: {\"rulenum\" : \"Rule Number\", \"target\" : \"[drop, accept, reject]\",\n" +
+             "+-- POST /responsedetails/[rdid]             - update an existing response detail in a recipe using body JSON: {\"rrid\" : \"Recipe ID\", \"ruleorder\" : \"Order Number\", \"target\" : \"[drop, accept, reject]\",\n" +
              "                                                                                                                \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
              "                                                                                                                \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
              "\n" +
              "+-- DELETE /responserecipes                  - delete all existing response recipes\n" +
              " +- DELETE /responserecipes/[rrid]           - delete an existing response recipe\n" +
              "+-- DELETE /responsedetails                  - delete all existing response details\n" +
-             " +- DELETE /responsedetails/[rrid]/[rulenum] - delete an existing response detail\n" +
+             " +- DELETE /responsedetails/[rdid]           - delete an existing response detail\n" +
              "";
    }
 
@@ -575,18 +577,19 @@ public class APIrest extends NanoHTTPD {
        return runSelectQuery("SELECT * FROM ResponseDetails");       
    }
    
-   private StringBuilder responseAddResponseDetail(int rrid, JsonObject reqJSON) {
+   private StringBuilder responsePutResponseDetail(JsonObject reqJSON) {
        StringBuilder sb = new StringBuilder();
        
-       int rulenum        = reqJSON.get("rulenum").getAsInt();
+       int rrid           = reqJSON.get("rrid").getAsInt();
+       int ruleorder      = reqJSON.get("ruleorder").getAsInt();
        String target      = reqJSON.get("target").getAsString();
        String chain       = reqJSON.get("chain").getAsString();
        String protocol    = reqJSON.get("protocol").getAsString();
        String source      = reqJSON.get("source").getAsString();
        String destination = reqJSON.get("destination").getAsString();
        
-       String addDetail = "INSERT INTO ResponseDetails (rrid, rulenum, target, chain, protocol, source, destination) VALUES "
-               + "(" + rrid + ", " + rulenum + ", '" + target + "', '" + chain + "', '" + protocol + "', '" + source + "', "
+       String addDetail = "INSERT INTO ResponseDetails (rrid, ruleorder, target, chain, protocol, source, destination) VALUES "
+               + "(" + rrid + ", " + ruleorder + ", '" + target + "', '" + chain + "', '" + protocol + "', '" + source + "', "
                + "'" + destination + "')";
        String updateRecipeDate = "UPDATE ResponseRecipes SET updatedate = now()::timestamp(0) "
                + "WHERE rrid = " + rrid;
@@ -597,21 +600,22 @@ public class APIrest extends NanoHTTPD {
        return sb;
    }
    
-   private StringBuilder responseUpdateResponseDetail(int rrid, int rulenum, JsonObject reqJSON) {
+   private StringBuilder responseUpdateResponseDetail(int rdid, JsonObject reqJSON) {
        StringBuilder sb = new StringBuilder();
        
-       int newrulenum     = reqJSON.get("rulenum").getAsInt();
+       int rrid           = reqJSON.get("rrid").getAsInt();
+       int ruleorder      = reqJSON.get("ruleorder").getAsInt();
        String target      = reqJSON.get("target").getAsString();
        String chain       = reqJSON.get("chain").getAsString();
        String protocol    = reqJSON.get("protocol").getAsString();
        String source      = reqJSON.get("source").getAsString();
        String destination = reqJSON.get("destination").getAsString();
        
-       String updateDetail = "UPDATE ResponseDetails SET rulenum = " + newrulenum + ", "
+       String updateDetail = "UPDATE ResponseDetails SET ruleorder = " + ruleorder + ", "
                + "target = '" + target + "', chain = '" + chain + "', "
                + "protocol = '" + protocol + "', source = '" + source + "', "
                + "destination = '" + destination + "' "
-               + "WHERE rrid = " + rrid + " AND rulenum = " + rulenum;
+               + "WHERE rdid = " + rdid;
        String updateRecipeDate = "UPDATE ResponseRecipes SET updatedate = now()::timestamp(0) "
                + "WHERE rrid = " + rrid;
        dbCommand(updateDetail);
@@ -621,11 +625,11 @@ public class APIrest extends NanoHTTPD {
        return sb;
    }
    
-   private StringBuilder responseDeleteResponseDetail(int rrid, int rulenum) {
+   private StringBuilder responseDeleteResponseDetail(int rdid) {
        StringBuilder sb = new StringBuilder();
        
        String query = "DELETE FROM ResponseDetails WHERE "
-               + "rrid = " + rrid + " AND rulenum = " + rulenum;
+               + "rrid = " + rdid;
        dbCommand(query);
        
        sb.append(makeJSON(messageKey, "200 OK"));

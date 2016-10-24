@@ -34,17 +34,18 @@ INSERT INTO ResponseRecipes (name) values
 DROP TABLE IF EXISTS ResponseDetails;
 
 CREATE TABLE ResponseDetails (
+    rdid        serial,
     rrid        integer not null references ResponseRecipes(rrid),
-    rulenum     integer not null,
+    ruleorder   integer not null,
     target      text,
     chain       text,
     protocol    text,
     source      text,
     destination text,
-   primary key(rrid, rulenum)
+   primary key(rdid)
 );
 
-INSERT INTO ResponseDetails (rrid, rulenum, target, chain, protocol, source, destination) values
+INSERT INTO ResponseDetails (rrid, ruleorder, target, chain, protocol, source, destination) values
     (1, 1, 'DROP',   'INPUT',  'tcp',  '1.2.3.4', '0.0.0.0'),
     (1, 2, 'DROP',   'INPUT',  'icmp', '4.3.2.1', '0.0.0.0'),
     (1, 3, 'REJECT', 'INPUT',  'tcp',  '2.3.4.5', '0.0.0.0'),
