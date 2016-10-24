@@ -644,36 +644,14 @@ public class APIrest extends NanoHTTPD {
    
    private StringBuilder responseGetOrchestration() {
        
-       // Is there a better way to get the number of profiles as an int? Do we need it even?
-       String countStr = runSelectQuery("SELECT count(*) FROM Profiles").toString();
-       JsonArray countJson = new JsonParser().parse(countStr).getAsJsonArray();
-       int count = countJson.get(0).getAsJsonObject().get("count").getAsInt();
-       
-       StringBuilder sb = new StringBuilder();
-       sb.append("[{");
-       for(int pid = 1; pid <= count; pid++) {
-            // Is there a better way to get the profile name as a string?
-            String nameStr = runSelectQuery("SELECT name FROM Profiles WHERE pid = " + pid).toString();
-            JsonArray nameJson = new JsonParser().parse(nameStr).getAsJsonArray();
-            String name = nameJson.get(0).getAsJsonObject().get("profiles__name").getAsString();
-            
-            // Build JSON structure
-            sb.append("\"profiles__name\" : \"" + name + "\", ");
-            sb.append("\"responserecipes\" : ");
-            
-            String query = "SELECT rr.rrid, rr.name "
+       String query = "SELECT p.name, rr.rrid, rr.name, rd.target, rd.chain, "
+                    + "rd.protocol, rd.source, rd.destination "
                     + "FROM Profiles AS p INNER JOIN Orchestration AS o ON p.pid = o.pid "
                     + "                   INNER JOIN ResponseRecipes AS rr ON o.rrid = rr.rrid "
-                    + "WHERE p.pid = " + pid;
-            sb.append(runSelectQuery(query).toString());
-            
-            // Run for every element except the last
-            if(pid != count)
-                sb.append("}, {");
-       }
-       sb.append("}]");   
+                    + "                   INNER JOIN ResponseDetails AS rd ON rr.rrid = rd.rrid "
+                    + "ORDER BY rd.rulenum";
        
-       return sb;         
+       return runSelectQuery(query);         
    }
    
    private StringBuilder responseGetSingleOrchestration(int pid) {
