@@ -653,7 +653,7 @@ public class APIrest extends NanoHTTPD {
                     + "FROM Profiles AS p INNER JOIN Orchestration AS o ON p.pid = o.pid "
                     + "                   INNER JOIN ResponseRecipes AS rr ON o.rrid = rr.rrid "
                     + "                   INNER JOIN ResponseDetails AS rd ON rr.rrid = rd.rrid "
-                    + "ORDER BY rd.rulenum";
+                    + "ORDER BY rd.ruleorder";
        
        return runSelectQuery(query);         
    }
