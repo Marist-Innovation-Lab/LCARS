@@ -33,50 +33,34 @@ function createProfile() {
 }
 
 
-// Clears the input boxes in the modal because they do not automatically clear on close 
-function clearModal() {
-    $(".modal").on("hidden.bs.modal", function() {
-       $("#profile-name").val("");
-       $("#profile-details").val("");
-    });
-}
-
-
+// Enables ability to add new response recipe detail
 function addRecipeDetail() {
     $("#add-detail").on("click", function () {
+       // Get the rule number of the last existing response detail
        var lastRuleNum =  $("#recipe-details tbody tr:last th:first").html();
+       // Add 1 to get the rule number for the new rule being added
        var newRuleNum = Number(lastRuleNum) + 1;
-       $("#recipe-details").find("tbody").append('<tr><th>' + newRuleNum + '</th>'
-                                               + '<td><select><option value="Accept">Accept</option><option value="Drop">Drop</option><option value="Reject">Reject</option></select></td>'
-                                               + '<td id="chn"><select><option value="Input">Input</option><option value="Output">Output</option><option value="Forward">Forward</option></select></td>'
-                                               + '<td><select><option value="All">All</option><option value="TCP">TCP</option><option value="UDP">UDP</option><option value="ICMP">ICMP</option></select></td>'
-                                               + '<td id="src"><input></input</td>'
-                                               + '<td id="dest">0.0.0.0</td>'
-                                               + '<td style="text-align: right; border-width: 0px;"><button type="button" class="btn btn-default btn-xs"><span title="Submit" class="glyphicon glyphicon-ok"></button>'
-                                               + '<button type="button" class="btn btn-default btn-xs"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button></td></tr>');
-   
+       // Add a new row with editable fields 
+       $("#recipe-details").find("tbody")
+           .append('<tr><th>' + newRuleNum + '</th>'
+                 + '<td><select>' + buildSelect({Accept:'Accept', Drop:'Drop', Reject:'Reject'}, 'Accept').html() + '</select></td>'   // buildSelect() not working as expected here and below... unsure why
+                 + '<td id="chn"><select>' + buildSelect({Input:'Input', Output:'Output', Forward:'Forward'}, 'Input').html() + '</select></td>'
+                 + '<td><select>' + buildSelect({All:'All', TCP:'TCP', UDP:'UDP', ICMP:'ICMP'}, 'All').html() + '</select></td>'
+                 + '<td id="src"><input></input</td>'
+                 + '<td id="dest">0.0.0.0</td>'
+                 + '<td style="text-align: right; border-width: 0px;"><button type="button" class="btn btn-default btn-xs"><span title="Submit" class="glyphicon glyphicon-ok"></button>'
+                 + '<button type="button" class="btn btn-default btn-xs"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button></td></tr>');
+       // Scroll to the bottom where the new editable row is
+       $(".modal-body").scrollTop(1E10);
+
+       // Get the row that was just added, and check for changes to the chain selection so that the input boxes can be updated as necessary
        var row = $("#recipe-details tbody tr:last");
        var chain = row.find("#chn");
        var source = row.find("#src");
        var dest = row.find("#dest");
-       checkChainSelection();
-
-       function checkChainSelection() {
-           if (chain.find("select").val() === 'Input') {
-               source.html('<input></input>');
-               dest.text('0.0.0.0');
-               chain.find("select").on("change", function () { checkChainSelection(); });
-           } else if (chain.find("select").val() === 'Output') {
-               dest.html('<input></input>');
-               source.text('0.0.0.0');
-               chain.find("select").on("change", function() { checkChainSelection(); });
-           } else if (chain.find("select").val() === 'Forward') {
-               source.html('<input></input>');
-               dest.html('<input></input>');
-               chain.find("select").on("change", function() { checkChainSelection(); });
-           }  
-       }
-        
+       
+       checkChainSelection(chain, source, dest);
+       
     });
 }
 
@@ -172,44 +156,8 @@ function getRecipeDetailsActionButton() {
             protocol.html(buildSelect({All:'All',TCP:'TCP',UDP:'UDP',ICMP:'ICMP'}, protocol.html()));
             actions.html('<button type="button" class="btn btn-default btn-xs"><span title="Submit" class="glyphicon glyphicon-ok"></span></button>'
                       + '<button type="button" class="btn btn-default btn-xs"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button>');
-            checkChainSelection(); 
-            
-            // Checks the selected chain value and decides which IP area to make editable
-            function checkChainSelection() {
-                if (chain.find("select").val() === 'Input') {
-                   source.html('<input></input>');
-                   dest.text('0.0.0.0');
-                   chain.find("select").on("change", function () { checkChainSelection(); });
-                } else if (chain.find("select").val() === 'Output') {
-                   dest.html('<input></input>');
-                   source.text('0.0.0.0');
-                   chain.find("select").on("change", function() { checkChainSelection(); }); 
-                } else if (chain.find("select").val() === 'Forward') {
-                   source.html('<input></input>');
-                   dest.html('<input></input>');
-                   chain.find("select").on("change", function() { checkChainSelection(); }); 
-                } 
-            }
-       
-            // Dynamically sets the selected option value based on text that was previously there
-            // http://stackoverflow.com/questions/2315879/how-do-i-dynamically-set-the-selected-option-of-a-drop-down-list-using-jquery-j
-            function buildSelect(options, def) {
-            // assume options = { value1 : 'Name 1', value2 : 'Name 2', ... }
-            //        default = 'value1'
-
-                var $select = $('<select></select>');
-                var $option;
-
-                for (var val in options) {
-                   $option = $('<option value="' + val + '">' + options[val] + '</option>');
-                   if (val == def) {
-                      $option.attr('selected', 'selected');
-                   }
-                   $select.append($option);
-                }
-
-                return $select;
-            }
+            checkChainSelection(chain, source, dest);        
+      
         }
 
 
@@ -347,14 +295,17 @@ function getRecipeDetails(rrid) {
            $("#recipe-details").find("h4").text("Response Details: " + data[0].responserecipes__name);
            $("#recipe-details").find("h4").append('<span id="rrid" title="' + rrid + '"></span>');
            $.each(data, function(i, item) {
-              $("#recipe-details").find("tbody").append('<tr class="old-rule"><th scope="row">' + data[i].responsedetails__rulenum + '</th>'
-                                                      + '<td>' + data[i].responsedetails__target.capitalize() + '</td>'
-                                                      + '<td>' + data[i].responsedetails__chain.capitalize() + '</td>'
-                                                      + '<td>' + data[i].responsedetails__protocol.formatProtocol() + '</td>'
-                                                      + '<td>' + data[i].responsedetails__source + '</td>'
-                                                      + '<td>' + data[i].responsedetails__destination + '</td>'
-                                                      + '<td style="text-align: right; border-width:0px;"><button type="button" class="btn btn-default btn-xs"><span title="Edit" class="glyphicon glyphicon-pencil"></span></button><button type="button" class="btn btn-default btn-xs"><span title="Delete" class="glyphicon glyphicon-trash"></span></button></td></tr>');
+               $("#recipe-details").find("tbody")
+                   .append('<tr class="old-rule"><th scope="row">' + data[i].responsedetails__rulenum + '</th>'
+                         + '<td>' + data[i].responsedetails__target.capitalize() + '</td>'
+                         + '<td>' + data[i].responsedetails__chain.capitalize() + '</td>'
+                         + '<td>' + data[i].responsedetails__protocol.formatProtocol() + '</td>'
+                         + '<td>' + data[i].responsedetails__source + '</td>'
+                         + '<td>' + data[i].responsedetails__destination + '</td>'
+                         + '<td style="text-align: right; border-width:0px;"><button type="button" class="btn btn-default btn-xs"><span title="Edit" class="glyphicon glyphicon-pencil"></span></button>'
+                         + '<button type="button" class="btn btn-default btn-xs"><span title="Delete" class="glyphicon glyphicon-trash"></span></button></td></tr>');
            });
+           
            $("#recipe-details").modal("show"); 
          }
       });
@@ -458,4 +409,54 @@ $(document).ready(function() {
    deployResponseRecipe();
 
 });
+
+
+/*
+ * Some utility functions.
+ */
+
+// Clears the input boxes in the modal window because they do not automatically clear on close 
+function clearModal() {
+    $(".modal").on("hidden.bs.modal", function() {
+       $("#profile-name").val("");
+       $("#profile-details").val("");
+    });
+}
+
+// Checks the selected chain value and decides which IP area to make editable
+function checkChainSelection(chain, source, dest) {
+    if (chain.find("select").val() === 'Input') {
+        source.html('<input></input>');
+        dest.text('0.0.0.0');
+        chain.find("select").on("change", function () { checkChainSelection(chain, source, dest); });
+    } else if (chain.find("select").val() === 'Output') {
+        dest.html('<input></input>');
+        source.text('0.0.0.0');
+        chain.find("select").on("change", function() { checkChainSelection(chain, source, dest); });
+    } else if (chain.find("select").val() === 'Forward') {
+        source.html('<input></input>');
+        dest.html('<input></input>');
+        chain.find("select").on("change", function() { checkChainSelection(chain, source, dest); });
+    }  
+}
+
+// Dynamically sets the selected option value of a dropdown list, rather than automatically having the first option selected
+// http://stackoverflow.com/questions/2315879/how-do-i-dynamically-set-the-selected-option-of-a-drop-down-list-using-jquery-j
+function buildSelect(options, def) {
+    // assume options = { value1 : 'Name 1', value2 : 'Name 2', ... }
+    //        default = 'value1'
+
+    var $select = $('<select></select>');
+    var $option;
+    
+    for (var val in options) {
+        $option = $('<option value="' + val + '">' + options[val] + '</option>');
+        if (val == def) {
+            $option.attr('selected', 'selected');
+        }
+        $select.append($option);
+    }
+    
+    return $select;
+}
 
