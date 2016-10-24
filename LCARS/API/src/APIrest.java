@@ -669,12 +669,12 @@ public class APIrest extends NanoHTTPD {
    
    private StringBuilder responseGetResponseRecipe(int rrid) {
        // Returns a list of response details with the name of the recipe
-       String query = "SELECT rr.name, rd.rulenum, rd.target, rd.chain, "
+       String query = "SELECT rr.name, rd.ruleorder, rd.target, rd.chain, "
                + "rd.protocol, rd.source, rd.destination "
                + "FROM ResponseRecipes AS rr "
                + "INNER JOIN ResponseDetails AS rd ON rr.rrid = rd.rrid "
                + "WHERE rr.rrid=" + rrid + " "
-               + "ORDER BY rd.rulenum";
+               + "ORDER BY rd.ruleorder";
        return runSelectQuery(query);
    }
    
