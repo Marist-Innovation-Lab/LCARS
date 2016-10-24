@@ -495,6 +495,8 @@ public class APIrest extends NanoHTTPD {
              "                                                                                                                \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
              "                                                                                                                \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
              "\n" +
+             "+-- DELETE /profiles                         - delete all existing profiles\n" +
+             " +- DELETE /profiles/[pid]                   - delete an existing profile\n" +
              "+-- DELETE /responserecipes                  - delete all existing response recipes\n" +
              " +- DELETE /responserecipes/[rrid]           - delete an existing response recipe\n" +
              "+-- DELETE /responsedetails                  - delete all existing response details\n" +
