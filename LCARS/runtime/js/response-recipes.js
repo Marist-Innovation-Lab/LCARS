@@ -32,6 +32,33 @@ function createProfile() {
 
 }
 
+// Creates a new response recipe from modal window that opens when "Create Response Recipe" button is clicked
+function createResponseRecipe() {
+
+   $("#create-recipe").on("click", function() {
+      var name = $("#recipe-name").val();
+     
+      if (name === "") {
+         console.log("Error");   // Create a real error message
+      } else {
+         // Build object that will be converted to JSON data that gets passed through the API
+         var dataObject = { 'name': name };
+        
+         $.ajax({
+                 url: lcarsAPI + "responserecipes",
+                 type: 'PUT',
+                 contentType: 'application/json',
+                 data: JSON.stringify(dataObject),
+                 success: function() { return populateRecipes(); }
+         });
+         
+         // Close the modal window
+         $(".modal").modal("hide");
+      }
+   });
+
+}
+
 
 // Enables ability to add new response recipe detail
 function addRecipeDetail() {
@@ -402,6 +429,8 @@ $(document).ready(function() {
 
    createProfile();
    getProfilesActionButton();
+
+   createResponseRecipe();
    getRecipesActionButton();
    getRecipeDetailsActionButton();   
 

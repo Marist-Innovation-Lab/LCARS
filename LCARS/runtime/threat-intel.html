@@ -236,7 +236,7 @@
                     <div class="clearfix"></div>                     
                   </div>
                   <div class="x_content" style="height: 250px;">
-                     <button type="button" class="btn btn-block btn-primary" href="reconfigurator.html">Create Response Recipe</button>
+                     <button type="button" class="btn btn-block btn-primary" data-toggle="modal" data-target="#add-recipe">Create Response Recipe</button>
                      <br>
                      <button type="button" class="btn btn-block btn-primary">Invoke Magic</button>
                      <br>
@@ -267,6 +267,30 @@
                   </div>
                </div>
             </div>
+
+            <!-- Modal window for creating a new response recipe -->
+            <div class="modal fade" id="add-recipe" tabindex="-1" role="dialog" aria-hidden="true">
+               <div class="modal-dialog">
+                 <div class="modal-content">
+                   <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                     <h4 class="modal-title">Create Response Recipe</h4>
+                   </div>
+                   <div class="modal-body">
+                     <form>
+                        <div class="form-group">
+                          <label for="recipe-name" class="form-control-label">Response Recipe Name:</label>
+                          <input type="text" class="form-control" id="recipe-name">
+                        </div>
+                     </form>       
+                   </div>
+                   <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                     <button type="button" class="btn btn-primary" id="create-recipe">Create Profile</button>
+                   </div>
+                 </div>
+               </div>
+             </div>
 
              <!-- Modal window for viewing the response recipe details  -->
              <div class="modal fade" id="recipe-details" tabindex="-1" role="dialog" aria-hidden="true">
