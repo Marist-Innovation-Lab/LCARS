@@ -1,3 +1,6 @@
+DROP TABLE IF EXISTS Orchestration;
+DROP TABLE IF EXISTS ResponseDetails;
+DROP TABLE IF EXISTS ResponseRecipes;
 DROP TABLE IF EXISTS Profiles;
 
 CREATE TABLE Profiles (
@@ -15,8 +18,6 @@ INSERT INTO Profiles (name, details) values
     ('Profile in Sarcasm', 'Profile summary'),
     ('Profile in Dude-ness', 'Profile summary');
 
-DROP TABLE IF EXISTS ResponseRecipes;
-
 CREATE TABLE ResponseRecipes (
     rrid        serial,
     name        text       not null,
@@ -30,8 +31,6 @@ INSERT INTO ResponseRecipes (name) values
     ('Turn Out the Lights'),
     ('Cower in Fear'),
     ('Fight the Power');
-
-DROP TABLE IF EXISTS ResponseDetails;
 
 CREATE TABLE ResponseDetails (
     rdid        serial,
@@ -58,8 +57,6 @@ INSERT INTO ResponseDetails (rrid, ruleorder, target, chain, protocol, source, d
     (4, 1, 'REJECT', 'INPUT',  'udp',  '4.3.2.1', '0.0.0.0'),
     (4, 2, 'REJECT', 'INPUT',  'tcp',  '1.2.3.4', '0.0.0.0'),
     (4, 3, 'REJECT', 'INPUT',  'icmp', '2.3.4.5', '0.0.0.0');
-
-DROP TABLE IF EXISTS Orchestration;
 
 CREATE TABLE Orchestration (
     pid  integer not null references Profiles(pid),
