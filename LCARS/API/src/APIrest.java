@@ -233,11 +233,11 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
       
       //
-      // profiles - GET/PUT - Get everything in Profiles table / Insert new profile
+      // profiles - GET/PUT/DELETE - Get everything in Profiles table / Insert new profile / Delete all profiles
       //    Example PUT: 
       //        URL - localhost:8081/profiles
       //        HTTP PUT Body (JSON) - {"name" : "New Profile", "details" : "Profile details"}
-      // profiles/<pid> - GET/POST - Get a single profile / Update existing profile
+      // profiles/<pid> - GET/POST/DELETE - Get a single profile / Update existing profile / Delete existing profile
       //    Example POST: 
       //        URL - localhost:8081/profiles/1
       //        HTTP POST Body (JSON) - {"name" : "Updated Name", "details" : "Updated details"}
@@ -260,6 +260,14 @@ public class APIrest extends NanoHTTPD {
           addApiResponseHeaders(response);
       } else if (methodIsPUT && command.equals("profiles")) {
           sb = responsePutProfile(reqJSON);
+          response = new NanoHTTPD.Response(sb.toString());
+          addApiResponseHeaders(response);
+      } else if (methodIsDELETE && command.equals("profiles")) {
+          if(commands.length > 2) {
+              sb = responseDeleteProfile(Integer.parseInt(commands[2]));
+          } else {
+              sb = responseDeleteProfiles();
+          }
           response = new NanoHTTPD.Response(sb.toString());
           addApiResponseHeaders(response);
           
@@ -563,6 +571,39 @@ public class APIrest extends NanoHTTPD {
        String query = "INSERT INTO Profiles (name, details) VALUES "
                + "('" + name + "', '" + details + "')";
        dbCommand(query);
+       
+       sb.append(makeJSON(messageKey, "200 OK"));
+       
+       return sb;
+   }
+   
+   private StringBuilder responseDeleteProfiles() {
+       StringBuilder sb = new StringBuilder();
+       
+       // Delete all of the response recipes (also deletes all orchestration information).
+       String deleteOrchestrations = "DELETE FROM Orchestration WHERE TRUE";
+       String deleteProfiles = "DELETE FROM Profiles WHERE TRUE";
+       
+       dbCommand(deleteOrchestrations);
+       dbCommand(deleteProfiles);
+       
+       sb.append(makeJSON(messageKey, "200 OK"));
+       
+       return sb; 
+   }
+   
+   private StringBuilder responseDeleteProfile(int pid){
+       StringBuilder sb = new StringBuilder();
+       
+       // Delete a particular profile (also deletes its associated orchestration information).
+       String deleteProfile = "DELETE FROM Profiles"
+               + " WHERE pid = " + pid;
+       
+       String deleteOrchestration = "DELETE FROM Orchestration"
+               + " WHERE pid = " + pid;
+       
+       dbCommand(deleteOrchestration);
+       dbCommand(deleteProfile);
        
        sb.append(makeJSON(messageKey, "200 OK"));
        
