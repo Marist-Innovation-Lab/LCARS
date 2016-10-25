@@ -688,10 +688,12 @@ public class APIrest extends NanoHTTPD {
    
    private StringBuilder responseDeleteResponseDetail(int rdid) {
        StringBuilder sb = new StringBuilder();
-       
-       String query = "DELETE FROM ResponseDetails WHERE "
+      
+       String updateOrder = "UPDATE ResponseDetails SET ruleorder = ruleorder - 1 WHERE rrid = (SELECT rrid FROM ResponseDetails WHERE rdid = " + rdid + ") AND rdid > " + rdid; 
+       String deleteDetail = "DELETE FROM ResponseDetails WHERE "
                + "rdid = " + rdid;
-       dbCommand(query);
+       dbCommand(updateOrder);
+       dbCommand(deleteDetail);
        
        sb.append(makeJSON(messageKey, "200 OK"));
        return sb;
