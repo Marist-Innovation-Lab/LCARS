@@ -64,12 +64,13 @@ function createResponseRecipe() {
 function addRecipeDetail() {
     $("#add-detail").on("click", function () {
        // Get the rule number of the last existing response detail
-       var lastRuleNum =  $("#recipe-details tbody tr:last th:first").html();
+       var lastRuleNum =  $("#recipe-details tbody tr:last th:nth-child(2)").html();
        // Add 1 to get the rule number for the new rule being added
        var newRuleNum = Number(lastRuleNum) + 1;
+       
        // Add a new row with editable fields 
        $("#recipe-details").find("tbody")
-           .append('<tr><th>' + newRuleNum + '</th>'
+           .append('<tr><th style="display:none;"></th><th>' + newRuleNum + '</th>'
                  + '<td><select>' + buildSelect({Accept:'Accept', Drop:'Drop', Reject:'Reject'}, 'Accept').html() + '</select></td>'   // buildSelect() not working as expected here and below... unsure why
                  + '<td id="chn"><select>' + buildSelect({Input:'Input', Output:'Output', Forward:'Forward'}, 'Input').html() + '</select></td>'
                  + '<td><select>' + buildSelect({All:'All', TCP:'TCP', UDP:'UDP', ICMP:'ICMP'}, 'All').html() + '</select></td>'
@@ -86,8 +87,8 @@ function addRecipeDetail() {
        var source = row.find("#src");
        var dest = row.find("#dest");
        
-       checkChainSelection(chain, source, dest);
-       
+       checkChainSelection(chain, source, dest); 
+    
     });
 }
 
@@ -195,11 +196,11 @@ function getRecipeDetailsActionButton() {
         } else if (button === "cancel") {
            getRecipeDetails(rrid);
         } else if (button === "submit") {
-
+           
            editedTarget = target.find("select").val();
            editedChain = chain.find("select").val();
            editedProtocol = protocol.find("select").val();
-           
+
            // Determine if the user inputted Source and/or Destination and get the values
            if (editedChain === 'Input') {
               editedSource = source.find("input").val();
@@ -212,6 +213,7 @@ function getRecipeDetailsActionButton() {
               editedDest = dest.find("input").val();
            }
            
+           
            // Check that the IPs entered are valid IP addresses
            var ipRegex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g;
            if (editedSource.match(ipRegex) && editedDest.match(ipRegex)) {
@@ -219,14 +221,14 @@ function getRecipeDetailsActionButton() {
                    console.log(rdid, rulenum);
                    editResponseDetail(rdid, rrid, ruleorder, editedTarget, editedChain, editedProtocol, editedSource, editedDest);
                } else {
-                   //addResponseDetail(rrid, rulenum, editedTarget, editedChain, editedProtocol, editedSource, editedDest);
+                   addResponseDetail(rrid, ruleorder, editedTarget, editedChain, editedProtocol, editedSource, editedDest);
                }
            } else { 
               $(this).closest("tr").find("input").css("border", "1.5px solid red"); 
            } 
  
         } else if (button === "delete") {
-           //deleteResponseDetail(rrid, rulenum);
+           deleteResponseDetail(rdid, rrid);
         }
          
     });
@@ -234,11 +236,11 @@ function getRecipeDetailsActionButton() {
 
 
 // Adds new response detail to a response recipe
-function addResponseDetail(rrid, rulenum, target, chain, protocol, source, dest) {
-    var dataObject = { 'rulenum': rulenum, 'target': target, 'chain': chain, 'protocol': protocol, 'source': source, 'destination': dest };
+function addResponseDetail(rrid, ruleorder, target, chain, protocol, source, dest) {
+    var dataObject = { 'rrid': rrid, 'ruleorder': ruleorder, 'target': target, 'chain': chain, 'protocol': protocol, 'source': source, 'destination': dest };
     $.ajax({
-            url: lcarsAPI + "responsedetails/" + rrid + "/",
-            type: 'POST',
+            url: lcarsAPI + "responsedetails/",
+            type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(dataObject),
             success: function() { populateRecipes(); getRecipeDetails(rrid); }
@@ -306,9 +308,9 @@ function deleteProfile(pid) {
 
 
 // Deletes a response detail
-function deleteResponseDetail(rrid, rulenum) {
+function deleteResponseDetail(rdid, rrid) {
     $.ajax({
-           url: lcarsAPI + "responsedetails/" + rrid + "/" + rulenum,
+           url: lcarsAPI + "responsedetails/" + rdid,
            type: 'DELETE',
            success: function() { return getRecipeDetails(rrid); }
     });
