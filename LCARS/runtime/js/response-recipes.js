@@ -67,6 +67,9 @@ function addRecipeDetail() {
        var lastRuleNum =  $("#recipe-details tbody tr:last th:nth-child(2)").html();
        // Add 1 to get the rule number for the new rule being added
        var newRuleNum = Number(lastRuleNum) + 1;
+       if ( isNaN(newRuleNum) ) {
+           newRuleNum = 1;
+       }
        
        // Add a new row with editable fields 
        $("#recipe-details").find("tbody")
@@ -325,17 +328,21 @@ function getRecipeDetails(rrid) {
            $("#recipe-details").find("tbody").html("");
            $("#recipe-details").find("h4").text("Response Details: " + data[0].responserecipes__name);
            $("#recipe-details").find("h4").append('<span id="rrid" title="' + rrid + '"></span>');
-           $.each(data, function(i, item) {
-               $("#recipe-details").find("tbody")
-                   .append('<tr class="old-rule"><th scope="row" style="display:none;">' + data[i].responsedetails__rdid + '</th><th scope="row">' + data[i].responsedetails__ruleorder + '</th>'
-                         + '<td>' + data[i].responsedetails__target.capitalize() + '</td>'
-                         + '<td>' + data[i].responsedetails__chain.capitalize() + '</td>'
-                         + '<td>' + data[i].responsedetails__protocol.formatProtocol() + '</td>'
-                         + '<td>' + data[i].responsedetails__source + '</td>'
-                         + '<td>' + data[i].responsedetails__destination + '</td>'
-                         + '<td style="text-align: right; border-width:0px;"><button type="button" class="btn btn-default btn-xs"><span title="Edit" class="glyphicon glyphicon-pencil"></span></button>'
-                         + '<button type="button" class="btn btn-default btn-xs"><span title="Delete" class="glyphicon glyphicon-trash"></span></button></td></tr>');
-           });
+           
+           // Check that theres actually a response detail, instead of just empty JSON strings
+           if (data[0].responsedetails__rdid) {
+               $.each(data, function(i, item) {
+                   $("#recipe-details").find("tbody")
+                       .append('<tr class="old-rule"><th scope="row" style="display:none;">' + data[i].responsedetails__rdid + '</th><th scope="row">' + data[i].responsedetails__ruleorder + '</th>'
+                             + '<td>' + data[i].responsedetails__target.capitalize() + '</td>'
+                             + '<td>' + data[i].responsedetails__chain.capitalize() + '</td>'
+                             + '<td>' + data[i].responsedetails__protocol.formatProtocol() + '</td>'
+                             + '<td>' + data[i].responsedetails__source + '</td>'
+                             + '<td>' + data[i].responsedetails__destination + '</td>'
+                             + '<td style="text-align: right; border-width:0px;"><button type="button" class="btn btn-default btn-xs"><span title="Edit" class="glyphicon glyphicon-pencil"></span></button>'
+                             + '<button type="button" class="btn btn-default btn-xs"><span title="Delete" class="glyphicon glyphicon-trash"></span></button></td></tr>');
+               });
+           }
            
            $("#recipe-details").modal("show"); 
          }
@@ -350,17 +357,20 @@ function populateRecipes() {
       function (data, status) {
          if (status === "success") {
             $("#response-recipes").empty();
-            $.each(data, function(i, item) {
-               $("#response-recipes").append('<tr><th scope="row" style="display:none;">' + data[i].responserecipes__rrid + '</th>'
-                                           + '<td>' + data[i].responserecipes__name + '</td>'
-                                           + '<td>' + data[i].responserecipes__updatedate + '</td>'
-                                           + '<td><button type="button" class="btn btn-default btn-xs"><span title="View Details" class="glyphicon glyphicon-list"></span></button>'
-                                           + '<button type="button" class="btn btn-default btn-xs"><span title="Edit" class="glyphicon glyphicon-pencil"></span></button>'
-                                           + '<button type="button" class="btn btn-default btn-xs"><span title="Delete" class="glyphicon glyphicon-trash"></span></button></td></tr>');
-               $("#deploy-response-recipes").append('<tr><th scope="row" style="display:none;">' + data[i].responserecipes__rrid + '</th>'
-                                                  + '<td>' + data[i].responserecipes__name + '</td>'
-                                                  + '<td style="text-align: center;"><button type="button" class="btn btn-default btn-xs"><span title="Deploy" class="glyphicon glyphicon-new-window"></span></button></td></tr>');
-            });
+            // Check that theres actually a response recipe, instead of just empty JSON strings
+            if (data[0].responserecipes__rrid) {
+                $.each(data, function(i, item) {
+                    $("#response-recipes").append('<tr><th scope="row" style="display:none;">' + data[i].responserecipes__rrid + '</th>'
+                                                + '<td>' + data[i].responserecipes__name + '</td>'
+                                                + '<td>' + data[i].responserecipes__updatedate + '</td>'
+                                                + '<td><button type="button" class="btn btn-default btn-xs"><span title="View Details" class="glyphicon glyphicon-list"></span></button>'
+                                                + '<button type="button" class="btn btn-default btn-xs"><span title="Edit" class="glyphicon glyphicon-pencil"></span></button>'
+                                                + '<button type="button" class="btn btn-default btn-xs"><span title="Delete" class="glyphicon glyphicon-trash"></span></button></td></tr>');
+                    $("#deploy-response-recipes").append('<tr><th scope="row" style="display:none;">' + data[i].responserecipes__rrid + '</th>'
+                                                       + '<td>' + data[i].responserecipes__name + '</td>'
+                                                       + '<td style="text-align: center;"><button type="button" class="btn btn-default btn-xs"><span title="Deploy" class="glyphicon glyphicon-new-window"></span></button></td></tr>');
+                });
+            }
          }
       });    
     getRecipesActionButton();
@@ -374,14 +384,17 @@ function populateProfiles() {
       function (data, status) {
          if (status === "success") {
             $("#profiles").empty();
-            $.each(data, function(i, item) {
-               $("#profiles").append('<tr><th scope="row" style="display:none;">' + data[i].profiles__pid + '</th>'
-                                   + '<td>' + data[i].profiles__name + '</td>'
-                                   + '<td>' + data[i].profiles__details + '</td>'
-                                   + '<td>' + data[i].profiles__updatedate + '</td>'
-                                   + '<td><button type="button" class="btn btn-default btn-xs"><span title="Edit" class="glyphicon glyphicon-pencil"></span></button>'
-                                   + '<button type="button" class="btn btn-default btn-xs"><span title="Delete" class="glyphicon glyphicon-trash"></span></button></td></tr>');
-            });
+            // Check that theres actually a profile, instead of just empty JSON strings
+            if (data[0].profiles__pid) {
+                $.each(data, function(i, item) {
+                    $("#profiles").append('<tr><th scope="row" style="display:none;">' + data[i].profiles__pid + '</th>'
+                                        + '<td>' + data[i].profiles__name + '</td>'
+                                        + '<td>' + data[i].profiles__details + '</td>'
+                                        + '<td>' + data[i].profiles__updatedate + '</td>'
+                                        + '<td><button type="button" class="btn btn-default btn-xs"><span title="Edit" class="glyphicon glyphicon-pencil"></span></button>'
+                                        + '<button type="button" class="btn btn-default btn-xs"><span title="Delete" class="glyphicon glyphicon-trash"></span></button></td></tr>');
+                });
+            }
          }
       });
 }
