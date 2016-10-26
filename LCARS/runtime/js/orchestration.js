@@ -1,4 +1,4 @@
-var lcarsAPI = "http://localhost:8081/";
+var lcarsAPI = "http://10.10.7.84:8081/";
 
 // Creates the "Response Orchestration" data at the bottom of the Threat Intel page
 function populateOrchestration() {
