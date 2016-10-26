@@ -20,6 +20,8 @@
     <link href="../build/css/custom.min.css" rel="stylesheet">
 
 <!-- <link href="css/custom.css" rel="stylesheet"> -->
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="js/dashboard.js"></script>
 
   </head>
 
@@ -116,32 +118,32 @@
           <div class="row tile_count">
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-bug"></i> Honeypots Online</span>
-              <div class="count">4</div>
+              <div class="count">0</div>
               <span class="count_bottom"><i>0% </i> from last week</span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-file"></i> Log File Entries</span>
-              <div class="count">5150</div>
+              <div class="count">0</div>
               <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>13% </i> from last week</span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-bullseye"></i> Attacks Profiled</span>
-              <div class="count f=green">107</div>
+              <span class="count_top"><i class="fa fa-bullseye"></i> Attack Profiles</span>
+              <div id="profile-count" class="count f=green"></div>
               <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>4% </i> from last week</span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-shield"></i> Responses Created</span>
-              <div class="count">99</div>
+              <span class="count_top"><i class="fa fa-shield"></i> Response Recipes</span>
+              <div id="response-count" class="count"></div>
               <span class="count_bottom"><i class="red"><i class="fa fa-sort-desc"></i>12% </i> from last week</span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-fire-extinguisher"></i> Firewall Rules</span>
-              <div class="count">210</div>
+              <div id="firewall-count" class="count"></div>
               <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>34% </i> from last week</span>
             </div>
             <div class="col-md-2 col-sm-4 col-xs-6 tile_stats_count">
               <span class="count_top"><i class="fa fa-bullseye"></i> Attacks this Week</span>
-              <div class="count red">3</div>
+              <div class="count red">0</div>
               <span class="count_bottom"><i class="green"><i class="fa fa-sort-asc"></i>50% </i> From last week</span>
             </div>
           </div>
