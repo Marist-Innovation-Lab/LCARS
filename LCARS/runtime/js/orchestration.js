@@ -1,4 +1,4 @@
-var lcarsAPI = "http://10.10.7.84:8081/";
+var lcarsAPI = "http://localhost:8081/";
 
 // Creates the "Response Orchestration" data at the bottom of the Threat Intel page
 function populateOrchestration() {
@@ -14,7 +14,7 @@ function populateOrchestration() {
             // This loop repurposes the data into profilesObj for easier manipulation
             $.each(data, function(i, item) {
             	profileName = data[i].profiles__name;
-            	recipeName = data[i].responserecipes__name;
+            	recipeName = data[i].responserecipes__name; 
             	detailsObj = {
             		target : data[i].responsedetails__target,
             		chain : data[i].responsedetails__chain,
@@ -64,7 +64,8 @@ function populateOrchestration() {
 											          '<span>'+ numSteps +' steps</span>' +
 											        '</div>' +
 											        '<p class="excerpt">' +
-											           // 'Response Recipe summary Response Recipe summary Response Recipe summary Response Recipe summary' + 
+											           '<button class="btn btn-primary">Add Recipe</button>' +
+											           '<button class="btn btn-primary">Remove Recipe</button>' +
 											        '</p>' +
 											      '</div>' +
 											   '</div>' +
@@ -73,6 +74,8 @@ function populateOrchestration() {
          }
       });
 }
+
+
 
 $(document).ready(function() {
 	populateOrchestration();

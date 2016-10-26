@@ -501,8 +501,8 @@ public class APIrest extends NanoHTTPD {
              "+-- PUT  /profiles                           - create a new profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
              "+-- PUT  /responserecipes                    - create a new response recipe using body JSON: {\"name\": \"Recipe Name\"}\n" +
              "+-- PUT  /responsedetails                    - add a response detail to an existing recipe using body JSON: {\"rrid\" : \"Recipe ID\", \"ruleorder\" : \"Order Number\", \"target\" : \"[drop, accept, reject]\",\n" +
-             "                                                                                                            \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
-             "                                                                                                            \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
+             "                                                                                                             \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
+             "                                                                                                             \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
              "+-- PUT  /orchestration                      - create a new profile using body JSON: {\"pid\" : \"Profile ID\", \"rrid\" : \"Recipe ID\"}\n" +
              "\n" +
              "+-- POST /profiles/[pid]                     - update existing profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
@@ -711,7 +711,7 @@ public class APIrest extends NanoHTTPD {
    
    private StringBuilder responseGetOrchestration() {
        
-       String query = "SELECT p.name, rr.rrid, rr.name, rd.target, rd.chain, "
+       String query = "SELECT p.name, p.pid, rr.rrid, rr.name, rd.target, rd.chain, "
                     + "rd.protocol, rd.source, rd.destination "
                     + "FROM Profiles AS p INNER JOIN Orchestration AS o ON p.pid = o.pid "
                     + "                   INNER JOIN ResponseRecipes AS rr ON o.rrid = rr.rrid "

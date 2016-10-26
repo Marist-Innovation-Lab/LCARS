@@ -329,7 +329,10 @@
             <div class="col-md-9 col-sm-9 col-xs-12">
                <div class="x_panel">
                  <div class="x_title">
-                   <h2>Response Orchestration</h2>
+                   <h2 class="col-xs-9">Response Orchestration</h2>
+                   <div class="col-xs-3">
+                   <button type="button" class="btn btn-primary pull-right" id="new-orchestration-btn" data-toggle="modal" data-target="#new-orchestration-modal">Create New Orchestration</button>
+                   </div>
                    <div class="clearfix"></div>
                  </div>
                  <div class="x_content">
@@ -439,6 +442,25 @@
           <!--/row 3 -->
           
         </div>
+
+        <!-- Modal window for editing orchestration  -->
+             <div class="modal fade" id="new-orchestration-modal" tabindex="-1" role="dialog" aria-hidden="true">
+               <div class="modal-dialog" style="width: 705px;">
+                 <div class="modal-content">
+                   <div class="modal-header">
+                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                     <h4 class="modal-title">New Orchestration</h4>
+                   </div>
+                   <div id="new-orchestration-body" class="modal-body" style="max-height: 300px; overflow: auto;">
+
+                   </div>
+                   <div class="modal-footer">
+                     <button type="button" class="btn btn-primary">Create</button>
+                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                   </div>
+                 </div>
+               </div>
+             </div>
         <!-- /page content -->
 
         <!-- footer content -->
