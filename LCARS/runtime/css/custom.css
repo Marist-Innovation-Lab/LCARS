@@ -64,3 +64,10 @@ td>input {
    font-size: 18px;
 }
 
+.timeline .block {
+   margin-left: 180px;
+}
+
+.timeline .tags {
+   width: 150px;
+}
