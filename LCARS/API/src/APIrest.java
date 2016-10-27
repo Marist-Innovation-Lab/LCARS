@@ -671,11 +671,48 @@ public class APIrest extends NanoHTTPD {
        String protocol    = reqJSON.get("protocol").getAsString();
        String source      = reqJSON.get("source").getAsString();
        String destination = reqJSON.get("destination").getAsString();
-       
-       String updateDetail = "UPDATE ResponseDetails SET ruleorder = " + ruleorder + ", "
-               + "target = '" + target + "', chain = '" + chain + "', "
-               + "protocol = '" + protocol + "', source = '" + source + "', "
-               + "destination = '" + destination + "' "
+
+       // This probably isn't the best way to do this, but it works for now.
+       JsonObject jsonResult = new JsonObject();
+       // Get the result of this query as a String (with brackets removed so it doesn't look like an array),
+       // so it can be parsed by the JSON Parser.
+       String result = runSelectQuery("SELECT ruleorder FROM ResponseDetails WHERE rdid = " + rdid).toString().replaceAll("\\[|\\]", "");
+       jsonResult = new JsonParser().parse(result).getAsJsonObject();
+       // Get the current rule order for the response detail that is being editied.
+       int currentRuleOrder = jsonResult.get("responsedetails__ruleorder").getAsInt();
+
+       // This checks if the rule order field was edited, and if so, updates the rule orders in the database.
+       if (currentRuleOrder != ruleorder) {
+           // currentRuleOrder > ruleorder means for example, changing rule order from 3 to 1
+           if (currentRuleOrder > ruleorder) {
+               String updateRuleOrders = "UPDATE ResponseDetails SET ruleorder = ruleorder + 1 "
+                       + "WHERE ruleorder >= " + ruleorder + " "
+                       + "AND ruleorder < " + currentRuleOrder + " "
+                       + "AND rrid = " + rrid;
+
+               dbCommand(updateRuleOrders);
+           // currentRuleOrder < ruleorder means for example, changing rule order from 1 to 3
+           } else if (currentRuleOrder < ruleorder) {
+               String updateRuleOrders = "UPDATE ResponseDetails SET ruleorder = ruleorder - 1 " 
+                       + "WHERE ruleorder <= " + ruleorder + " "
+                       + "AND ruleorder > " + currentRuleOrder + " "
+                       + "AND rrid = " + rrid;
+
+               dbCommand(updateRuleOrders);
+           } 
+
+           // Update the rule order for the rule that we're editing to the new rule order
+           String updateRuleOrderForDetail = "UPDATE ResponseDetails SET ruleorder = " + ruleorder + " "
+                   + "WHERE rdid = " + rdid + " "
+                   + "AND rrid = " + rrid;
+
+           dbCommand(updateRuleOrderForDetail);
+       }
+
+       // Update the other response details fields
+       String updateDetail = "UPDATE ResponseDetails SET target = '" + target + "', "
+               + "chain = '" + chain + "', protocol = '" + protocol + "', "
+               + "source = '" + source + "', destination = '" + destination + "' "
                + "WHERE rdid = " + rdid;
        String updateRecipeDate = "UPDATE ResponseRecipes SET updatedate = now()::timestamp(0) "
                + "WHERE rrid = " + rrid;

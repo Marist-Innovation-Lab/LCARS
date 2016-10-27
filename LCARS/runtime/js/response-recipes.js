@@ -79,8 +79,8 @@ function addRecipeDetail() {
                  + '<td><select>' + buildSelect({All:'All', TCP:'TCP', UDP:'UDP', ICMP:'ICMP'}, 'All').html() + '</select></td>'
                  + '<td id="src"><input></input</td>'
                  + '<td id="dest">0.0.0.0</td>'
-                 + '<td style="text-align: right; border-width: 0px;"><button type="button" class="btn btn-default btn-xs"><span title="Submit" class="glyphicon glyphicon-ok"></button>'
-                 + '<button type="button" class="btn btn-default btn-xs"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button></td></tr>');
+                 + '<td style="text-align: right; border-width: 0px;"><button type="button" class="btn btn-default btn-xs submit-btn"><span title="Submit" class="glyphicon glyphicon-ok"></button>'
+                 + '<button type="button" class="btn btn-default btn-xs cancel-btn"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button></td></tr>');
        // Scroll to the bottom where the new editable row is
        $(".modal-body").scrollTop(1E10);
 
@@ -171,7 +171,7 @@ function getRecipeDetailsActionButton() {
         
         var rdid = $(this).closest("tr").find("th:nth-child(1)").text();
         var rrid = $("#rrid").attr("title");
-        var ruleorder = $(this).closest("tr").find("th:nth-child(2)").text();
+        var ruleorder = $(this).closest("tr").find("th:nth-child(2)");
         var target = $(this).closest("tr").find("td:nth-child(3)");
         var chain = $(this).closest("tr").find("td:nth-child(4)");
         var protocol = $(this).closest("tr").find("td:nth-child(5)");
@@ -179,16 +179,25 @@ function getRecipeDetailsActionButton() {
         var dest = $(this).closest("tr").find("td:nth-child(7)");
         var actions = $(this).closest("tr").find("td:nth-child(8)");
         var oldrule = $(this).closest("tr").hasClass("old-rule");
-        
 
         function editMode() {
-
+            
+            ruleorder.html(buildSelect(ruleNumSelect(), ruleorder.html()));
             target.html(buildSelect({Accept:'Accept',Drop:'Drop',Reject:'Reject'}, target.html()));
             chain.html(buildSelect({Input:'Input',Output:'Output',Forward:'Forward'}, chain.html()));
             protocol.html(buildSelect({All:'All',TCP:'TCP',UDP:'UDP',ICMP:'ICMP'}, protocol.html()));
             actions.html('<button type="button" class="btn btn-default btn-xs submit-btn"><span title="Submit" class="glyphicon glyphicon-ok"></span></button>'
                       + '<button type="button" class="btn btn-default btn-xs cancel-btn"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button>');
             checkChainSelection(chain, source, dest);        
+
+            function ruleNumSelect() {
+               var num = Number( $("#recipe-details tr:last").find("th:nth-child(2)").text() );
+               var obj = {}; 
+               for (var i = 1; i <= num; i++) {
+                  obj[ i ] = '' + i + '';
+               }
+               return obj;
+            }
 
         }
 
@@ -200,6 +209,7 @@ function getRecipeDetailsActionButton() {
            getRecipeDetails(rrid);
         } else if (button === "submit") {
            
+           //ruleorder = ruleorder.find("select").val();
            editedTarget = target.find("select").val();
            editedChain = chain.find("select").val();
            editedProtocol = protocol.find("select").val();
@@ -221,9 +231,10 @@ function getRecipeDetailsActionButton() {
            var ipRegex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g;
            if (editedSource.match(ipRegex) && editedDest.match(ipRegex)) {
                if (oldrule) {
-                   console.log(rdid, rulenum);
+                   ruleorder = ruleorder.find("select").val();
                    editResponseDetail(rdid, rrid, ruleorder, editedTarget, editedChain, editedProtocol, editedSource, editedDest);
                } else {
+                   ruleorder = ruleorder.text();
                    addResponseDetail(rrid, ruleorder, editedTarget, editedChain, editedProtocol, editedSource, editedDest);
                }
            } else { 
@@ -453,7 +464,7 @@ $(document).ready(function() {
 
    addRecipeDetail();
    deployResponseRecipe();
-
+   
 });
 
 
@@ -472,16 +483,16 @@ function clearModal() {
 // Checks the selected chain value and decides which IP area to make editable
 function checkChainSelection(chain, source, dest) {
     if (chain.find("select").val() === 'Input') {
-        source.html('<input></input>');
+        source.html('<input value="'+ source.text() +'"></input>');
         dest.text('0.0.0.0');
         chain.find("select").on("change", function () { checkChainSelection(chain, source, dest); });
     } else if (chain.find("select").val() === 'Output') {
-        dest.html('<input></input>');
+        dest.html('<input value="'+ dest.text() +'"></input>');
         source.text('0.0.0.0');
         chain.find("select").on("change", function() { checkChainSelection(chain, source, dest); });
     } else if (chain.find("select").val() === 'Forward') {
-        source.html('<input></input>');
-        dest.html('<input></input>');
+        source.html('<input value="' + source.text()+ '"></input>');
+        dest.html('<input value="'+ dest.text() +'"></input>');
         chain.find("select").on("change", function() { checkChainSelection(chain, source, dest); });
     }  
 }
