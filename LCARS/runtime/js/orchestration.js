@@ -1,5 +1,58 @@
 var lcarsAPI = "http://10.10.7.84:8081/";
 
+function createOrchestration() {
+	$("#orchestration-create-btn").click(function () {
+		var dataObject = {};
+		dataObject["pid"] = $("#orchestration-profile-select").val();
+		dataObject["rrid"] = $("#orchestration-recipe-select").val();
+		$.ajax({
+                 url: lcarsAPI + "orchestration",
+                 type: 'PUT',
+                 contentType: 'application/json',
+                 data: JSON.stringify(dataObject),
+                 success: function() { return populateOrchestration(); }
+         });
+	});
+}
+
+// Create the dropdown menus for adding a new orchestration
+function createDropdowns() {
+	var profilesHTML = '';
+	var recipesHTML  = '';
+
+	// Populate profiles dropdown
+	$.getJSON(
+		lcarsAPI + "profiles",
+		function(data, status) {
+			if(status === "success") {
+				var profilesObj = {};
+				$.each(data, function(i, item) {
+					profilesObj[data[i].profiles__pid] = data[i].profiles__name;
+				});
+				profilesHTML = buildSelect(profilesObj, '').html();
+				$("#orchestration-profile-select").html(profilesHTML);
+			}
+		}
+	);
+
+	$.getJSON(
+		lcarsAPI + "responserecipes",
+		function(data, status) {
+			if(status === "success") {
+				var recipesObj = {};
+				$.each(data, function(i, item) {
+					recipesObj[data[i].responserecipes__rrid] = data[i].responserecipes__name;
+				});
+				recipesHTML = buildSelect(recipesObj, '').html();
+				$("#orchestration-recipe-select").html(recipesHTML);
+			}
+		}
+	);
+
+	
+}
+
+
 // Creates the "Response Orchestration" data at the bottom of the Threat Intel page
 function populateOrchestration() {
 	var profilesObj = {};
@@ -64,8 +117,6 @@ function populateOrchestration() {
 											          '<span>'+ numSteps +' steps</span>' +
 											        '</div>' +
 											        '<p class="excerpt">' +
-											           '<button class="btn btn-primary">Add Recipe</button>' +
-											           '<button class="btn btn-primary">Remove Recipe</button>' +
 											        '</p>' +
 											      '</div>' +
 											   '</div>' +
@@ -79,4 +130,6 @@ function populateOrchestration() {
 
 $(document).ready(function() {
 	populateOrchestration();
+	createDropdowns();
+	createOrchestration();
 });
