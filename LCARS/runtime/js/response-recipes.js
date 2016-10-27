@@ -108,8 +108,8 @@ function getRecipesActionButton() {
  
         function editMode() {
            name.html('<input value="' + name.html() + '"></input>');
-           actions.html('<button type="button" class="btn btn-default btn-xs"><span title="Submit" class="glyphicon glyphicon-ok"></button>'
-                      + '<button type="button" class="btn btn-default btn-xs"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button>');
+           actions.html('<button type="button" class="btn btn-default btn-xs submit-btn"><span title="Submit" class="glyphicon glyphicon-ok"></button>'
+                      + '<button type="button" class="btn btn-default btn-xs cancel-btn"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button>');
         }
 
         if (button === "view details") {
@@ -145,8 +145,8 @@ function getProfilesActionButton() {
         function editMode() {
            name.html('<input value="' + name.html() + '"></input>');
            details.html('<input value="' + details.html() + '"></input>');
-           actions.html('<button type="button" class="btn btn-default btn-xs"><span title="Submit" class="glyphicon glyphicon-ok"></span></button>'
-                      + '<button type="button" class="btn btn-default btn-xs"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button>');
+           actions.html('<button type="button" class="btn btn-default btn-xs submit-btn"><span title="Submit" class="glyphicon glyphicon-ok"></span></button>'
+                      + '<button type="button" class="btn btn-default btn-xs cancel-btn"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button>');
         }
 
         if (button === "edit") {
@@ -186,10 +186,10 @@ function getRecipeDetailsActionButton() {
             target.html(buildSelect({Accept:'Accept',Drop:'Drop',Reject:'Reject'}, target.html()));
             chain.html(buildSelect({Input:'Input',Output:'Output',Forward:'Forward'}, chain.html()));
             protocol.html(buildSelect({All:'All',TCP:'TCP',UDP:'UDP',ICMP:'ICMP'}, protocol.html()));
-            actions.html('<button type="button" class="btn btn-default btn-xs"><span title="Submit" class="glyphicon glyphicon-ok"></span></button>'
-                      + '<button type="button" class="btn btn-default btn-xs"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button>');
+            actions.html('<button type="button" class="btn btn-default btn-xs submit-btn"><span title="Submit" class="glyphicon glyphicon-ok"></span></button>'
+                      + '<button type="button" class="btn btn-default btn-xs cancel-btn"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button>');
             checkChainSelection(chain, source, dest);        
-      
+
         }
 
 

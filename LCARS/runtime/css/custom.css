@@ -24,3 +24,43 @@ td>input {
    display: block;
    width: 100%;
 }
+
+.submit-btn {
+   background-color: mediumseagreen;
+   border-color: mediumseagreen;
+}
+
+.submit-btn>span {
+   color: white;
+}
+
+.submit-btn:hover {
+   background-color: #82cea4;
+}
+
+.cancel-btn {
+   background-color: indianred;
+   border-color: indianred;
+}
+
+.cancel-btn>span {
+   color: white;
+}
+
+.cancel-btn:hover {
+   background-color: #df9797;
+}
+
+.add-btn {
+   position: absolute;
+   right: 15px;
+   top: 10px;
+   background-color: #558CB0;
+   border-color: #558CB0;
+}
+
+.add-btn>span {
+   color: white;
+   font-size: 18px;
+}
+
