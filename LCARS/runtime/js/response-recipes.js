@@ -12,7 +12,10 @@ function createProfile() {
       var details = $("#profile-details").val();
      
       if (name === "" || details === "") {
-         console.log("Error");   // Create a real error message
+          $("#profile-name").closest("form").find("input").removeAttr("style");
+          $("#profile-name").closest("form").find("input").filter(function() {
+                  return !this.value;
+              }).css("border", "1.5px solid red");
       } else {
          // Build object that will be converted to JSON data that gets passed through the API
          var dataObject = { 'name': name, 'details': details };
@@ -35,11 +38,13 @@ function createProfile() {
 // Creates a new response recipe from modal window that opens when "Create Response Recipe" button is clicked
 function createResponseRecipe() {
 
+   clearModal();
+
    $("#create-recipe").on("click", function() {
       var name = $("#recipe-name").val();
      
       if (name === "") {
-         console.log("Error");   // Create a real error message
+          $("#recipe-name").css("border", "1.5px solid red");
       } else {
          // Build object that will be converted to JSON data that gets passed through the API
          var dataObject = { 'name': name };
@@ -237,8 +242,11 @@ function getRecipeDetailsActionButton() {
                    ruleorder = ruleorder.text();
                    addResponseDetail(rrid, ruleorder, editedTarget, editedChain, editedProtocol, editedSource, editedDest);
                }
-           } else { 
-              $(this).closest("tr").find("input").css("border", "1.5px solid red"); 
+           } else {
+               $(this).closest("tr").find("input").removeAttr("style");
+               $(this).closest("tr").find("input").filter(function() {
+                       return (!this.value || !this.value.match(ipRegex));
+                   }).css("border", "1.5px solid red"); 
            } 
  
         } else if (button === "delete") {
@@ -257,7 +265,7 @@ function addResponseDetail(rrid, ruleorder, target, chain, protocol, source, des
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(dataObject),
-            success: function() { populateRecipes(); getRecipeDetails(rrid); }
+            success: function() { populateRecipes(); getRecipeDetails(rrid); populateOrchestration(); }
     });
 }
 
@@ -306,7 +314,7 @@ function deleteRecipe(rrid) {
             url: lcarsAPI + "responserecipes/" + rrid,
             type: 'DELETE',
             contentType: 'application/json',
-            success: function() { return populateRecipes(); }
+            success: function() { populateRecipes(); populateOrchestration(); }
     });
 }
 
@@ -316,7 +324,7 @@ function deleteProfile(pid) {
     $.ajax({
             url: lcarsAPI + "profiles/" + pid,
             type: 'DELETE',
-            success: function() { return populateProfiles(); }
+            success: function() { populateProfiles(); populateOrchestration(); }
     });
 }
 
@@ -326,7 +334,7 @@ function deleteResponseDetail(rdid, rrid) {
     $.ajax({
            url: lcarsAPI + "responsedetails/" + rdid,
            type: 'DELETE',
-           success: function() { return getRecipeDetails(rrid); }
+           success: function() { getRecipeDetails(rrid); populateRecipes(); populateOrchestration(); }
     });
 }            
 
@@ -475,8 +483,9 @@ $(document).ready(function() {
 // Clears the input boxes in the modal window because they do not automatically clear on close 
 function clearModal() {
     $(".modal").on("hidden.bs.modal", function() {
-       $("#profile-name").val("");
-       $("#profile-details").val("");
+       $("#profile-name").val("").removeAttr("style");
+       $("#profile-details").val("").removeAttr("style");
+       $("#recipe-name").val("").removeAttr("style");
     });
 }
 
