@@ -270,7 +270,7 @@ function editProfile(pid, name, details) {
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(dataObject),
-            success: function() { return populateProfiles(); }
+            success: function() { populateProfiles(); populateOrchestration(); }
     });
 }
 
@@ -283,7 +283,7 @@ function editRecipe(rrid, name) {
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(dataObject),
-            success: function() { return populateRecipes(); }
+            success: function() { populateRecipes(); populateOrchestration(); }
     });
 }
 
