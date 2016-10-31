@@ -124,12 +124,13 @@ function populateOrchestration() {
             }
          }
       });
+      createDropdowns();
 }
 
 
 
 $(document).ready(function() {
 	populateOrchestration();
-	createDropdowns();
+//	createDropdowns();
 	createOrchestration();
 });
