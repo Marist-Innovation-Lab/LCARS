@@ -146,7 +146,7 @@ function populateOrchestrationRecipes(pid) {
 		lcarsAPI + "orchestration/" + pid,
 		function(data, status) {
 			if(status === "success") {
-				var tableHTML = '<table class="table"><tr><th colspan="2">Recipe Name</th></tr>';
+				var tableHTML = '<table pid="' + pid + '" class="table"><tr><th colspan="2">Recipe Name</th></tr>';
 				$.each(data, function(i, item){
 					tableHTML += '<tr><td>' + data[i].responserecipes__name + '</td>';
 					tableHTML += '<td><button type="button" pid="' + pid + '" rrid="' + data[i].responserecipes__rrid + '" class="btn btn-default btn-xs"><span title="Delete" class="glyphicon glyphicon-trash"></span></button></td></tr>';
@@ -158,19 +158,50 @@ function populateOrchestrationRecipes(pid) {
 	);
 }
 
-// Handles deletion of orchestration record (recipe associated with profile)
-function onDeleteOrchestrationClick() {
+// Handles deletion/adding of orchestration record (recipe associated with profile)
+function onOrchestrationActionButtonClick() {
 	$("#edit-orchestration-body").on("click", "table tr td button", function() {
-		var pid = $(this).attr("pid");
-		var rrid = $(this).attr("rrid");
-		$.ajax({
-                 url: lcarsAPI + "orchestration/" + pid + "/" + rrid,
-                 type: 'DELETE',
-                 success: function() { 
-                 	populateOrchestrationRecipes(pid);
-                 	populateOrchestration();                 						 
-                 }
-         });
+		var action = $(this).children("span").attr("title").toLowerCase();
+
+		if(action === "delete") {
+			var pid = $(this).attr("pid");
+			var rrid = $(this).attr("rrid");
+			$.ajax({
+	                 url: lcarsAPI + "orchestration/" + pid + "/" + rrid,
+	                 type: 'DELETE',
+	                 success: function() { 
+	                 	populateOrchestrationRecipes(pid);
+	                 	populateOrchestration();                 						 
+	                 }
+	         });
+		}
+	});
+}
+
+// Create new row and dropdown for adding new recipes to an orchestration
+function onOrchestrationAddNewRecipeClick() {
+	$("#edit-orchestration-new-btn").click(function() {
+		var pid = $("#edit-orchestration-body").children("table").attr("pid");
+
+		var selectHTML = '<tr><td><select>';
+		$.getJSON(
+			lcarsAPI + "responserecipes",
+			function(data, status) {
+				if(status === "success") {
+					var recipesObj = {};
+					$.each(data, function(i, item) {
+						recipesObj[data[i].responserecipes__rrid] = data[i].responserecipes__name;
+					});
+					recipesHTML = buildSelect(recipesObj, '').html();
+					selectHTML += recipesHTML + '</select></td>';
+					selectHTML += '<td><button type="button" class="btn btn-default btn-xs submit-btn"><span title="Submit" class="glyphicon glyphicon-ok"></button>';
+                    selectHTML += '<button type="button" class="btn btn-default btn-xs cancel-btn"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button></td></tr>';
+					$("#edit-orchestration-body").children("table").append(selectHTML);
+				}
+			}
+		);
+
+		
 	});
 }
 
@@ -178,5 +209,6 @@ $(document).ready(function() {
 	populateOrchestration();
 	createOrchestration();
 	onEditOrchestrationClick();
-	onDeleteOrchestrationClick();
+	onOrchestrationActionButtonClick();
+	onOrchestrationAddNewRecipeClick();
 });
