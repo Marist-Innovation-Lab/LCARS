@@ -18,6 +18,20 @@
 
     <!-- Custom Theme Style -->
     <link href="../build/css/custom.min.css" rel="stylesheet">
+
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script>
+       // Refreshes Longtail image every one minute. The actual image itself refreshes every 5 minutes on Longtail's site,
+       // but if we set it to every 5 minutes here as well, the cycle is more likely to start at something other than 
+       // a :00 or :05 time, making the image still 1-4 minutes off
+       // Putting this here for now until we have js file for this type of stuff
+       function refreshLongtailImage() {
+           // The ? + Math.random() appended to the URL below allows the image to actually refresh, without it the browser recognizes
+           // that the URL path is the same and won't grab the new image from the Longtail site     
+           $("#longtail-img").attr("src", "http://longtail.it.marist.edu/honey/dashboard_number_of_attacks.png?"+Math.random());
+       }
+       setInterval('refreshLongtailImage()', 60000);
+    </script>
   </head>
 
   <body class="nav-md">
@@ -284,8 +298,8 @@
                    <h2>Honey-pot Classifiers</h2>
                    <div class="clearfix"></div>
                  </div>
-                 <div class="x_content" style="height: 200px;">
-                    <img src="http://longtail.it.marist.edu/honey/last-30-days-attack-count.png" class="img-responsive">                    
+                 <div class="x_content" id="longtail-div" style="height: 300px;">
+                    <img id="longtail-img" src="http://longtail.it.marist.edu/honey/dashboard_number_of_attacks.png" class="img-responsive">                    
                  </div>
                </div>
             </div>
