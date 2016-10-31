@@ -55,7 +55,7 @@ function createDropdowns() {
 
 // Creates the "Response Orchestration" data at the bottom of the Threat Intel page
 function populateOrchestration() {
-	var profilesObj = {};
+	var orchestrationArr = [];
 
     $.getJSON(
       lcarsAPI + "orchestration",
@@ -66,6 +66,7 @@ function populateOrchestration() {
 
             // This loop repurposes the data into profilesObj for easier manipulation
             $.each(data, function(i, item) {
+            	pid = data[i].profiles__pid;
             	profileName = data[i].profiles__name;
             	recipeName = data[i].responserecipes__name; 
             	detailsObj = {
@@ -76,61 +77,70 @@ function populateOrchestration() {
             		destination : data[i].responsedetails__destination
             	};
 
-            	// Put empty object if profile doesn't exist yet
-            	if(profilesObj[profileName] === undefined) {
-            		profilesObj[profileName] = {};
+            	// Put new object if profile doesn't exist yet
+            	if(orchestrationArr[pid] === undefined) {
+            		orchestrationArr[pid] = {name: profileName, recipes: {}};
             	}
+
             	// Put empty array if recipe doesn't exist yet
-            	if(profilesObj[profileName][recipeName] === undefined) {
-            		profilesObj[profileName][recipeName] = [];
+            	if(orchestrationArr[pid]["recipes"][recipeName] === undefined) {
+            		orchestrationArr[pid]["recipes"][recipeName] = [];
             	}
             	// Fill the recipes with recipe details
-            	profilesObj[profileName][recipeName].push(detailsObj);
+            	orchestrationArr[pid]["recipes"][recipeName].push(detailsObj);
 
             });
+            console.log(orchestrationArr);
+            $.each(orchestrationArr, function(i, item) {
+            	// Iterate through all profiles, skipping undefined ones
+            	if(item !== undefined) {
+	            	var numSteps = 0;
+	            	var recipeList = "";
 
-            for(var profileName in profilesObj) {
-            	var numSteps = 0;
-            	var recipeList = "";
+	            	// Count total response details (# of steps) and format the list of recipe names
+	            	for(var recipeName in item["recipes"]) {
+						if(numSteps !== 0)
+							recipeList += ", ";
+						recipeList += recipeName;
+						numSteps += item["recipes"][recipeName].length;
+					}
 
-            	// Count total response details (# of steps) and format the list of recipe names
-            	for(var recipeName in profilesObj[profileName]) {
-					if(numSteps !== 0)
-						recipeList += ", ";
-					recipeList += recipeName;
-					numSteps += profilesObj[profileName][recipeName].length;
-				}
-
-				// Create "Response Orchestration" display HTML
-            	$("#orchestration").append('<li>' +
-											   '<div class="block">' +
-											      '<div class="tags">' +
-											        '<a class="tag" title="'+ profileName + '">' +
-											          '<span>'+ profileName +'</span>' +
-											        '</a>' +
-											      '</div>' +
-											      '<div class="block_content">' +
-											         '<h2 class="title">' +
-													recipeList +
-											         '</h2>' +
-											        '<div class="byline">' +
-											          '<span>'+ numSteps +' steps</span>' +
-											        '</div>' +
-											        '<p class="excerpt">' +
-											        '</p>' +
-											      '</div>' +
-											   '</div>' +
-											'</li>');
-            }
+					// Create "Response Orchestration" display HTML
+	            	$("#orchestration").append('<li>' +
+												   '<div class="block">' +
+												      '<div class="tags">' +
+												        '<a class="tag" title="'+ item["name"] + '">' +
+												          '<span>'+ item["name"] +'</span>' +
+												        '</a>' +
+												      '</div>' +
+												      '<div class="block_content">' +
+												         '<h2 class="title">' +
+														recipeList + ' <button type="button" pid="' + i + '" class="btn btn-default btn-xs"><span title="Edit" class="glyphicon glyphicon-pencil"></span></button>' +
+												         '</h2>' +
+												        '<div class="byline">' +
+												          '<span>'+ numSteps +' steps</span>' +
+												        '</div>' +
+												        '<p class="excerpt">' +
+												        '</p>' +
+												      '</div>' +
+												   '</div>' +
+												'</li>'); 
+            	}
+            });
          }
       });
       createDropdowns();
 }
 
-
+function onEditOrchestrationClick() {
+	$("#orchestration").on("click", "li div div h2 button", function () {
+		var pid = $(this).attr("pid");
+	});
+}
 
 $(document).ready(function() {
 	populateOrchestration();
 //	createDropdowns();
 	createOrchestration();
+	onEditOrchestrationClick();
 });
