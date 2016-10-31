@@ -90,7 +90,6 @@ function populateOrchestration() {
             	orchestrationArr[pid]["recipes"][recipeName].push(detailsObj);
 
             });
-            console.log(orchestrationArr);
             $.each(orchestrationArr, function(i, item) {
             	// Iterate through all profiles, skipping undefined ones
             	if(item !== undefined) {
@@ -132,15 +131,52 @@ function populateOrchestration() {
       createDropdowns();
 }
 
+// Handles button click for editing orchestration
 function onEditOrchestrationClick() {
 	$("#orchestration").on("click", "li div div h2 button", function () {
 		var pid = $(this).attr("pid");
+		populateOrchestrationRecipes(pid);
+		$("#edit-orchestration-modal").modal();
+	});
+}
+
+// Populates the modal window for editing orchestration
+function populateOrchestrationRecipes(pid) {
+	$.getJSON(
+		lcarsAPI + "orchestration/" + pid,
+		function(data, status) {
+			if(status === "success") {
+				var tableHTML = '<table class="table"><tr><th colspan="2">Recipe Name</th></tr>';
+				$.each(data, function(i, item){
+					tableHTML += '<tr><td>' + data[i].responserecipes__name + '</td>';
+					tableHTML += '<td><button type="button" pid="' + pid + '" rrid="' + data[i].responserecipes__rrid + '" class="btn btn-default btn-xs"><span title="Delete" class="glyphicon glyphicon-trash"></span></button></td></tr>';
+				});
+				tableHTML += '</table>';
+				$("#edit-orchestration-body").html(tableHTML);
+			}
+		}
+	);
+}
+
+// Handles deletion of orchestration record (recipe associated with profile)
+function onDeleteOrchestrationClick() {
+	$("#edit-orchestration-body").on("click", "table tr td button", function() {
+		var pid = $(this).attr("pid");
+		var rrid = $(this).attr("rrid");
+		$.ajax({
+                 url: lcarsAPI + "orchestration/" + pid + "/" + rrid,
+                 type: 'DELETE',
+                 success: function() { 
+                 	populateOrchestrationRecipes(pid);
+                 	populateOrchestration();                 						 
+                 }
+         });
 	});
 }
 
 $(document).ready(function() {
 	populateOrchestration();
-//	createDropdowns();
 	createOrchestration();
 	onEditOrchestrationClick();
+	onDeleteOrchestrationClick();
 });
