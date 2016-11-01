@@ -24,18 +24,20 @@ function clearModal() {
 }
 
 
+// Refreshes Longtail image every one minute. The actual image itself refreshes every 5 minutes on Longtail's site,
+// but if we set it to every 5 minutes here as well, the cycle is more likely to start at something other than 
+// a :00 or :05 time, making the image still 1-4 minutes off
+function refreshLongtailImage() {
+    // The ? + Math.random() appended to the URL below allows the image to actually refresh, without it the browser recognizes
+    // that the URL path is the same and won't grab the new image from the Longtail site     
+    $("#longtail-img").attr("src", "http://longtail.it.marist.edu/honey/dashboard_number_of_attacks.png?"+Math.random());
+}
+
 
 $(document).ready(function() {
     viewLogs();
-
-    // Refreshes Longtail image every one minute. The actual image itself refreshes every 5 minutes on Longtail's site,
-    // but if we set it to every 5 minutes here as well, the cycle is more likely to start at something other than 
-    // a :00 or :05 time, making the image still 1-4 minutes off
-    function refreshLongtailImage() {
-        // The ? + Math.random() appended to the URL below allows the image to actually refresh, without it the browser recognizes
-        // that the URL path is the same and won't grab the new image from the Longtail site     
-        $("#longtail-img").attr("src", "http://longtail.it.marist.edu/honey/dashboard_number_of_attacks.png?"+Math.random());
-    }
-    setInterval('refreshLongtailImage()', 60000);
-
 });
+
+setInterval('refreshLongtailImage()', 60000);
+
+
