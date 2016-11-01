@@ -20,18 +20,7 @@
     <link href="../build/css/custom.min.css" rel="stylesheet">
 
     <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script>
-       // Refreshes Longtail image every one minute. The actual image itself refreshes every 5 minutes on Longtail's site,
-       // but if we set it to every 5 minutes here as well, the cycle is more likely to start at something other than 
-       // a :00 or :05 time, making the image still 1-4 minutes off
-       // Putting this here for now until we have js file for this type of stuff
-       function refreshLongtailImage() {
-           // The ? + Math.random() appended to the URL below allows the image to actually refresh, without it the browser recognizes
-           // that the URL path is the same and won't grab the new image from the Longtail site     
-           $("#longtail-img").attr("src", "http://longtail.it.marist.edu/honey/dashboard_number_of_attacks.png?"+Math.random());
-       }
-       setInterval('refreshLongtailImage()', 60000);
-    </script>
+    <script src="js/honeypot.js"></script>
   </head>
 
   <body class="nav-md">
@@ -131,17 +120,28 @@
                       <thead>
                         <tr>
                           <th>#</th>
-                          <th>Name</th>
-                          <th>Location</th>
+                          <th>Type</th>
+                          <th>Hostname</th>
                           <th>Updated</th>
                           <th>Actions</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody id="honeypots">
                         <tr>
                           <th scope="row">1</th>
-                          <td>Longtail SSH</td>
-                          <td>Marist</td>
+                          <td>SSH</td>
+                          <td>
+                            <select>
+                              <option value="All">All Hosts</option>
+                              <option value="AWS">AWS</option>
+                              <option value="shepherd">shepherd</option>
+                              <option value="syrtest">syrtest</option>
+                              <option value="edu_c">edu_c</option>
+                              <option value="erhp">erhp</option>
+                              <option value="erhp2">erhp2</option>
+                              <option value="ecdal2">ecdal2</option>
+                              <option value="cssdn">cssdn</option>
+                            </select></td>
                           <td>2016-09-17 14:42.25</td>
                           <td>
                              <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
@@ -150,7 +150,7 @@
                         </tr>
                         <tr>
                           <th scope="row">2</th>
-                          <td>Dolos SDN</td>
+                          <td>SDN</td>
                           <td>Vassar</td>
                           <td>2016-09-16 18:24.52</td>
                           <td>
@@ -160,7 +160,7 @@
                         </tr>
                         <tr>
                           <th scope="row">3</th>
-                          <td>Mystery Telnet</td>
+                          <td>Telnet</td>
                           <td>New Paltz</td>
                           <td>2017-01-23 5:51.00</td>
                           <td>
@@ -170,7 +170,7 @@
                         </tr>
                         <tr>
                           <th scope="row">4</th>
-                          <td>Yretsym HTTP</td>
+                          <td>HTTP</td>
                           <td>Newburgh</td>
                           <td>2019-04-04 15:15.51</td>
                           <td>
@@ -185,38 +185,18 @@
             </div>
 
                <!-- Modal pop-up for VIEW buttons -->
-               <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+               <div id="log-modal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
                  <div class="modal-dialog modal-lg">
                    <div class="modal-content">
    
                      <div class="modal-header">
                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                        </button>
-                       <h4 class="modal-title" id="myModalLabel">SSH/SDN/Telnet/HTTP Honeypot</h4>
+                       <h4 class="modal-title"></h4>
                      </div>
-                     <div class="modal-body">
-                       <h4>Log Data</h4>
-                       <p>
-                          Could someone survive inside a transporter buffer for 75 years? 
-                          Smooth as an android's bottom, eh, Data? 
-                          Ensign Babyface! 
-                          For an android with no feelings, he sure managed to evoke them in others. 
-                          Well, that's certainly good to know. 
-                          And blowing into maximum warp speed, you appeared for an instant to be in two places at once. 
-                          Damage report! 
-                          My oath is between Captain Kargan and myself. 
-                          Your only concern is with how you obey my orders. 
-                          Or do you prefer the rank of prisoner to that of lieutenant? 
-                          Maybe if we felt any human loss as keenly as we feel one of those close to us, human history would be far less bloody. 
-                          Flair is what marks the difference between artistry and mere competence. 
-                          This should be interesting. 
-                          I think you've let your personal feelings cloud your judgement. 
-                          You enjoyed that. 
-                          That might've been one of the shortest assignments in the history of Starfleet. 
-                          We could cause a diplomatic crisis. 
-                          Take the ship into the Neutral Zone. 
-                          Your head is not an artifact!
-                     </p>
+                     <div class="modal-body" style="height: 400px; overflow:auto;">
+                       <p id="log-data">
+                       </p>
                      </div>
                      <div class="modal-footer">
                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -298,9 +278,8 @@
                    <h2>Honey-pot Classifiers</h2>
                    <div class="clearfix"></div>
                  </div>
-                 <div class="x_content" id="longtail-div" style="height: 300px;">
-                    <img id="longtail-img" src="http://longtail.it.marist.edu/honey/dashboard_number_of_attacks.png" class="img-responsive">                    
-                 </div>
+                 <div class="x_content" style="height: 300px;">
+                    <img id="longtail-img" src="http://longtail.it.marist.edu/honey/dashboard_number_of_attacks.png" class="img-responsive">                         </div>
                </div>
             </div>
             
