@@ -6,13 +6,14 @@ function viewLogs() {
 
         // Gets the text of the button that was clicked to determine which it was
         var button = $(this).children("span").attr("title").toLowerCase(); 
-        var type = $(this).closest("tr").find("td:nth-child(2)").text();
-        var host = $(this).closest("tr").find("select").val().toLowerCase();
-        
-        $("#log-modal").find("h4").text("Today's Log Data for " + type + " Honeypot: " + host);
+        var host = $(this).closest("tr").find("td:nth-child(2)").text();
+        var type = $(this).closest("tr").find("td:nth-child(3)").text();
 
-        $("#log-data").load("/lcars/runtime/logs/"+host+".log");
-        
+        if (button === "view") {        
+            $("#log-modal").find("h4").text("Today's Log Data for " + type + " Honeypot: " + host);
+
+            $("#log-data").load("/lcars/runtime/logs/"+host.toLowerCase()+".log");
+        }
     });
 
 }

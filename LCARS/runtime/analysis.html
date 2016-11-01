@@ -112,7 +112,7 @@
             <div class="col-md-9 col-sm-9 col-xs-12">
                <div class="x_panel">
                   <div class="x_title">
-                    <h2>Honey-pot logs <small>Last refreshed on January 23, 2112</small></h2>
+                    <h2>Honeypot logs <small>Last refreshed on January 23, 2112</small></h2>
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content" style="height: 250px; overflow: auto;">
@@ -120,28 +120,19 @@
                       <thead>
                         <tr>
                           <th>#</th>
-                          <th>Type</th>
                           <th>Hostname</th>
-                          <th>Updated</th>
+                          <th>Type</th>
+                          <th>Location</th>
+                          <th>Last Attacked</th>
                           <th>Actions</th>
                         </tr>
                       </thead>
                       <tbody id="honeypots">
                         <tr>
                           <th scope="row">1</th>
+                          <td>AWS</td>
                           <td>SSH</td>
-                          <td>
-                            <select>
-                              <option value="All">All Hosts</option>
-                              <option value="AWS">AWS</option>
-                              <option value="shepherd">shepherd</option>
-                              <option value="syrtest">syrtest</option>
-                              <option value="edu_c">edu_c</option>
-                              <option value="erhp">erhp</option>
-                              <option value="erhp2">erhp2</option>
-                              <option value="ecdal2">ecdal2</option>
-                              <option value="cssdn">cssdn</option>
-                            </select></td>
+                          <td>AWS Cloud</td>
                           <td>2016-09-17 14:42.25</td>
                           <td>
                              <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
@@ -150,8 +141,9 @@
                         </tr>
                         <tr>
                           <th scope="row">2</th>
-                          <td>SDN</td>
-                          <td>Vassar</td>
+                          <td>shepherd</td>
+                          <td>SSH</td>
+                          <td>Marist</td>
                           <td>2016-09-16 18:24.52</td>
                           <td>
                              <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
@@ -160,8 +152,9 @@
                         </tr>
                         <tr>
                           <th scope="row">3</th>
-                          <td>Telnet</td>
-                          <td>New Paltz</td>
+                          <td>syrtest</td>
+                          <td>SSH</td>
+                          <td>Marist</td>
                           <td>2017-01-23 5:51.00</td>
                           <td>
                              <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
@@ -170,8 +163,53 @@
                         </tr>
                         <tr>
                           <th scope="row">4</th>
-                          <td>HTTP</td>
-                          <td>Newburgh</td>
+                          <td>edu_c</td>
+                          <td>SSH</td>
+                          <td>Marist</td>
+                          <td>2019-04-04 15:15.51</td>
+                          <td>
+                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
+                             <button type="button" class="btn btn-default btn-xs"><span title="Parse" class="glyphicon glyphicon-log-in"</span></button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th scope="row">5</th>
+                          <td>erph</td>
+                          <td>SSH</td>
+                          <td>Marist</td>
+                          <td>2019-04-04 15:15.51</td>
+                          <td>
+                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
+                             <button type="button" class="btn btn-default btn-xs"><span title="Parse" class="glyphicon glyphicon-log-in"</span></button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th scope="row">6</th>
+                          <td>erhp2</td>
+                          <td>SSH</td>
+                          <td>Marist</td>
+                          <td>2019-04-04 15:15.51</td>
+                          <td>
+                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
+                             <button type="button" class="btn btn-default btn-xs"><span title="Parse" class="glyphicon glyphicon-log-in"</span></button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th scope="row">7</th>
+                          <td>ecdal2</td>
+                          <td>SSH</td>
+                          <td>Marist</td>
+                          <td>2019-04-04 15:15.51</td>
+                          <td>
+                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
+                             <button type="button" class="btn btn-default btn-xs"><span title="Parse" class="glyphicon glyphicon-log-in"</span></button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th scope="row">8</th>
+                          <td>cssdn</td>
+                          <td>SSH</td>
+                          <td>Marist</td>
                           <td>2019-04-04 15:15.51</td>
                           <td>
                              <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
@@ -275,7 +313,7 @@
             <div class="col-md-9 col-sm-9 col-xs-12">
                <div class="x_panel">
                  <div class="x_title">
-                   <h2>Honey-pot Classifiers</h2>
+                   <h2>Honeypot Classifiers</h2>
                    <div class="clearfix"></div>
                  </div>
                  <div class="x_content" style="height: 300px;">
