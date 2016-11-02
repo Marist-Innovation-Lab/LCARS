@@ -162,7 +162,10 @@ function populateOrchestrationRecipes(pid) {
 function onOrchestrationActionButtonClick() {
 	$("#edit-orchestration-body").on("click", "table tr td button", function() {
 		var action = $(this).children("span").attr("title").toLowerCase();
-
+		var dataObject = {};
+		dataObject["pid"] = $("#edit-orchestration-body").children("table").attr("pid");
+		dataObject["rrid"] = $(this).closest("tr").find("select").val();
+		
 		if(action === "delete") {
 			var pid = $(this).attr("pid");
 			var rrid = $(this).attr("rrid");
@@ -174,6 +177,19 @@ function onOrchestrationActionButtonClick() {
 	                 	populateOrchestration();                 						 
 	                 }
 	         });
+		} else if (action === "submit") {
+			$.ajax({
+	                 url: lcarsAPI + "orchestration",
+	                 type: 'PUT',
+	                 contentType: 'application/json',
+                 	 data: JSON.stringify(dataObject),
+	                 success: function() { 
+	                 	populateOrchestrationRecipes(dataObject["pid"]);
+	                 	populateOrchestration();                 						 
+	                 }
+	         });
+		} else if (action === "cancel") {
+			populateOrchestrationRecipes(dataObject["pid"]);
 		}
 	});
 }
