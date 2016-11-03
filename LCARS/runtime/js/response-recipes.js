@@ -25,7 +25,7 @@ function createProfile() {
                  type: 'PUT',
                  contentType: 'application/json',
                  data: JSON.stringify(dataObject),
-                 success: function() { return populateProfiles(); }
+                 success: function() { populateProfiles(); populateOrchestration(); }
          });
          
          // Close the modal window
@@ -54,7 +54,7 @@ function createResponseRecipe() {
                  type: 'PUT',
                  contentType: 'application/json',
                  data: JSON.stringify(dataObject),
-                 success: function() { return populateRecipes(); }
+                 success: function() { populateRecipes(); populateOrchestration(); }
          });
          
          // Close the modal window
@@ -99,7 +99,6 @@ function addRecipeDetail() {
     
     });
 }
-
 
 // Determines which Action button or link was clicked in the Response Recipes section and executes the appropriate action
 function getRecipesActionButton() {
@@ -153,7 +152,8 @@ function getProfilesActionButton() {
            actions.html('<button type="button" class="btn btn-default btn-xs submit-btn"><span title="Submit" class="glyphicon glyphicon-ok"></span></button>'
                       + '<button type="button" class="btn btn-default btn-xs cancel-btn"><span title="Cancel" class="glyphicon glyphicon-remove"></span></button>');
         }
-
+       
+        
         if (button === "edit") {
            editMode();
         } else if (button === "cancel") {
