@@ -22,6 +22,7 @@
     <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="js/firewall.js"></script>
     <script src="js/response-recipes.js"></script>
+    <script src="js/orchestration.js"></script>
 
   </head>
 
@@ -115,7 +116,7 @@
            
           <!-- row 1 -->
           <div class="row">
-            <div class="col-md-4 col-sm-4 col-xs-12">
+            <div class="col-md-3 col-sm-3 col-xs-12">
                <div class="x_panel">
                   <div class="x_title">
                     <h2>Response Recipes</h2>
@@ -135,7 +136,27 @@
                   </div>
                </div>
             </div>
-            <div class="col-md-8 col-sm-8 col-xs-12">
+            <div class="col-md-3 col-sm-3 col-xs-12">
+               <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Orchestrated Responses</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content" style="height: 250px; overflow: auto;">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th style="text-align: center;">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="deploy-orchestration">
+                      </tbody>
+                    </table>
+                  </div>
+               </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
                <div class="x_panel">
                   <div class="x_title">
                     <h2>Reconfigurator Log</h2>

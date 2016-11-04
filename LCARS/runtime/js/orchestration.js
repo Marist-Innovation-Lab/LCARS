@@ -123,8 +123,11 @@ function populateOrchestration() {
 												        '</p>' +
 												      '</div>' +
 												   '</div>' +
-												'</li>'); 
-            	}
+												'</li>');
+                        $("#deploy-orchestration").append('<tr><th scope="row" style="display:none;">'+ i + '</th>'   // i is the pid
+                                                        + '<td>' + item["name"] + '</td>'
+                                                        + '<td style="text-align: center;"><button type="button" class="btn btn-default btn-xs"><span title="Deploy" class="glyphicon glyphicon-new-window"></span></button></td></tr>');  
+                }
             });
          }
       });
