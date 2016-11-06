@@ -419,25 +419,30 @@ function populateProfiles() {
 }
 
 
-// Deploys selected response recipe on Reconfigurator Page
-function deployResponseRecipe() {
+// Determines which response recipe to deploy on Reconfigurator Page
+function onDeployResponseRecipeButtonClick() {
     $("#deploy-response-recipes").on("click", "td button", function() {
         var rrid = $(this).closest("tr").find("th").text();
-
-        $.getJSON(
-          lcarsAPI + "responserecipes/" + rrid,
-          function (data, status) {
-             if (status === "success") {
-                getResponseRules(data);
-             }
-          });
-
+        deployResponseRecipe(rrid);
     });
 }
 
 
+// Deploys selected response recipe on Reconfigurator Page
+function deployResponseRecipe(rrid) {
+     $.getJSON(
+          lcarsAPI + "responserecipes/" + rrid,
+          function (data, status) {
+             if (status === "success") {
+                deployResponseRules(data);
+             }
+          }
+     );
+}
+
+
 // Takes array of JSON objects returned by LCARS API and uses it to build the rules to send to the rfw server
-function getResponseRules(rules) {
+function deployResponseRules(rules) {
     for (i = 0; i < rules.length; i++) {
         var tar    = rules[i].responsedetails__target.toLowerCase();
         var chn    = rules[i].responsedetails__chain.toLowerCase();
@@ -471,7 +476,7 @@ $(document).ready(function() {
    getRecipeDetailsActionButton();   
 
    addRecipeDetail();
-   deployResponseRecipe();
+   onDeployResponseRecipeButtonClick();
    
 });
 

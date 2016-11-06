@@ -224,10 +224,32 @@ function onOrchestrationAddNewRecipeClick() {
 	});
 }
 
+// Deploys selected orchestration on Reconfigurator Page
+function deployOrchestration() {
+    $("#deploy-orchestration").on("click", "td button", function() {
+        var pid = $(this).closest("tr").find("th").text();
+
+        $.getJSON(
+          lcarsAPI + "orchestration/" + pid,
+          function (data, status) {
+             if (status === "success") {
+                $.each(data, function(i, item) {
+                    deployResponseRecipe(data[i].responserecipes__rrid);
+                });
+             }  
+          }
+        );
+       
+    });
+
+}
+
+
 $(document).ready(function() {
 	populateOrchestration();
 	createOrchestration();
 	onEditOrchestrationClick();
 	onOrchestrationActionButtonClick();
 	onOrchestrationAddNewRecipeClick();
+        deployOrchestration();
 });
