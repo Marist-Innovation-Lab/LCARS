@@ -44,6 +44,25 @@ function getTimeLastAttacked() {
 }
 
 
+function setLogsLastRefreshedTime() {
+   var date = new Date();
+   var mins = date.getMinutes();
+   var hours = date.getHours();
+   
+   function refreshed(time) {
+       $("#last-refreshed").html("Last refreshed: Today at " + time);
+   }
+
+   if (mins < 20) {
+      refreshed(hours + ":00:00");
+   } else if (mins < 40) {
+      refreshed(hours + ":20:00");
+   } else {
+      refreshed(hours + ":40:00");
+   }
+}
+
+
 // Refreshes Longtail image every one minute. The actual image itself refreshes every 5 minutes on Longtail's site,
 // but if we set it to every 5 minutes here as well, the cycle is more likely to start at something other than 
 // a :00 or :05 time, making the image still 1-4 minutes off
@@ -57,6 +76,7 @@ function refreshLongtailImage() {
 $(document).ready(function() {
     viewLogs();
     getTimeLastAttacked();
+    setLogsLastRefreshedTime();
 });
 
 setInterval('refreshLongtailImage()', 60000);
