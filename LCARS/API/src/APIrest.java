@@ -231,6 +231,14 @@ public class APIrest extends NanoHTTPD {
          sb = responseGetDateTime();
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
+
+      //
+      // hpattacktime - GET only - Gets the most recent attack time for all honeypots
+      //
+      } else if (methodIsGET && command.equals("hpattacktime")) {
+         sb = responseGetTimeHPLastAttacked();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
       
       //
       // profiles - GET/PUT/DELETE - Get everything in Profiles table / Insert new profile / Delete all profiles
@@ -490,6 +498,7 @@ public class APIrest extends NanoHTTPD {
              "+-- GET  /date                               - current date\n" +             
              "+-- GET  /time                               - current time\n" +
              "+-- GET  /datetime                           - current date and time\n" +
+             "+-- GET  /hpattacktime                       - most recent attack time for all honeypots\n" +
              "+-- GET  /profiles                           - get all profiles\n" +
              " +- GET  /profiles/[pid]                     - get a single profile\n" +
              "+-- GET  /responserecipes                    - get names and ids of all response recipes\n" +
@@ -556,6 +565,10 @@ public class APIrest extends NanoHTTPD {
       return sb;
    }
    
+   private StringBuilder responseGetTimeHPLastAttacked() {
+      return runShellScript("/var/www/html/lcars/scripts/lastAttacked.sh");
+   }
+
    private StringBuilder responseGetProfiles() {
        return runSelectQuery("SELECT * FROM Profiles ORDER BY pid");       
    }
@@ -1071,6 +1084,29 @@ public class APIrest extends NanoHTTPD {
       for(int i = 0; i < hashMapArray.length; i++) {
          System.out.println(hashMapArray[i]);
       }
+   }
+
+   /**
+    * Execute shell script and get the data returned.
+    * @param pathToScript
+    * @return a string builder of the data received (output of the script should be in JSON format)
+    */
+   private StringBuilder runShellScript(String pathToScript) {
+      StringBuilder sb = new StringBuilder();
+
+      String line;
+      try {
+          Process executeScript = Runtime.getRuntime().exec(pathToScript);
+          BufferedReader reader = new BufferedReader(new InputStreamReader(executeScript.getInputStream()));
+          while ((line = reader.readLine()) != null) {
+              sb.append(line);
+          }
+
+      } catch (IOException e) {
+           e.printStackTrace();
+      }
+
+      return sb;
    }
 
 
