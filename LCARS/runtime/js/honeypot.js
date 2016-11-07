@@ -1,4 +1,6 @@
 
+var lcarsAPI = "http://10.10.7.84:8081/"
+
 function viewLogs() {
     $("#honeypots").on("click", "td button", function() {
 
@@ -24,23 +26,30 @@ function clearModal() {
     });
 }
 
+
 // Get the time each honeypot was last attacked
 function getTimeLastAttacked() {
-   // expected output of the future API call
-   hps = [{"hostname":"AWS", "time":"2016-11-05 13:12:07"}, {"hostname":"cssdn", "time":"2016-11-05 13:11:57"}, {"hostname":"ecdal2", "time":"2016-11-05 13:12:15"}, {"hostname":"edu_c", "time":"2016-11-05 13:12:09"}, {"hostname":"erhp2", "time":"2016-11-05 11:14:45"}, {"hostname":"erhp", "time":"2016-11-05 06:26:39"}, {"hostname":"shepherd", "time":"2016-11-05 13:12:02"}, {"hostname":"syrtest", "time":"2016-11-05 13:12:12"}];
-   hpTable = $("#honeypots tr");
-   for (var i = 0; i < hps.length; i++) {
-      hpTable.each( function() {
-         hpTableHostname = $(this).find("td:nth-child(2)").text();
-         hpTableLastAttacked = $(this).find("td:nth-child(5)");
-         hostname = hps[i].hostname;
-         time = hps[i].time;
-         if (hpTableHostname === hostname) {
-            hpTableLastAttacked.html(time);
-         }
-      });      
-   } 
+    $.getJSON(
+       lcarsAPI + "hpattacktime",
+       function (data, status) {
+          if (status === "success") {
 
+              hpTable = $("#honeypots tr");
+              for (var i = 0; i < data.length; i++) {
+                  hpTable.each( function() {
+                      hpTableHostname = $(this).find("td:nth-child(2)").text();
+                      hpTableLastAttacked = $(this).find("td:nth-child(5)");
+                      hostname = data[i].hostname;
+                      time = data[i].time;
+                      if (hpTableHostname === hostname) {
+                          hpTableLastAttacked.html(time);
+                      }
+                  });
+              }
+
+          }
+       }
+    );
 }
 
 
