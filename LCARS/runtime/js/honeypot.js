@@ -72,9 +72,6 @@ function setLogsLastRefreshedTime() {
 }
 
 
-// Refreshes Longtail image every one minute. The actual image itself refreshes every 5 minutes on Longtail's site,
-// but if we set it to every 5 minutes here as well, the cycle is more likely to start at something other than 
-// a :00 or :05 time, making the image still 1-4 minutes off
 function refreshLongtailImage() {
     // The ? + Math.random() appended to the URL below allows the image to actually refresh, without it the browser recognizes
     // that the URL path is the same and won't grab the new image from the Longtail site     
@@ -86,8 +83,36 @@ $(document).ready(function() {
     viewLogs();
     getTimeLastAttacked();
     setLogsLastRefreshedTime();
+
+    setIntervalAdapted(getTimeLastAttacked, 20);
+    setIntervalAdapted(setLogsLastRefreshedTime, 20, 5);
+    setIntervalAdapted(refreshLongtailImage, 5, 5);
 });
 
-setInterval('refreshLongtailImage()', 60000);
 
+/** 
+ * An adaptation of the built in setInterval function - Runs a function at a specified interval on the interval
+ * Main purpose is to sync page refresh with cron job in honeypot logs table
+ * Example: setIntervalAdapted(func, 20) will run func() every 20 minutes on the 20 minute mark (:00, :20, and :40)
+ * @param minuteInterval - interval (in minutes) in which function will run
+ * @param [secondsOffset=0] - an optional parameter that allows you to specify a number of seconds after hh:mm:00 to start timeout, defaults to hh:mm:00  
+ * http://stackoverflow.com/questions/28532731/how-to-run-a-javascript-function-every-10-minutes-specifically-on-the-10-minute
+ */
+function setIntervalAdapted(myFunction, minuteInterval, secondsOffset) {
+    var currentSeconds = new Date().getTime() / 1000; // / 1000 converts time from milliseconds to seconds
+    // converts the specified interval to seconds
+    var interval = minuteInterval * 60;
+    // set offset to 0 if none specified
+    if (typeof secondsOffset === 'undefined') { secondsOffset = 0; }    
+
+    var secondsSinceLastTimerTrigger = currentSeconds % interval;
+    var secondsUntilNextTimerTrigger = interval - secondsSinceLastTimerTrigger + secondsOffset;
+
+    // If current time is :33 and the interval is 20, timeout needs to be set to run the function once time reaches :40
+    // And then call the built in setInterval to execute the function every 20 minutes from this point
+    setTimeout(function() {        
+        setInterval(myFunction, interval*1000); // *1000 converts back to milliseconds
+        myFunction();
+    }, secondsUntilNextTimerTrigger*1000);
+}
 
