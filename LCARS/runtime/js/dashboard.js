@@ -50,11 +50,43 @@ function updateFirewallCount() {
     }	
 }
 
+// Gets the number of current log entries (according to data from Longtail)
+function updateLogEntriesCount() {
+    $.getJSON(
+        lcarsAPI + "logentries",
+        function (data, status) {
+           if (status === "success") {
+              var count = data.logCount;
+              $("#log-count").html(count);;
+           }
+        });
+}
+
+// Get the number of current attacks (according to Longtail)
+function updateAttacksCount() {
+    $.getJSON(
+        lcarsAPI + "attacks",
+        function (data, status) {
+           if (status === "success") {
+              var count = data.attacksCount;
+              $("#attack-count").html(count);;
+           }
+        });
+}
+
+
 // Update stats on page load
 $(document).ready(function() {
 	updateProfileCount();
 	updateResponseCount();
 	updateFirewallCount();
+        updateLogEntriesCount();
+        updateAttacksCount();
+
+        // Cron job gets new logs every 20 minutes so update this number every 20 minutes
+        setIntervalAdapted(updateLogEntriesCount, 20, 5);
+        // Longtail updates this number every 5 minutes so update it here every 5 minutes
+        setIntervalAdapted(updateAttacksCount, 5, 5);
 });
 
 // Update stats on specified interval
