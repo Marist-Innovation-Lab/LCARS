@@ -114,13 +114,19 @@ function populateOrchestration() {
 												      '</div>' +
 												      '<div class="block_content">' +
 												         '<h2 class="title">' +
-														recipeList + ' <button type="button" pid="' + i + '" class="btn btn-default btn-xs"><span title="Edit" class="glyphicon glyphicon-pencil"></span></button>' +
+															'<div class="col-xs-6">' +
+															recipeList + 
+															'</div>' +
+															'<div class="col-xs-6">' +
+															'<button type="button" pid="' + i + '" class="btn btn-default btn-xs"><span title="Edit" class="glyphicon glyphicon-pencil"></span></button>' +
+															'<button type="button" pid="' + i + '" class="btn btn-default btn-xs"><span title="Delete" class="glyphicon glyphicon-trash"></span></button>' +
+															'</div>' +
 												         '</h2>' +
+												         '<br><br>' +
 												        '<div class="byline">' +
-												          '<span>'+ numSteps +' steps</span>' +
+												          '<span>'+ numSteps +' steps</span>' +  
 												        '</div>' +
-												        '<p class="excerpt">' +
-												        '</p>' +
+												        '<br>' +
 												      '</div>' +
 												   '</div>' +
 												'</li>');
