@@ -140,12 +140,24 @@ function populateOrchestration() {
       createDropdowns();
 }
 
-// Handles button click for editing orchestration
-function onEditOrchestrationClick() {
+// Handles button click for editing/deleting orchestration
+function onOrchestrationActionButtonClick() {
 	$("#orchestration").on("click", "li div div h2 button", function () {
 		var pid = $(this).attr("pid");
-		populateOrchestrationRecipes(pid);
-		$("#edit-orchestration-modal").modal();
+		var action = $(this).children("span").attr("title").toLowerCase();
+
+		if(action === "edit") {
+			populateOrchestrationRecipes(pid);
+			$("#edit-orchestration-modal").modal();
+		} else if (action === "delete") {
+			$.ajax({
+				url: lcarsAPI + "orchestration/" + pid,
+				type: 'DELETE',
+				success: function () {
+					populateOrchestration();
+				}
+			});
+		}
 	});
 }
 
@@ -168,7 +180,7 @@ function populateOrchestrationRecipes(pid) {
 }
 
 // Handles deletion/adding of orchestration record (recipe associated with profile)
-function onOrchestrationActionButtonClick() {
+function onEditOrchestrationActionButtonClick() {
 	$("#edit-orchestration-body").on("click", "table tr td button", function() {
 		var action = $(this).children("span").attr("title").toLowerCase();
 		var dataObject = {};
@@ -254,8 +266,8 @@ function deployOrchestration() {
 $(document).ready(function() {
 	populateOrchestration();
 	createOrchestration();
-	onEditOrchestrationClick();
 	onOrchestrationActionButtonClick();
+	onEditOrchestrationActionButtonClick();
 	onOrchestrationAddNewRecipeClick();
-        deployOrchestration();
+    deployOrchestration();
 });

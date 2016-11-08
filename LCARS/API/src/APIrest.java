@@ -380,7 +380,7 @@ public class APIrest extends NanoHTTPD {
       //    Example PUT:
       //        URL - localhost:8081/orchestration
       //        HTTP PUT Body (JSON) - {"pid" : "1", "rrid" : "1"}
-      // orchestration/<pid> - GET  - Get orchestration for single profile
+      // orchestration/<pid> - GET/DELETE  - Get orchestration for single profile / Delete all orchestration for a single profile
       // orchestration/<pid>/<rrid> - DELETE - Delete single orchestration record
       //
       } else if (methodIsGET && command.equals("orchestration")) {
@@ -398,6 +398,8 @@ public class APIrest extends NanoHTTPD {
       } else if (methodIsDELETE && command.equals("orchestration")) {
          if(commands.length > 3) {
              sb = responseDeleteSingleOrchestration(Integer.parseInt(commands[2]), Integer.parseInt(commands[3]));
+         } else if (commands.length == 3) {
+             sb = responseDeleteOrchestrationProfile(Integer.parseInt(commands[2]));
          } else {
              sb = responseDeleteOrchestration();
          }
@@ -545,6 +547,7 @@ public class APIrest extends NanoHTTPD {
              "+-- DELETE /responsedetails                  - delete all existing response details\n" +
              " +- DELETE /responsedetails/[rdid]           - delete an existing response detail\n" +
              "+-- DELETE /orchestration                    - delete all existing orchestration records\n" +
+             " +- DELETE /orchestration/[pid]              - delete all orchestration records associated with a specific profile\n" +
              " +- DELETE /orchestration/[pid]/[rrid]       - delete an existing orchestration record\n" +
              "";
    }
@@ -841,6 +844,16 @@ public class APIrest extends NanoHTTPD {
        StringBuilder sb = new StringBuilder();
        
        String query = "DELETE FROM Orchestration WHERE pid = " + pid + " AND rrid = " + rrid;
+       dbCommand(query);
+       
+       sb.append(makeJSON(messageKey, "200 OK"));
+       return sb;
+   }
+   
+   private StringBuilder responseDeleteOrchestrationProfile(int pid) {
+       StringBuilder sb = new StringBuilder();
+       
+       String query = "DELETE FROM Orchestration WHERE pid = " + pid;
        dbCommand(query);
        
        sb.append(makeJSON(messageKey, "200 OK"));
