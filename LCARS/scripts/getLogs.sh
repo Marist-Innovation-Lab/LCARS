@@ -10,7 +10,7 @@ gunzip -f current-raw-data.gz
 # Directory to store log files
 log_dir="/var/www/html/lcars/runtime/logs"
 
-#cp -f current-raw-data $log_dir/all.log
+cp -f current-raw-data $log_dir
 # Find all log entries that match currently known honeypot hostnames, and store them in their own files
 awk '$2 == "AWS" {print}' current-raw-data > $log_dir/aws.log
 awk '$2 == "shepherd" {print}' current-raw-data > $log_dir/shepherd.log
