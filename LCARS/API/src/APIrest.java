@@ -647,6 +647,8 @@ public class APIrest extends NanoHTTPD {
                + "('" + name + "', '" + details + "')";
        dbCommand(query);
        
+       createLcarsLogEntry("Attack Profiles", "Created attack profile: " + name);
+       
        sb.append(makeJSON(messageKey, "200 OK"));
        
        return sb;
@@ -1184,6 +1186,16 @@ public class APIrest extends NanoHTTPD {
       }
    }
 
+   /**
+    * Insert a new entry into the LCARS log
+    * @param category String denoting the type of event being logged
+    * @param message  String description of event
+    */
+   private void createLcarsLogEntry(String category, String message) {
+       String query = "INSERT INTO LcarsLogEntries(category, message) " +
+                      "VALUES ('" + category + "', '" + message + "')";
+       dbCommand(query);
+   }
 
    /**
     * Perform the database non-query command (e.g., insert, update, delete)
