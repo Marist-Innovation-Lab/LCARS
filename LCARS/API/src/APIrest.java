@@ -239,7 +239,23 @@ public class APIrest extends NanoHTTPD {
          sb = responseGetTimeHPLastAttacked();
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
-      
+
+      //
+      // logentries - GET only - Gets the number of log entries recorded today
+      //
+      } else if (methodIsGET && command.equals("logentries")) {
+         sb = responseGetLogEntriesCount();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+
+      //
+      // attacks - GET only - Gets the number of attacks recorded today
+      //
+      } else if (methodIsGET && command.equals("attacks")) {
+         sb = responseGetAttacksCount();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+
       //
       // profiles - GET/PUT/DELETE - Get everything in Profiles table / Insert new profile / Delete all profiles
       //    Example PUT: 
@@ -499,6 +515,8 @@ public class APIrest extends NanoHTTPD {
              "+-- GET  /time                               - current time\n" +
              "+-- GET  /datetime                           - current date and time\n" +
              "+-- GET  /hpattacktime                       - most recent attack time for all honeypots\n" +
+             "+-- GET  /logentries                         - number of recorded log entries today\n" +
+             "+-- GET  /attacks                            - number of recorded attacks today\n" +
              "+-- GET  /profiles                           - get all profiles\n" +
              " +- GET  /profiles/[pid]                     - get a single profile\n" +
              "+-- GET  /responserecipes                    - get names and ids of all response recipes\n" +
@@ -512,7 +530,7 @@ public class APIrest extends NanoHTTPD {
              "+-- PUT  /responsedetails                    - add a response detail to an existing recipe using body JSON: {\"rrid\" : \"Recipe ID\", \"ruleorder\" : \"Order Number\", \"target\" : \"[drop, accept, reject]\",\n" +
              "                                                                                                             \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
              "                                                                                                             \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
-             "+-- PUT  /orchestration                      - create a new profile using body JSON: {\"pid\" : \"Profile ID\", \"rrid\" : \"Recipe ID\"}\n" +
+             "+-- PUT  /orchestration                      - create a new orchestrated response using body JSON: {\"pid\" : \"Profile ID\", \"rrid\" : \"Recipe ID\"}\n" +
              "\n" +
              "+-- POST /profiles/[pid]                     - update existing profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
              "+-- POST /responserecipes/[rrid]             - update existing recipe using body JSON: {\"name\": \"Profile Name\"}\n" +
@@ -567,6 +585,14 @@ public class APIrest extends NanoHTTPD {
    
    private StringBuilder responseGetTimeHPLastAttacked() {
       return runShellScript("/var/www/html/lcars/scripts/lastAttacked.sh");
+   }
+
+   private StringBuilder responseGetLogEntriesCount() {
+      return runShellScript("/var/www/html/lcars/scripts/logCount.sh");
+   }
+
+   private StringBuilder responseGetAttacksCount() {
+      return runShellScript("/var/www/html/lcars/scripts/attacksCount.sh");
    }
 
    private StringBuilder responseGetProfiles() {
