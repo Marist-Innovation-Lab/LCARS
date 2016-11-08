@@ -255,7 +255,15 @@ public class APIrest extends NanoHTTPD {
          sb = responseGetAttacksCount();
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
-
+      
+      //
+      // lcarslog - GET only - Gets all log entries from the LCARS log
+      //
+      } else if (methodIsGET && command.equals("lcarslog")) {
+         sb = responseGetLcarsLog();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+      
       //
       // profiles - GET/PUT/DELETE - Get everything in Profiles table / Insert new profile / Delete all profiles
       //    Example PUT: 
@@ -518,6 +526,7 @@ public class APIrest extends NanoHTTPD {
              "+-- GET  /datetime                           - current date and time\n" +
              "+-- GET  /hpattacktime                       - most recent attack time for all honeypots\n" +
              "+-- GET  /logentries                         - number of recorded log entries today\n" +
+             "+-- GET  /lcarslog                           - get all log entries from LCARS log\n" +
              "+-- GET  /attacks                            - number of recorded attacks today\n" +
              "+-- GET  /profiles                           - get all profiles\n" +
              " +- GET  /profiles/[pid]                     - get a single profile\n" +
@@ -596,6 +605,10 @@ public class APIrest extends NanoHTTPD {
 
    private StringBuilder responseGetAttacksCount() {
       return runShellScript("/var/www/html/lcars/scripts/attacksCount.sh");
+   }
+   
+   private StringBuilder responseGetLcarsLog() {
+       return runSelectQuery("SELECT * FROM LcarsLogEntries ORDER BY createdate");
    }
 
    private StringBuilder responseGetProfiles() {

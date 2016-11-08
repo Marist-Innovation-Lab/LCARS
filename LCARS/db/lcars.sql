@@ -69,3 +69,11 @@ INSERT INTO Orchestration (pid, rrid) values
     (2, 3),
     (3, 2),
     (4, 1);
+
+CREATE TABLE LcarsLogEntries (
+    logid      serial,
+    category   text not null,
+    message    text not null,
+    createdate timestamp default now()::timestamp(0),
+   primary key(logid)
+)
