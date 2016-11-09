@@ -608,7 +608,7 @@ public class APIrest extends NanoHTTPD {
    }
    
    private StringBuilder responseGetLcarsLog() {
-       return runSelectQuery("SELECT * FROM LcarsLogEntries ORDER BY createdate");
+       return runSelectQuery("SELECT * FROM LcarsLogEntries ORDER BY createdate DESC");
    }
 
    private StringBuilder responseGetProfiles() {
@@ -647,7 +647,7 @@ public class APIrest extends NanoHTTPD {
                + "('" + name + "', '" + details + "')";
        dbCommand(query);
        
-       createLcarsLogEntry("Attack Profiles", "Created attack profile: " + name);
+       createLcarsLogEntry("Attack Profiles", "Created attack profile " + name + " (" + details + ")");
        
        sb.append(makeJSON(messageKey, "200 OK"));
        
