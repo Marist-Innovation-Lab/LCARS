@@ -633,6 +633,8 @@ public class APIrest extends NanoHTTPD {
                + "WHERE pid = " + pid;
        dbCommand(query);
        
+       createLcarsLogEntry("Attack Profiles", "Edited attack profile (pid: " + pid + ")");
+       
        sb.append(makeJSON(messageKey, "200 OK"));
        return sb;
    }
@@ -664,6 +666,8 @@ public class APIrest extends NanoHTTPD {
        dbCommand(deleteOrchestrations);
        dbCommand(deleteProfiles);
        
+       createLcarsLogEntry("Attack Profiles", "Deleted all attack profiles");
+       
        sb.append(makeJSON(messageKey, "200 OK"));
        
        return sb; 
@@ -681,6 +685,8 @@ public class APIrest extends NanoHTTPD {
        
        dbCommand(deleteOrchestration);
        dbCommand(deleteProfile);
+       
+       createLcarsLogEntry("Attack Profiles", "Deleted attack profile (pid: " + pid + ")");
        
        sb.append(makeJSON(messageKey, "200 OK"));
        
@@ -713,6 +719,8 @@ public class APIrest extends NanoHTTPD {
                + "WHERE rrid = " + rrid;
        dbCommand(addDetail);
        dbCommand(updateRecipeDate);
+       
+       createLcarsLogEntry("Response Recipes", "Created new response detail for rrid " + rrid);
        
        sb.append(makeJSON(messageKey, "200 OK"));
        return sb;
@@ -775,7 +783,9 @@ public class APIrest extends NanoHTTPD {
                + "WHERE rrid = " + rrid;
        dbCommand(updateDetail);
        dbCommand(updateRecipeDate);
-
+       
+       createLcarsLogEntry("Response Recipes", "Edited response detail (rdid: " + rdid + ")");
+       
        sb.append(makeJSON(messageKey, "200 OK"));
        return sb;
    }
@@ -795,6 +805,8 @@ public class APIrest extends NanoHTTPD {
        dbCommand(updateRecipeDate);
        dbCommand(deleteDetail);
 
+       createLcarsLogEntry("Response Recipes", "Deleted response detail (rdid: " + rdid + ")");
+       
        sb.append(makeJSON(messageKey, "200 OK"));
        return sb;
    }
@@ -804,6 +816,8 @@ public class APIrest extends NanoHTTPD {
        
        String query = "DELETE FROM ResponseDetails WHERE TRUE";
        dbCommand(query);
+       
+       createLcarsLogEntry("Response Recipes", "Deleted all response details");
        
        sb.append(makeJSON(messageKey, "200 OK"));
        return sb;
@@ -840,6 +854,8 @@ public class APIrest extends NanoHTTPD {
                + "('" + pid + "', '" + rrid + "')";
        dbCommand(query);
        
+       createLcarsLogEntry("Orchestration", "Created new orchestration record for pid " + pid + " and rrid " + rrid);
+       
        sb.append(makeJSON(messageKey, "200 OK"));
        
        return sb;
@@ -851,6 +867,8 @@ public class APIrest extends NanoHTTPD {
        String query = "DELETE FROM Orchestration WHERE TRUE";
        dbCommand(query);
        
+       createLcarsLogEntry("Orchestration", "Deleted all orchestration records");
+       
        sb.append(makeJSON(messageKey, "200 OK"));
        return sb;
    }
@@ -861,6 +879,8 @@ public class APIrest extends NanoHTTPD {
        String query = "DELETE FROM Orchestration WHERE pid = " + pid + " AND rrid = " + rrid;
        dbCommand(query);
        
+       createLcarsLogEntry("Orchestration", "Deleted orchestration record (pid: " + pid + ", rrid: " + rrid + ")");
+       
        sb.append(makeJSON(messageKey, "200 OK"));
        return sb;
    }
@@ -870,6 +890,8 @@ public class APIrest extends NanoHTTPD {
        
        String query = "DELETE FROM Orchestration WHERE pid = " + pid;
        dbCommand(query);
+       
+       createLcarsLogEntry("Orchestration", "Deleted all orchestration for attack profile (pid: " + pid + ")");
        
        sb.append(makeJSON(messageKey, "200 OK"));
        return sb;
@@ -896,6 +918,8 @@ public class APIrest extends NanoHTTPD {
                + "WHERE rrid = " + rrid;
        dbCommand(query);
        
+       createLcarsLogEntry("Response Recipes", "Edited response recipe (rrid: " + rrid + ")");
+       
        sb.append(makeJSON(messageKey, "200 OK"));
        return sb;
    }
@@ -908,6 +932,8 @@ public class APIrest extends NanoHTTPD {
        String query = "INSERT INTO ResponseRecipes (name) VALUES "
                + "('" + name + "')";
        dbCommand(query);
+       
+       createLcarsLogEntry("Response Recipes", "Created new response recipe " + name);
        
        sb.append(makeJSON(messageKey, "200 OK"));
        
@@ -925,6 +951,8 @@ public class APIrest extends NanoHTTPD {
        dbCommand(deleteDetails);
        dbCommand(deleteOrchestrations);
        dbCommand(deleteRecipes);
+       
+       createLcarsLogEntry("Response Recipes", "Deleted all response recipes");
        
        sb.append(makeJSON(messageKey, "200 OK"));
        
@@ -947,6 +975,8 @@ public class APIrest extends NanoHTTPD {
        dbCommand(deleteDetail);
        dbCommand(deleteOrchestration);
        dbCommand(deleteRecipe);
+       
+       createLcarsLogEntry("Response Recipes", "Deleted response recipe (rrid: " + rrid + ")");
        
        sb.append(makeJSON(messageKey, "200 OK"));
        
