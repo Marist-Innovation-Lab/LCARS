@@ -166,6 +166,9 @@ function populateOrchestrationRecipes(pid) {
 	$.getJSON(
 		lcarsAPI + "orchestration/" + pid,
 		function(data, status) {
+			if(data[0].responserecipes__rrid === "") {
+				$("#edit-orchestration-modal").modal("toggle");
+			}
 			if(status === "success") {
 				var tableHTML = '<table pid="' + pid + '" class="table"><tr><th colspan="2">Recipe Name</th></tr>';
 				$.each(data, function(i, item){
