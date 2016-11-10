@@ -257,13 +257,16 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
       
       //
-      // lcarslog - GET only - Gets all log entries from the LCARS log
+      // lcarslog - GET/PUT - Get all log entries from the LCARS log / Create new LCARS log entry
       //
       } else if (methodIsGET && command.equals("lcarslog")) {
          sb = responseGetLcarsLog();
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
-      
+      } else if (methodIsPUT && command.equals("lcarslog")) {
+         sb = responsePutLcarsLog(reqJSON);
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
       //
       // profiles - GET/PUT/DELETE - Get everything in Profiles table / Insert new profile / Delete all profiles
       //    Example PUT: 
@@ -542,6 +545,7 @@ public class APIrest extends NanoHTTPD {
              "                                                                                                             \"chain\" : \"[input, output, forward]\", \"protocol\" : \"Protocol Name\",\n" +
              "                                                                                                             \"source\" : \"Source IP\", \"destination\" : \"Dest. IP\"}\n" +
              "+-- PUT  /orchestration                      - create a new orchestrated response using body JSON: {\"pid\" : \"Profile ID\", \"rrid\" : \"Recipe ID\"}\n" +
+             "+-- PUT  /lcarslog                           - create a new LCARS log entry using body JSON: {\"category\" : \"Entry Type\", \"message\" : \"Entry Message\"}\n" +
              "\n" +
              "+-- POST /profiles/[pid]                     - update existing profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
              "+-- POST /responserecipes/[rrid]             - update existing recipe using body JSON: {\"name\": \"Profile Name\"}\n" +
@@ -609,6 +613,19 @@ public class APIrest extends NanoHTTPD {
    
    private StringBuilder responseGetLcarsLog() {
        return runSelectQuery("SELECT * FROM LcarsLogEntries ORDER BY createdate DESC");
+   }
+   
+   private StringBuilder responsePutLcarsLog(JsonObject reqJSON) {
+       StringBuilder sb = new StringBuilder();
+       
+       String category = reqJSON.get("category").getAsString();
+       String message = reqJSON.get("message").getAsString();
+       
+       createLcarsLogEntry(category, message);
+       
+       sb.append(makeJSON(messageKey, "200 OK"));
+       
+       return sb;
    }
 
    private StringBuilder responseGetProfiles() {
