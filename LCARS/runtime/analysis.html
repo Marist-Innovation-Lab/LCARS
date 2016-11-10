@@ -109,7 +109,7 @@
 
           <!-- row 1 -->
           <div class="row">
-            <div class="col-md-9 col-sm-9 col-xs-12">
+            <div class="col-md-12 col-sm-12 col-xs-12">
                <div class="x_panel">
                   <div class="x_title">
                     <h2>Log Data <small id="last-refreshed" style="display: inline;"></small></h2>
@@ -249,17 +249,17 @@
                             <td>Gateway 1</td>
                             <td>Marist</td>
                             <td><select>
-                              <option>2016-08-31</option>
-                              <option>2016-09-01</option>
-                              <option>2016-09-02</option>
-                              <option>2016-09-03</option>
-                              <option>2016-09-04</option>
-                              <option>2016-09-05</option>
-                              <option>2016-09-06</option>
-                              <option>2016-09-07</option>
-                              <option>2016-09-08</option>
-                              <option>2016-09-09</option>
                               <option>2016-09-10</option>
+                              <option>2016-09-09</option>
+                              <option>2016-09-08</option>
+                              <option>2016-09-07</option>
+                              <option>2016-09-06</option>
+                              <option>2016-09-05</option>
+                              <option>2016-09-04</option>
+                              <option>2016-09-03</option>
+                              <option>2016-09-02</option>
+                              <option>2016-09-01</option>
+                              <option>2016-08-31</option>
                             </select></td>
                             <td>
                               <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
@@ -295,7 +295,7 @@
                  </div>
                </div>
                <!-- /Modal pop-up for VIEW buttons -->
-
+            <!--
             <div class="col-md-3 col-sm-3 col-xs-12">
                <div class="x_panel">
                   <div class="x_title">
@@ -311,36 +311,34 @@
                   </div>
                </div>
             </div>
+            -->
           </div>
           <!--/row 1 -->
          
           <!-- row 2 -->
           <div class="row">
-            <div class="col-md-9 col-sm-9 col-xs-12">
+            <div class="col-md-12 col-sm-12 col-xs-12">
                <div class="x_panel">
                  <div class="x_title">
                    <h2>Integrated Graph and SQL Analytics - G*Studio</h2>
+                   <a type="button" class="btn btn-primary" href="http://10.10.7.84/gstarstudio" target="_blank" style="position:absolute; right:20px; top:8px;">Launch G*Studio &rarr;</a>
                    <div class="clearfix"></div>
                  </div>
                  <div class="row">
                    <div class="x_content" style="height: 300px;">
-                     <div class="col-md-6 col-sm-6">
+                     <div class="col-md-8 col-sm-8">
                        <h4>Data Parsing</h4>
                      </div>
-                     <div class="col-md-6 col-sm-6 col-xs-12">
-                       <h4>Input Data</h4>
-                       <textarea class="form-control" id="logData" rows="3"></textarea>
-                       <br>
-                       <button type="button" class="btn btn-primary" onclick="convertToGstar()">Convert</button>
-                       <br>
+                     <div class="col-md-4 col-sm-4 col-xs-12">
                        <h4>G* Commands</h4>
-                       <textarea class="form-control" id="logDataOutput" rows="3"></textarea>           
+                       <textarea class="form-control" id="logDataOutput" rows="12"></textarea>           
                      </div>
                    </div>
                  </div>
                </div>
               </div>
-            
+
+            <!--
             <div class="col-md-3 col-sm-3 col-xs-12">
                <div class="x_panel">
                   <div class="x_title">
@@ -356,22 +354,25 @@
                   </div>
                </div>
             </div>
+            -->
           </div>
           <!--/row 2 -->
 
           <!-- row 3 -->
           <div class="row">
-            <div class="col-md-9 col-sm-9 col-xs-12">
+            <div class="col-md-12 col-sm-12 col-xs-12">
                <div class="x_panel">
                  <div class="x_title">
                    <h2>Honeypot Classifiers</h2>
                    <div class="clearfix"></div>
                  </div>
                  <div class="x_content" style="height: 300px;">
-                    <img id="longtail-img" src="http://longtail.it.marist.edu/honey/dashboard_number_of_attacks.png" class="img-responsive">                         </div>
+                    <img id="longtail-img" src="http://longtail.it.marist.edu/honey/dashboard_number_of_attacks.png" class="img-responsive">
+                 </div>
                </div>
             </div>
-            
+
+            <!--            
             <div class="col-md-3 col-sm-3 col-xs-12">
                <div class="x_panel">
                   <div class="x_title">
@@ -387,6 +388,7 @@
                   </div>
                </div>
             </div>
+            -->
           </div>
           <!--/row 3 -->
           
