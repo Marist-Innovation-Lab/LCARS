@@ -112,120 +112,164 @@
             <div class="col-md-9 col-sm-9 col-xs-12">
                <div class="x_panel">
                   <div class="x_title">
-                    <h2>Honeypot logs <small id="last-refreshed" style="display: inline;"></small></h2>
-                    <div class="clearfix"></div>
+                    <h2>Log Data <small id="last-refreshed" style="display: inline;"></small></h2>
+                    <div class="clearfix"></div></div><div>
+                    <ul id="logs-tab" class="nav nav-tabs nav-justified">
+                       <li role="presentation" data-toggle="tab" class="active"><a href="#honeypot-logs"><strong>Honeypot</strong></a></li>
+                       <li role="presentation" data-toggle="tab"><a href="#blackridge-logs"><strong>BlackRidge</strong></a></li>
+                    </ul>
                   </div>
-                  <div class="x_content" style="height: 250px; overflow: auto;">
-                    <table class="table table-hover">
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Hostname</th>
-                          <th>Type</th>
-                          <th>Location</th>
-                          <th>Last Attacked</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody id="honeypots">
-                        <tr>
-                          <th scope="row">1</th>
-                          <td>AWS</td>
-                          <td>SSH</td>
-                          <td>AWS Cloud</td>
-                          <td></td>
-                          <td>
-                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
-                             <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-share-alt"</span></button>
-                             <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th scope="row">2</th>
-                          <td>shepherd</td>
-                          <td>SSH</td>
-                          <td>Marist</td>
-                          <td></td>
-                          <td>
-                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
-                             <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-share-alt"</span></button>
-                             <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th scope="row">3</th>
-                          <td>syrtest</td>
-                          <td>SSH</td>
-                          <td>Marist</td>
-                          <td></td>
-                          <td>
-                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
-                             <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-share-alt"</span></button>
-                             <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th scope="row">4</th>
-                          <td>edu_c</td>
-                          <td>SSH</td>
-                          <td>Marist</td>
-                          <td></td>
-                          <td>
-                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
-                             <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-share-alt"</span></button>
-                             <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th scope="row">5</th>
-                          <td>erhp</td>
-                          <td>SSH</td>
-                          <td>Marist</td>
-                          <td></td>
-                          <td>
-                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
-                             <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-share-alt"</span></button>
-                             <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th scope="row">6</th>
-                          <td>erhp2</td>
-                          <td>SSH</td>
-                          <td>Marist</td>
-                          <td></td>
-                          <td>
-                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
-                             <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-share-alt"</span></button>
-                             <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th scope="row">7</th>
-                          <td>ecdal2</td>
-                          <td>SSH</td>
-                          <td>Marist</td>
-                          <td></td>
-                          <td>
-                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
-                             <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-share-alt"</span></button>
-                             <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <th scope="row">8</th>
-                          <td>cssdn</td>
-                          <td>SSH</td>
-                          <td>Marist</td>
-                          <td></td>
-                          <td>
-                             <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
-                             <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-share-alt"</span></button>
-                             <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
+                  <div class="tab-content">
+                    <div role="tabpanel" id="honeypot-logs" class="tab-pane active" style="height: 250px; overflow: auto;">
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Hostname</th>
+                            <th>Type</th>
+                            <th>Location</th>
+                            <th>Last Attacked</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody id="honeypots">
+                          <tr>
+                            <th scope="row">1</th>
+                            <td>AWS</td>
+                            <td>SSH</td>
+                            <td>AWS Cloud</td>
+                            <td></td>
+                            <td>
+                              <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-share-alt"</span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th scope="row">2</th>
+                            <td>shepherd</td>
+                            <td>SSH</td>
+                            <td>Marist</td>
+                            <td></td>
+                            <td>
+                              <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-share-alt"</span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th scope="row">3</th>
+                            <td>syrtest</td>
+                            <td>SSH</td>
+                            <td>Marist</td>
+                            <td></td>
+                            <td>
+                              <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-share-alt"</span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th scope="row">4</th>
+                            <td>edu_c</td>
+                            <td>SSH</td>
+                            <td>Marist</td>
+                            <td></td>
+                            <td>
+                              <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-share-alt"</span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th scope="row">5</th>
+                            <td>erhp</td>
+                            <td>SSH</td>
+                            <td>Marist</td>
+                            <td></td>
+                            <td>
+                              <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-share-alt"</span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th scope="row">6</th>
+                            <td>erhp2</td>
+                            <td>SSH</td>
+                            <td>Marist</td>
+                            <td></td>
+                            <td>
+                              <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-share-alt"</span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th scope="row">7</th>
+                            <td>ecdal2</td>
+                            <td>SSH</td>
+                            <td>Marist</td>
+                            <td></td>
+                            <td>
+                              <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-share-alt"</span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <th scope="row">8</th>
+                            <td>cssdn</td>
+                            <td>SSH</td>
+                            <td>Marist</td>
+                            <td></td>
+                            <td>
+                              <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-share-alt"</span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div role="tabpanel" id="blackridge-logs" class="tab-pane" style="height: 250px; overflow: auto;">
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Hostname</th>
+                            <th>Location</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody id="blackridge">
+                          <tr>
+                            <th scope="row">1</th>
+                            <td>Gateway 1</td>
+                            <td>Marist</td>
+                            <td><select>
+                              <option>2016-08-31</option>
+                              <option>2016-09-01</option>
+                              <option>2016-09-02</option>
+                              <option>2016-09-03</option>
+                              <option>2016-09-04</option>
+                              <option>2016-09-05</option>
+                              <option>2016-09-06</option>
+                              <option>2016-09-07</option>
+                              <option>2016-09-08</option>
+                              <option>2016-09-09</option>
+                              <option>2016-09-10</option>
+                            </select></td>
+                            <td>
+                              <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg"><span title="View" class="glyphicon glyphicon-list"></span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-share-alt"</span></button>
+                              <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>
+                            </td>
+                          </tr> 
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                </div>
             </div>

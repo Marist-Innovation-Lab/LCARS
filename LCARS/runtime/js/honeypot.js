@@ -1,7 +1,7 @@
 
 var lcarsAPI = "http://10.10.7.84:8081/"
 
-function viewLogs() {
+function viewHoneypotLogs() {
     $("#honeypots").on("click", "td button", function() {
 
         clearModal();        
@@ -20,9 +20,30 @@ function viewLogs() {
 
 }
 
+
+function viewBlackridgeLogs() {
+    $("#blackridge").on("click", "td button", function() {
+
+        clearModal();
+
+        // Gets the text of the button that was clicked to determine which it was
+        var button = $(this).children("span").attr("title").toLowerCase();
+        var host = $(this).closest("tr").find("td:nth-child(2)").text();
+        var date = $(this).closest("tr").find("select").val();
+
+        if (button === "view") {
+            $("#log-modal").find("h4").text(date + " BlackRidge Log Data for: " + host);
+
+            $("#log-data").load("/lcars/runtime/logs/blackridge/" + date);
+        }
+    });
+
+}
+
+
 function clearModal() {
     $(".modal").on("hidden.bs.modal", function() {
-        $("log-data").html("");
+        $("#log-data").html("");
     });
 }
 
@@ -79,14 +100,24 @@ function refreshLongtailImage() {
 }
 
 
+function switchLogTab() {
+    $('#logs-tab a').click(function (e) {
+        e.preventDefault()
+        $(this).tab('show')
+    })
+}
+
 $(document).ready(function() {
-    viewLogs();
+    viewHoneypotLogs();
+    viewBlackridgeLogs();
     getTimeLastAttacked();
     setLogsLastRefreshedTime();
 
     setIntervalAdapted(getTimeLastAttacked, 20);
     setIntervalAdapted(setLogsLastRefreshedTime, 20, 5);
     setIntervalAdapted(refreshLongtailImage, 5, 5);
+
+    switchLogTab();
 });
 
 
