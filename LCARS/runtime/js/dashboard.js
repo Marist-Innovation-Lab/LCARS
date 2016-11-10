@@ -56,7 +56,7 @@ function updateLogEntriesCount() {
         lcarsAPI + "logentries",
         function (data, status) {
            if (status === "success") {
-              var count = data.logCount;
+              var count = Number(data.logCount).toLocaleString();
               $("#log-count").html(count);;
            }
         });
@@ -68,7 +68,7 @@ function updateAttacksCount() {
         lcarsAPI + "attacks",
         function (data, status) {
            if (status === "success") {
-              var count = data.attacksCount;
+              var count = Number(data.attacksCount).toLocaleString();
               $("#attack-count").html(count);;
            }
         });
