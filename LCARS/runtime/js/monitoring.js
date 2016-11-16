@@ -16,6 +16,21 @@ function populateLcarsLog() {
 	);
 }
 
+function populateOsInfo() {
+	$.getJSON(
+		lcarsAPI + "osversion",
+		function(data, status) {
+			if(status === "success") {
+				var osInfoHTML = "";
+				osInfoHTML += "<b>OS Version:</b> " + data[0].name + " (" + data[0].major + "." + data[0].minor + "." + data[0].patch + ")";
+
+				$("#osquery").html(osInfoHTML);
+			}
+		}
+	);
+}
+
 $(document).ready(function () {
 	populateLcarsLog();
+	populateOsInfo();
 });

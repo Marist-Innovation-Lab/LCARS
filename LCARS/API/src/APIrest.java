@@ -265,6 +265,14 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
       
       //
+      // interfacedetails - GET only - Gets information about LCARS system interfaces
+      //
+      } else if (methodIsGET && command.equals("interfacedetails")) {
+         sb = responseGetInterfaceDetails();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+      
+      //
       // lcarslog - GET/PUT - Get all log entries from the LCARS log / Create new LCARS log entry
       //
       } else if (methodIsGET && command.equals("lcarslog")) {
@@ -623,6 +631,10 @@ public class APIrest extends NanoHTTPD {
    private StringBuilder responseGetOsVersion() {
       //return runShellScript("osqueryi --json 'select * from os_version'");
       return runShellScript("/var/www/html/lcars/scripts/osversion.sh");
+   }
+   
+   private StringBuilder responseGetInterfaceDetails() {
+      return runShellScript("/var/www/html/lcars/scripts/interface_details.sh");
    }
    
    private StringBuilder responseGetLcarsLog() {
