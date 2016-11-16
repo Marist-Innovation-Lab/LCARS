@@ -621,7 +621,8 @@ public class APIrest extends NanoHTTPD {
    }
    
    private StringBuilder responseGetOsVersion() {
-      return runShellScript("osqueryi --json \"select * from os_version\"");
+      //return runShellScript("osqueryi --json 'select * from os_version'");
+      return runShellScript("/var/www/html/lcars/scripts/osversion.sh");
    }
    
    private StringBuilder responseGetLcarsLog() {
