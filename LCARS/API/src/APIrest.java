@@ -257,6 +257,14 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
       
       //
+      // osversion - GET only - Gets the OS version information
+      //
+      } else if (methodIsGET && command.equals("osversion")) {
+         sb = responseGetOsVersion();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+      
+      //
       // lcarslog - GET/PUT - Get all log entries from the LCARS log / Create new LCARS log entry
       //
       } else if (methodIsGET && command.equals("lcarslog")) {
@@ -529,6 +537,7 @@ public class APIrest extends NanoHTTPD {
              "+-- GET  /datetime                           - current date and time\n" +
              "+-- GET  /hpattacktime                       - most recent attack time for all honeypots\n" +
              "+-- GET  /logentries                         - number of recorded log entries today\n" +
+             "+-- GET  /osversion                          - version info about LCARS server operating system" +
              "+-- GET  /lcarslog                           - get all log entries from LCARS log\n" +
              "+-- GET  /attacks                            - number of recorded attacks today\n" +
              "+-- GET  /profiles                           - get all profiles\n" +
@@ -609,6 +618,10 @@ public class APIrest extends NanoHTTPD {
 
    private StringBuilder responseGetAttacksCount() {
       return runShellScript("/var/www/html/lcars/scripts/attacksCount.sh");
+   }
+   
+   private StringBuilder responseGetOsVersion() {
+      return runShellScript("osqueryi --json \"select * from os_version\"");
    }
    
    private StringBuilder responseGetLcarsLog() {
