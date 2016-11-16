@@ -545,7 +545,8 @@ public class APIrest extends NanoHTTPD {
              "+-- GET  /datetime                           - current date and time\n" +
              "+-- GET  /hpattacktime                       - most recent attack time for all honeypots\n" +
              "+-- GET  /logentries                         - number of recorded log entries today\n" +
-             "+-- GET  /osversion                          - version info about LCARS server operating system" +
+             "+-- GET  /osversion                          - version info about LCARS server operating system\n" +
+             "+-- GET  /interfacedetails                   - info about LCARS server interfaces\n" +
              "+-- GET  /lcarslog                           - get all log entries from LCARS log\n" +
              "+-- GET  /attacks                            - number of recorded attacks today\n" +
              "+-- GET  /profiles                           - get all profiles\n" +
@@ -634,7 +635,7 @@ public class APIrest extends NanoHTTPD {
    }
    
    private StringBuilder responseGetInterfaceDetails() {
-      return runShellScript("/var/www/html/lcars/scripts/interface_details.sh");
+      return runShellScript("/var/www/html/lcars/scripts/interfacedetails.sh");
    }
    
    private StringBuilder responseGetLcarsLog() {
