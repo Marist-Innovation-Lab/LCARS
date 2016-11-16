@@ -8,7 +8,7 @@ curl -sO http://longtail.it.marist.edu/honey/current-raw-data.gz
 gunzip -f current-raw-data.gz
 
 # Directory to store log files
-log_dir="/var/www/html/lcars/runtime/logs"
+log_dir="/var/www/html/lcars/runtime/logs/longtail"
 
 cp -f current-raw-data $log_dir
 # Find all log entries that match currently known honeypot hostnames, and store them in their own files
@@ -20,6 +20,9 @@ awk '$2 == "erhp" {print}' current-raw-data > $log_dir/erhp.log
 awk '$2 == "erhp2" {print}' current-raw-data > $log_dir/erhp2.log
 awk '$2 == "ecdal2" {print}' current-raw-data > $log_dir/ecdal2.log
 awk '$2 == "cssdn" {print}' current-raw-data > $log_dir/cssdn.log
+
+# Run python script that converts all the new logs to json
+python BR-to-Json.py
 
 # Remove original log file
 rm current-raw-data

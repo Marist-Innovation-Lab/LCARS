@@ -13,13 +13,13 @@ function viewHoneypotLogs() {
 
         if (button === "view") {        
             $("#log-modal").find("h4").text("Today's Log Data for " + type + " Honeypot: " + host);
-
-            $("#log-data").load("/lcars/runtime/logs/"+host.toLowerCase()+".log");
+            $("#log-identifier").html(host.toLowerCase());
+    
+            $("#log-data").load("/lcars/runtime/logs/longtail/"+host.toLowerCase()+".log");
         }
     });
 
 }
-
 
 function viewBlackridgeLogs() {
     $("#blackridge").on("click", "td button", function() {
@@ -33,6 +33,7 @@ function viewBlackridgeLogs() {
 
         if (button === "view") {
             $("#log-modal").find("h4").text(date + " BlackRidge Log Data for: " + host);
+            $("#log-identifier").html(date);
 
             $("#log-data").load("/lcars/runtime/logs/blackridge/" + date);
         }
@@ -41,9 +42,38 @@ function viewBlackridgeLogs() {
 }
 
 
+function viewParsedLogs() {
+    $("#data-view").on("click", function() {
+        var id = $("#log-identifier").text();
+        var parsedFile;
+        var rawFile;
+        
+        // Longtail Log
+        if (id.match(/[A-Za-z]+/g)) {
+            parsedFile = "/lcars/runtime/logs/parsed_json/"+id+".log-LT.json";   
+            rawFile = "/lcars/runtime/logs/longtail/"+id+".log";
+        // BlackRidge Log
+        } else {
+            parsedFile = "/lcars/runtime/logs/parsed_json/"+id+"-BR.json";
+            rawFile = "/lcars/runtime/logs/blackridge/"+id;
+        }
+
+        if ($(this).text() === "View Parsed") {
+            $(this).html("View Raw");
+            $("#log-data").load(parsedFile);
+        }
+        else if ($(this).text() === "View Raw") {
+            $(this).html("View Parsed");
+            $("#log-data").load(rawFile);
+        }
+    });
+}
+
+
 function clearModal() {
     $(".modal").on("hidden.bs.modal", function() {
         $("#log-data").html("");
+        $("#data-view").html("View Parsed");
     });
 }
 
@@ -110,6 +140,7 @@ function switchLogTab() {
 $(document).ready(function() {
     viewHoneypotLogs();
     viewBlackridgeLogs();
+    viewParsedLogs();
     getTimeLastAttacked();
     setLogsLastRefreshedTime();
 
