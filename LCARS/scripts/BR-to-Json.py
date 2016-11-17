@@ -10,8 +10,9 @@ debug = False
 
 # File to Read Path
 #read_path = "read_folder/"
-read_path = "/var/www/html/lcars/runtime/logs/longtail/"
-print_path = "/var/www/html/lcars/runtime/logs/parsed_json/"
+read_paths = ["/var/www/html/lcars/runtime/logs/longtail/", "/var/www/html/lcars/runtime/logs/blackridge/"]
+#print_path = "/var/www/html/lcars/runtime/logs/longtail/parsed_json/"
+
 # Local Database
 #database = "local_dbs/GeoLite2-City.mmdb"
 
@@ -27,7 +28,7 @@ def create_json(regex_code, read_name):
         # File To Read
         file_to_read = read_name
         # File To Print
-        file_to_print = print_path + file_to_read + "-BR.json"
+        file_to_print = print_path + file_to_read + ".json"
         syslog = open(read_path + file_to_read).read()
         syslog = re.findall('(Gateway1.*gwAction="DISCARD)', syslog)
         #syslog = re.findall('(Gateway1.*gwAction="FORWARD)', syslog)
@@ -83,7 +84,7 @@ def create_json(regex_code, read_name):
         # File To Read
         file_to_read = read_name
         # File To Print
-        file_to_print = print_path + file_to_read + "-LT.json"
+        file_to_print = print_path + file_to_read + ".json"
         # Input each individual line of the file into a list to be run again ReGex
         syslog = open(read_path + file_to_read).readlines()
 
@@ -171,14 +172,19 @@ if debug:
 #______________ Main Section______________#
 
 # This Section figures out which Regex To Use
-if os.listdir(read_path) != []:
+for read_path in read_paths:
+ if os.listdir(read_path) != []:
     # Grabs all the files in the folder
     file_list = os.listdir(read_path)
-
+    
+    print_path = read_path + "parsed_json/"
+    
     if debug:
         print(str(file_list))
 
     for i in range(len(file_list)):
+      path = os.path.join(read_path, file_list[i])
+      if os.path.isfile(path):
         with open(read_path + file_list[i], 'r') as f:
             first_line = f.readline()
 
@@ -203,7 +209,7 @@ if os.listdir(read_path) != []:
 
         file_name = create_json(regex_code, read_name)
         #os.rename("read_folder/" + file_name, "finished_parsing/" + file_name)
-else:
+ else:
     print("No files to read...")
 
 # Test Running Function

@@ -50,11 +50,11 @@ function viewParsedLogs() {
         
         // Longtail Log
         if (id.match(/[A-Za-z]+/g)) {
-            parsedFile = "/lcars/runtime/logs/parsed_json/"+id+".log-LT.json";   
+            parsedFile = "/lcars/runtime/logs/longtail/parsed_json/"+id+".log.json";   
             rawFile = "/lcars/runtime/logs/longtail/"+id+".log";
         // BlackRidge Log
         } else {
-            parsedFile = "/lcars/runtime/logs/parsed_json/"+id+"-BR.json";
+            parsedFile = "/lcars/runtime/logs/blackridge/parsed_json/"+id+".json";
             rawFile = "/lcars/runtime/logs/blackridge/"+id;
         }
 
@@ -107,18 +107,27 @@ function getTimeLastAttacked() {
 function setLogsLastRefreshedTime() {
    var date = new Date();
    var mins = date.getMinutes();
-   var hours = date.getHours();
-   
+   var currentHour = date.getHours();
+   var lastHour;
+   var day;
+
+   if (currentHour == 00 && mins < 15) {
+      lastHour = 23;
+      day = "Yesterday";
+   } else {
+      lastHour = currentHour - 1;
+      day = "Today";
+   } 
+
    function refreshed(time) {
-       $("#last-refreshed").html("Last refreshed: Today at " + time);
+       $("#last-refreshed").html("Last refreshed: " + day + " at " + time);
    }
 
    if (mins < 15) {
-      refreshed(hours-1 + ":15:00");
+      refreshed(lastHour + ":15:00");
    } else {
-      refreshed(hours + ":15:00");
+      refreshed(currentHour + ":15:00");
    }
-   console.log("working");
 }
 
 
