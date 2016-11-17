@@ -634,12 +634,12 @@ public class APIrest extends NanoHTTPD {
    
    private StringBuilder responseGetOsVersion() {
       //return runShellScript("osqueryi --json 'select * from os_version'");
-      String[] command = new String[]{"/var/www/html/lcars/scripts/osversion.sh"};
+      String[] command = new String[]{"/var/www/html/lcars/scripts/osquery.sh", "osversion"};
       return runShellScript(command);
    }
    
    private StringBuilder responseGetInterfaceDetails() {
-      String[] command = new String[]{"/var/www/html/lcars/scripts/interfacedetails.sh"};
+      String[] command = new String[]{"/var/www/html/lcars/scripts/osquery.sh", "interfacedetails"};
       return runShellScript(command);
    }
    
