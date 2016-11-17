@@ -618,24 +618,29 @@ public class APIrest extends NanoHTTPD {
    }
    
    private StringBuilder responseGetTimeHPLastAttacked() {
-      return runShellScript("/var/www/html/lcars/scripts/lastAttacked.sh");
+      String[] command = new String[]{"/var/www/html/lcars/scripts/lastAttacked.sh"};
+      return runShellScript(command);
    }
 
    private StringBuilder responseGetLogEntriesCount() {
-      return runShellScript("/var/www/html/lcars/scripts/logCount.sh");
+      String[] command = new String[]{"/var/www/html/lcars/scripts/logCount.sh"};
+      return runShellScript(command);
    }
 
    private StringBuilder responseGetAttacksCount() {
-      return runShellScript("/var/www/html/lcars/scripts/attacksCount.sh");
+      String[] command = new String[]{"/var/www/html/lcars/scripts/attacksCount.sh"};
+      return runShellScript(command);
    }
    
    private StringBuilder responseGetOsVersion() {
       //return runShellScript("osqueryi --json 'select * from os_version'");
-      return runShellScript("/var/www/html/lcars/scripts/osversion.sh");
+      String[] command = new String[]{"/var/www/html/lcars/scripts/osversion.sh"};
+      return runShellScript(command);
    }
    
    private StringBuilder responseGetInterfaceDetails() {
-      return runShellScript("/var/www/html/lcars/scripts/interfacedetails.sh");
+      String[] command = new String[]{"/var/www/html/lcars/scripts/interfacedetails.sh"};
+      return runShellScript(command);
    }
    
    private StringBuilder responseGetLcarsLog() {
@@ -1219,7 +1224,7 @@ public class APIrest extends NanoHTTPD {
     * @param pathToScript
     * @return a string builder of the data received (output of the script should be in JSON format)
     */
-   private StringBuilder runShellScript(String pathToScript) {
+   private StringBuilder runShellScript(String[] pathToScript) {
       StringBuilder sb = new StringBuilder();
 
       String line;
