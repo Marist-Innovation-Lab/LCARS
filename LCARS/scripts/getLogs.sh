@@ -22,7 +22,7 @@ awk '$2 == "ecdal2" {print}' current-raw-data > $log_dir/ecdal2.log
 awk '$2 == "cssdn" {print}' current-raw-data > $log_dir/cssdn.log
 
 # Run python script that converts all the new logs to json
-python BR-to-Json.py
+python /var/www/html/lcars/scripts/BR-to-Json.py
 
 # Remove original log file
 rm current-raw-data

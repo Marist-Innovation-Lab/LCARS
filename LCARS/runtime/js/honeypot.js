@@ -113,13 +113,12 @@ function setLogsLastRefreshedTime() {
        $("#last-refreshed").html("Last refreshed: Today at " + time);
    }
 
-   if (mins < 20) {
-      refreshed(hours + ":00:00");
-   } else if (mins < 40) {
-      refreshed(hours + ":20:00");
+   if (mins < 15) {
+      refreshed(hours-1 + ":15:00");
    } else {
-      refreshed(hours + ":40:00");
+      refreshed(hours + ":15:00");
    }
+   console.log("working");
 }
 
 
@@ -144,8 +143,9 @@ $(document).ready(function() {
     getTimeLastAttacked();
     setLogsLastRefreshedTime();
 
-    setIntervalAdapted(getTimeLastAttacked, 20);
-    setIntervalAdapted(setLogsLastRefreshedTime, 20, 5);
+    // Attempt to call function every hour on the 15 minute but its broken :(
+    setIntervalAdapted(getTimeLastAttacked, 60, 905);
+    setIntervalAdapted(setLogsLastRefreshedTime, 60, 905);
     setIntervalAdapted(refreshLongtailImage, 5, 5);
 
     switchLogTab();
@@ -166,13 +166,12 @@ function setIntervalAdapted(myFunction, minuteInterval, secondsOffset) {
     var interval = minuteInterval * 60;
     // set offset to 0 if none specified
     if (typeof secondsOffset === 'undefined') { secondsOffset = 0; }    
-
     var secondsSinceLastTimerTrigger = currentSeconds % interval;
     var secondsUntilNextTimerTrigger = interval - secondsSinceLastTimerTrigger + secondsOffset;
-
+    
     // If current time is :33 and the interval is 20, timeout needs to be set to run the function once time reaches :40
     // And then call the built in setInterval to execute the function every 20 minutes from this point
-    setTimeout(function() {        
+    setTimeout(function() {
         setInterval(myFunction, interval*1000); // *1000 converts back to milliseconds
         myFunction();
     }, secondsUntilNextTimerTrigger*1000);
