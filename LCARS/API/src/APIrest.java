@@ -273,6 +273,14 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
       
       //
+      // iptables - GET only - Gets information about LCARS system iptables
+      //
+      } else if (methodIsGET && command.equals("iptables")) {
+         sb = responseGetIptables();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+         
+      //
       // lcarslog - GET/PUT - Get all log entries from the LCARS log / Create new LCARS log entry
       //
       } else if (methodIsGET && command.equals("lcarslog")) {
@@ -547,6 +555,7 @@ public class APIrest extends NanoHTTPD {
              "+-- GET  /logentries                         - number of recorded log entries today\n" +
              "+-- GET  /osversion                          - version info about LCARS server operating system\n" +
              "+-- GET  /interfacedetails                   - info about LCARS server interfaces\n" +
+             "+-- GET  /iptables                           - info about LCARS server iptables firewall\n" +
              "+-- GET  /lcarslog                           - get all log entries from LCARS log\n" +
              "+-- GET  /attacks                            - number of recorded attacks today\n" +
              "+-- GET  /profiles                           - get all profiles\n" +
@@ -641,6 +650,11 @@ public class APIrest extends NanoHTTPD {
    private StringBuilder responseGetInterfaceDetails() {
       String[] command = new String[]{"/var/www/html/lcars/scripts/osquery.sh", "interfacedetails"};
       return runShellScript(command);
+   }
+   
+   private StringBuilder responseGetIptables() {
+       String[] command = new String[]{"/var/www/html/lcars/scripts/osquery.sh", "iptables"};
+       return runShellScript(command);
    }
    
    private StringBuilder responseGetLcarsLog() {
