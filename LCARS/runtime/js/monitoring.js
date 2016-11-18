@@ -30,6 +30,23 @@ function populateOsVersion() {
 	);
 }
 
+function populateSystemInfo() {
+	$.getJSON(
+		lcarsAPI + "systeminfo",
+		function(data, status) {
+			if(status === "success") {
+				var divHTML = '<table class="table"><thead><th>System Info</th><th></th></thead>';
+				divHTML += "<tr><td><b>Hostname:</b></td><td>" + data[0].hostname + "</td></tr>";
+				divHTML += "<tr><td><b>CPU:</b></td><td>" + data[0].cpu_brand + " (" + data[0].cpu_physical_cores + " cores)</td></tr>";
+				divHTML += "<tr><td><b>Memory:</b></td><td>" + data[0].physical_memory + " bytes</td></tr>";
+				divHTML += "<tr><td><b>Hardware Info:</b></td><td>" + data[0].hardware_model + " (" + data[0].hardware_vendor + ")</td></tr>";
+				divHTML += "</table>";
+				$("#system-info").html(divHTML);
+			}
+		}
+	);
+}
+
 function populateInterfaceDetails() {
 	$.getJSON(
 		lcarsAPI + "interfacedetails",
@@ -117,5 +134,5 @@ $(document).ready(function () {
 	populateOsVersion();
 	populateInterfaceDetails();
 	populateIptablesInfo();
-	createInterfaceChart();
+	populateSystemInfo();
 });
