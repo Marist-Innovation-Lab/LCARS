@@ -48,8 +48,24 @@ function populateInterfaceDetails() {
 	);
 }
 
+function populateIptablesInfo() {
+	$.getJSON(
+		lcarsAPI + "iptables",
+		function(data, status) {
+			if(status === "success") {
+				var divHTML = '<div><b>Iptables</b></div>' +
+				'<ul><li><b>Total Rules: </b>' + data.length + '</li>' +
+				'<li><b>Total Packets Caught: </b>' + data[0].totalpackets + '</li></ul>';
+
+				$("#iptables-info").html(divHTML);
+			}
+		}
+	);
+}
+
 $(document).ready(function () {
 	populateLcarsLog();
 	populateOsVersion();
 	populateInterfaceDetails();
+	populateIptablesInfo();
 });
