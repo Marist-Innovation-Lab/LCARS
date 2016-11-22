@@ -8,10 +8,16 @@ import datetime
 # Debug Variable
 debug = False
 
+# Move FIle Variable - Whether you want to move parsed files or not
+move_file = False
+
 # File to Read Path
 #read_path = "read_folder/"
 read_paths = ["/var/www/html/lcars/runtime/logs/longtail/", "/var/www/html/lcars/runtime/logs/blackridge/"]
-#print_path = "/var/www/html/lcars/runtime/logs/longtail/parsed_json/"
+
+# File to Store Path
+#json_store_path = "valid_json/"
+parsed_file_path = "finished_parsing/"
 
 # Local Database
 #database = "local_dbs/GeoLite2-City.mmdb"
@@ -23,12 +29,17 @@ if debug:
 # Function to parse the file and gather information
 def create_json(regex_code, read_name):
     #filter_ips = []
+    if not os.path.exists(json_store_path):
+        if debug:
+            print("No folder detected...creating 'valid_json' folder...")
+        os.makedirs(json_store_path)
     date_time = datetime.datetime.today().strftime('%Y-%m-%d-%H%M%S')
+
     if regex_code == "BlackRidge":
         # File To Read
         file_to_read = read_name
         # File To Print
-        file_to_print = print_path + file_to_read + ".json"
+        file_to_print = json_store_path + file_to_read + ".json"
         syslog = open(read_path + file_to_read).read()
         syslog = re.findall('(Gateway1.*gwAction="DISCARD)', syslog)
         #syslog = re.findall('(Gateway1.*gwAction="FORWARD)', syslog)
@@ -73,8 +84,8 @@ def create_json(regex_code, read_name):
 
                 file.writelines(str(atck_profile) + "\n")
 
-                if debug:
-                    print("Printing " + str(list_num+1) + " lines")
+                #if debug:
+                    #print("Printing " + str(list_num+1) + " lines")
 
                 list_num += 1
 
@@ -84,7 +95,7 @@ def create_json(regex_code, read_name):
         # File To Read
         file_to_read = read_name
         # File To Print
-        file_to_print = print_path + file_to_read + ".json"
+        file_to_print = json_store_path + file_to_read + ".json"
         # Input each individual line of the file into a list to be run again ReGex
         syslog = open(read_path + file_to_read).readlines()
 
@@ -117,8 +128,12 @@ def create_json(regex_code, read_name):
                 atck_profile = '{"src": "' + records[0] + '", "username": "' + records[1] + '", "password": "' + records[2] + '"}'
 
                 file.writelines(str(atck_profile) + "\n")
-                if debug:
-                    print("Printing " + str(i+1) + " lines")
+                #if debug:
+                    #print("Printing " + str(i+1) + " lines")
+    else:
+        if debug:
+            print("File is not recognized...skipping file...")
+        return read_name
 
         # Old Write Function - Saving in case we must revert to older method.
         '''with open(file_to_print, "w") as file:
@@ -173,44 +188,59 @@ if debug:
 
 # This Section figures out which Regex To Use
 for read_path in read_paths:
- if os.listdir(read_path) != []:
-    # Grabs all the files in the folder
-    file_list = os.listdir(read_path)
-    
-    print_path = read_path + "parsed_json/"
-    
-    if debug:
-        print(str(file_list))
+    if os.listdir(read_path) != []:
+        # Grabs all the files in the folder
+        file_list = os.listdir(read_path)
 
-    for i in range(len(file_list)):
-      path = os.path.join(read_path, file_list[i])
-      if os.path.isfile(path):
-        with open(read_path + file_list[i], 'r') as f:
-            first_line = f.readline()
-
-        # Grabs file name
-        read_name = str(file_list[i])
+        # File to store parsed JSON
+        json_store_path = read_path + "parsed_json/" 
 
         if debug:
-            print(first_line)
+            print(str(file_list))
 
-        if re.findall('(\d+-\d+-\d+T\d+:\d+:\d+-\d+:\d+\s\w+\s\w+-\d+\[\d+\]:\sIP:\s\d+.\d+.\d+.\d+\sPassLog:\sUsername:\s.*\sPassword:\s.*)', first_line) != []:
+        for i in range(len(file_list)):
+            read_file = os.path.join(read_path, file_list[i])
+            # Verifies that file being read is in fact a file, not a directory
+            if os.path.isfile(read_file):
+                with open(read_path + file_list[i], 'r') as f:
+                    first_line = f.readline()
+
+                # Grabs file name
+                read_name = str(file_list[i])
+
             if debug:
-                print("Longtail messages file...")
+                print(first_line)
 
-            #read_name = str(first_file[i])
-            regex_code = "Longtail"
+            if re.findall('(\d+-\d+-\d+T\d+:\d+:\d+-\d+:\d+\s\w+\s\w+-\d+\[\d+\]:\sIP:\s\d+.\d+.\d+.\d+\sPassLog:\sUsername:\s.*\sPassword:\s.*)', first_line) != []:
+                if debug:
+                    print("Longtail messages file...")
 
-        elif re.findall('(\w+\s\d+\s\d+:\d+:\d+\sGateway1.*")', first_line) != []:
-            if debug:
-                print("BlackRidge syslog file...")
-            #read_name = str(first_file[i])
-            regex_code = "BlackRidge"
+                #read_name = str(first_file[i])
+                regex_code = "Longtail"
 
-        file_name = create_json(regex_code, read_name)
-        #os.rename("read_folder/" + file_name, "finished_parsing/" + file_name)
- else:
-    print("No files to read...")
+            #elif re.findall('(\w+\s\d+\s\d+:\d+:\d+\sGateway1\skernel:\s\[BlackRidge\|Gateway\|\d+.\d+.\d+.\d+\]\sclass="\w+"\scategory=".*"\sctx="bump0"\ssrc="\d+.\d+.\d+.\d+"\ssrcPort="\d+"\sdest="\d+.\d+.\d+.\d+"\sdestPort="\d+"\sidentity="\w+"\sgwAction="\w+"\sgwMode="\w+")', first_line) != []:
+            elif re.findall('(\w+\s\d+\s\d+:\d+:\d+\sGateway1.*")', first_line) != []:              
+                if debug:
+                    print("BlackRidge syslog file...")
+                #read_name = str(first_file[i])
+                regex_code = "BlackRidge"
+
+            else:
+                if debug:
+                    print("File not in correct format to be parsed...")
+                regex_code = ""
+
+            file_name = create_json(regex_code, read_name)
+
+            if move_file:
+                if not os.path.exists(parsed_file_path):
+                    if debug:
+                        print("No folder detected...creating 'finished_parsing' folder...")
+                    os.makedirs(parsed_file_path)
+                os.rename("read_folder/" + file_name, "finished_parsing/" + file_name)
+    else:
+        if debug:
+            print("No files to read...")
 
 # Test Running Function
 #file_name = create_json("Longtail", "current-raw-data")
