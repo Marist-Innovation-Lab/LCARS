@@ -1,5 +1,23 @@
 
-var lcarsAPI = "http://10.10.7.84:8081/"
+var lcarsAPI = "http://10.10.7.84:8081/";
+var currentLog = "";
+var honeypot_settings_html = `<p><b>Settings</b></p>
+Number of axes: 
+<select id="numAxes" onchange="genAxisNameSelectors()">
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+</select>
+<br>
+Axis names:
+<span id="axisNames"></span>
+<br>
+Axis connections:
+<br>
+<span id="connections"></span>
+<br>
+<input type="checkbox" id="linkWeight" checked> Show link weights <br>
+<a type="button" class="btn btn-primary" onclick="makePlot()" data-dismiss="modal">Plot</a>`;
 
 function viewHoneypotLogs() {
     $("#honeypots").on("click", "td button", function() {
@@ -7,7 +25,7 @@ function viewHoneypotLogs() {
         clearModal();        
 
         // Gets the text of the button that was clicked to determine which it was
-        var button = $(this).children("span").attr("title").toLowerCase(); 
+        var button = $(this).children("span").attr("title").toLowerCase();
         var host = $(this).closest("tr").find("td:nth-child(2)").text();
         var type = $(this).closest("tr").find("td:nth-child(3)").text();
 
@@ -15,6 +33,22 @@ function viewHoneypotLogs() {
             $("#log-modal").find("h4").text("Today's Log Data for " + type + " Honeypot: " + host);
 
             $("#log-data").load("/lcars/runtime/logs/"+host.toLowerCase()+".log");
+        }
+
+        if(button === "plot") {
+          $("#log-modal").find("h4").text("Settings for hive plot:");
+          $(".modal-body").html(honeypot_settings_html);
+          $.get("/lcars/runtime/logs/"+host.toLowerCase()+".log", function(x){
+            currentLog = x;
+            console.log(x);
+          });
+          genAxisNameSelectors();
+
+        }
+
+        if(button === "to graph") {
+          $("#log-modal").find("h4").text("Settings for graph:");
+
         }
     });
 
@@ -35,6 +69,16 @@ function viewBlackridgeLogs() {
             $("#log-modal").find("h4").text(date + " BlackRidge Log Data for: " + host);
 
             $("#log-data").load("/lcars/runtime/logs/blackridge/" + date);
+        }
+
+        if(button === "plot") {
+          $("#log-modal").find("h4").text("Settings for hive plot:");
+
+        }
+
+        if(button === "to graph") {
+          $("#log-modal").find("h4").text("Settings for graph:");
+
         }
     });
 
