@@ -35,7 +35,7 @@ function populateSystemInfo() {
 		lcarsAPI + "systeminfo",
 		function(data, status) {
 			if(status === "success") {
-				var divHTML = '<table class="table"><thead><th>System Info</th><th></th></thead>';
+				var divHTML = '<table class="table" style="width:50%;"><thead><th colspan="2">System Info</th></thead>';
 				divHTML += "<tr><td><b>Hostname:</b></td><td>" + data[0].hostname + "</td></tr>";
 				divHTML += "<tr><td><b>CPU:</b></td><td>" + data[0].cpu_brand + " (" + data[0].cpu_physical_cores + " cores)</td></tr>";
 				divHTML += "<tr><td><b>Memory:</b></td><td>" + data[0].physical_memory + " bytes</td></tr>";
@@ -89,9 +89,9 @@ function populateIptablesInfo() {
 		lcarsAPI + "iptables",
 		function(data, status) {
 			if(status === "success") {
-				var divHTML = '<div><b>Iptables</b></div>' +
-				'<ul><li><b>Total Rules: </b>' + data.length + '</li>' +
-				'<li><b>Total Packets Caught: </b>' + data[0].totalpackets + '</li></ul>';
+				var divHTML = '<table class="table" style="width:50%;"><thead><th>Iptables</th><th></th></thead>' +
+				'<tr><td><b>Total Rules: </b></td><td>' + data.length + '</td></tr>' +
+				'<tr><td><b>Packets Caught: </b></td><td>' + data[0].totalpackets + '</td></tr></table>';
 
 				$("#iptables-info").html(divHTML);
 			}
