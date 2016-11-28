@@ -21,6 +21,10 @@
 
     <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="js/monitoring.js"></script>
+
+    <!-- Chart.js -->
+    <script src="../vendors/Chart.js/dist/Chart.min.js"></script>
+
   </head>
 
   <body class="nav-md">
@@ -86,9 +90,6 @@
         <div class="top_nav">
           <div class="nav_menu">
             <nav>
-              <div class="nav toggle pull-left">
-                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
-              </div>
               <div class="pull-right">
                   <h4>
                      System Monitoring &mdash;
@@ -115,11 +116,35 @@
                  </div>
                  <div class="x_content">
                      <div class="bs-example" data-example-id="simple-jumbotron">
-                       <div class="jumbotron">
+                       <div class="jumbotron" style="height: 250px; overflow: auto;">
                          <p id="lcars-log">
                             
                          </p>
                        </div>
+                     </div>
+                 </div>
+               </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+               <div class="x_panel">
+                 <div class="x_title">
+                   <h2>LCARS System</h2>
+                   <div class="clearfix"></div>
+                 </div>
+                 <div class="x_content">
+                     <div id="os-version">
+                     </div>
+                     <br>
+                     <div id="system-info">
+                     </div>
+                     <br>
+                     <div id="interface-details">
+                      
+                     </div>
+                     <br>
+                     <div id="iptables-info">
                      </div>
                  </div>
                </div>

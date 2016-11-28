@@ -31,8 +31,9 @@ function viewHoneypotLogs() {
 
         if (button === "view") {        
             $("#log-modal").find("h4").text("Today's Log Data for " + type + " Honeypot: " + host);
-
-            $("#log-data").load("/lcars/runtime/logs/"+host.toLowerCase()+".log");
+            $("#log-identifier").html(host.toLowerCase());
+    
+            $("#log-data").load("/lcars/runtime/logs/longtail/"+host.toLowerCase()+".log");
         }
 
         if(button === "plot") {
@@ -54,7 +55,6 @@ function viewHoneypotLogs() {
 
 }
 
-
 function viewBlackridgeLogs() {
     $("#blackridge").on("click", "td button", function() {
 
@@ -67,6 +67,7 @@ function viewBlackridgeLogs() {
 
         if (button === "view") {
             $("#log-modal").find("h4").text(date + " BlackRidge Log Data for: " + host);
+            $("#log-identifier").html(date);
 
             $("#log-data").load("/lcars/runtime/logs/blackridge/" + date);
         }
@@ -85,9 +86,38 @@ function viewBlackridgeLogs() {
 }
 
 
+function viewParsedLogs() {
+    $("#data-view").on("click", function() {
+        var id = $("#log-identifier").text();
+        var parsedFile;
+        var rawFile;
+        
+        // Longtail Log
+        if (id.match(/[A-Za-z]+/g)) {
+            parsedFile = "/lcars/runtime/logs/longtail/parsed_json/"+id+".log.json";   
+            rawFile = "/lcars/runtime/logs/longtail/"+id+".log";
+        // BlackRidge Log
+        } else {
+            parsedFile = "/lcars/runtime/logs/blackridge/parsed_json/"+id+".json";
+            rawFile = "/lcars/runtime/logs/blackridge/"+id;
+        }
+
+        if ($(this).text() === "View Parsed") {
+            $(this).html("View Raw");
+            $("#log-data").load(parsedFile);
+        }
+        else if ($(this).text() === "View Raw") {
+            $(this).html("View Parsed");
+            $("#log-data").load(rawFile);
+        }
+    });
+}
+
+
 function clearModal() {
     $(".modal").on("hidden.bs.modal", function() {
         $("#log-data").html("");
+        $("#data-view").html("View Parsed");
     });
 }
 
@@ -121,18 +151,26 @@ function getTimeLastAttacked() {
 function setLogsLastRefreshedTime() {
    var date = new Date();
    var mins = date.getMinutes();
-   var hours = date.getHours();
-   
+   var currentHour = date.getHours();
+   var lastHour;
+   var day;
+
+   if (currentHour == 00 && mins < 15) {
+      lastHour = 23;
+      day = "Yesterday";
+   } else {
+      lastHour = currentHour - 1;
+      day = "Today";
+   } 
+
    function refreshed(time) {
-       $("#last-refreshed").html("Last refreshed: Today at " + time);
+       $("#last-refreshed").html("Last refreshed: " + day + " at " + time);
    }
 
-   if (mins < 20) {
-      refreshed(hours + ":00:00");
-   } else if (mins < 40) {
-      refreshed(hours + ":20:00");
+   if (mins < 15) {
+      refreshed(lastHour + ":15:00");
    } else {
-      refreshed(hours + ":40:00");
+      refreshed(currentHour + ":15:00");
    }
 }
 
@@ -154,11 +192,13 @@ function switchLogTab() {
 $(document).ready(function() {
     viewHoneypotLogs();
     viewBlackridgeLogs();
+    viewParsedLogs();
     getTimeLastAttacked();
     setLogsLastRefreshedTime();
 
-    setIntervalAdapted(getTimeLastAttacked, 20);
-    setIntervalAdapted(setLogsLastRefreshedTime, 20, 5);
+    // Attempt to call function every hour on the 15 minute but its broken :(
+    setIntervalAdapted(getTimeLastAttacked, 60, 905);
+    setIntervalAdapted(setLogsLastRefreshedTime, 60, 905);
     setIntervalAdapted(refreshLongtailImage, 5, 5);
 
     switchLogTab();
@@ -179,13 +219,12 @@ function setIntervalAdapted(myFunction, minuteInterval, secondsOffset) {
     var interval = minuteInterval * 60;
     // set offset to 0 if none specified
     if (typeof secondsOffset === 'undefined') { secondsOffset = 0; }    
-
     var secondsSinceLastTimerTrigger = currentSeconds % interval;
     var secondsUntilNextTimerTrigger = interval - secondsSinceLastTimerTrigger + secondsOffset;
-
+    
     // If current time is :33 and the interval is 20, timeout needs to be set to run the function once time reaches :40
     // And then call the built in setInterval to execute the function every 20 minutes from this point
-    setTimeout(function() {        
+    setTimeout(function() {
         setInterval(myFunction, interval*1000); // *1000 converts back to milliseconds
         myFunction();
     }, secondsUntilNextTimerTrigger*1000);

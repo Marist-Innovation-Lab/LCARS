@@ -257,6 +257,38 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
       
       //
+      // osversion - GET only - Gets the OS version information
+      //
+      } else if (methodIsGET && command.equals("osversion")) {
+         sb = responseGetOsVersion();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+      
+      //
+      // interfacedetails - GET only - Gets information about LCARS system interfaces
+      //
+      } else if (methodIsGET && command.equals("interfacedetails")) {
+         sb = responseGetInterfaceDetails();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+      
+      //
+      // iptables - GET only - Gets information about LCARS system iptables
+      //
+      } else if (methodIsGET && command.equals("iptables")) {
+         sb = responseGetIptables();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+         
+      //
+      // systeminfo - GET only - Gets information about LCARS system
+      //
+      } else if (methodIsGET && command.equals("systeminfo")) {
+         sb = responseGetSystemInfo();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+         
+      //
       // lcarslog - GET/PUT - Get all log entries from the LCARS log / Create new LCARS log entry
       //
       } else if (methodIsGET && command.equals("lcarslog")) {
@@ -529,6 +561,10 @@ public class APIrest extends NanoHTTPD {
              "+-- GET  /datetime                           - current date and time\n" +
              "+-- GET  /hpattacktime                       - most recent attack time for all honeypots\n" +
              "+-- GET  /logentries                         - number of recorded log entries today\n" +
+             "+-- GET  /osversion                          - version info about LCARS server operating system\n" +
+             "+-- GET  /interfacedetails                   - info about LCARS server interfaces\n" +
+             "+-- GET  /iptables                           - info about LCARS server iptables firewall\n" +
+             "+-- GET  /systeminfo                         - general info about LCARS system\n" +
              "+-- GET  /lcarslog                           - get all log entries from LCARS log\n" +
              "+-- GET  /attacks                            - number of recorded attacks today\n" +
              "+-- GET  /profiles                           - get all profiles\n" +
@@ -600,15 +636,39 @@ public class APIrest extends NanoHTTPD {
    }
    
    private StringBuilder responseGetTimeHPLastAttacked() {
-      return runShellScript("/var/www/html/lcars/scripts/lastAttacked.sh");
+      String[] command = new String[]{"/var/www/html/lcars/scripts/lastAttacked.sh"};
+      return runShellScript(command);
    }
 
    private StringBuilder responseGetLogEntriesCount() {
-      return runShellScript("/var/www/html/lcars/scripts/logCount.sh");
+      String[] command = new String[]{"/var/www/html/lcars/scripts/logCount.sh"};
+      return runShellScript(command);
    }
 
    private StringBuilder responseGetAttacksCount() {
-      return runShellScript("/var/www/html/lcars/scripts/attacksCount.sh");
+      String[] command = new String[]{"/var/www/html/lcars/scripts/attacksCount.sh"};
+      return runShellScript(command);
+   }
+   
+   private StringBuilder responseGetOsVersion() {
+      //return runShellScript("osqueryi --json 'select * from os_version'");
+      String[] command = new String[]{"/var/www/html/lcars/scripts/osquery.sh", "osversion"};
+      return runShellScript(command);
+   }
+   
+   private StringBuilder responseGetInterfaceDetails() {
+      String[] command = new String[]{"/var/www/html/lcars/scripts/osquery.sh", "interfacedetails"};
+      return runShellScript(command);
+   }
+   
+   private StringBuilder responseGetIptables() {
+       String[] command = new String[]{"/var/www/html/lcars/scripts/osquery.sh", "iptables"};
+       return runShellScript(command);
+   }
+   
+   private StringBuilder responseGetSystemInfo() {
+       String[] command = new String[]{"/var/www/html/lcars/scripts/osquery.sh", "systeminfo"};
+       return runShellScript(command);
    }
    
    private StringBuilder responseGetLcarsLog() {
@@ -1192,7 +1252,7 @@ public class APIrest extends NanoHTTPD {
     * @param pathToScript
     * @return a string builder of the data received (output of the script should be in JSON format)
     */
-   private StringBuilder runShellScript(String pathToScript) {
+   private StringBuilder runShellScript(String[] pathToScript) {
       StringBuilder sb = new StringBuilder();
 
       String line;
