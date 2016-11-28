@@ -37,8 +37,8 @@ function viewHoneypotLogs() {
         }
 
         if(button === "plot") {
-          $("#log-modal").find("h4").text("Settings for hive plot:");
-          $(".modal-body").html(honeypot_settings_html);
+          $("#plot-modal").find("h4").text("Settings for hive plot:");
+          $("#plot-data").html(honeypot_settings_html);
           $.get("/lcars/runtime/logs/"+host.toLowerCase()+".log", function(x){
             currentLog = x;
             console.log(x);
