@@ -129,18 +129,27 @@ function getTimeLastAttacked() {
        function (data, status) {
           if (status === "success") {
 
-              hpTable = $("#honeypots tr");
-              for (var i = 0; i < data.length; i++) {
-                  hpTable.each( function() {
-                      hpTableHostname = $(this).find("td:nth-child(2)").text();
-                      hpTableLastAttacked = $(this).find("td:nth-child(5)");
-                      hostname = data[i].hostname;
-                      time = data[i].time;
-                      if (hpTableHostname === hostname) {
-                          hpTableLastAttacked.html(time);
-                      }
-                  });
-              }
+              $.each(data, function(i, item) {
+                  var hostname = data[i].hostname;
+                  var loc;
+                  if (hostname.includes("AWS")) {
+                      loc = "AWS Cloud";
+                  } else {
+                      loc = "Marist";
+                  }
+ 
+                  $("#honeypots").append('<tr><th scope="row">' + (i+1) + '</th>'
+                                       + '<td>' + hostname + '</td>'
+                                       + '<td>SSH</td>'
+                                       + '<td>' + loc + '</td>'
+                                       + '<td>' + data[i].time + '</td>'
+                                       + '<td>'
+                                         + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal"><span title="View" class="glyphicon glyphicon-list"></span></button>'
+                                         + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#plot-modal"><span title="Plot" class="fa fa-share-alt"</span></button>'
+                                         + '<button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>'
+                                       + '</td></tr>');
+
+              });
 
           }
        }
