@@ -74,6 +74,17 @@ function updateAttacksCount() {
         });
 }
 
+function updateHoneypotCount() {
+    $.getJSON(
+        lcarsAPI + "hpattacktime",
+        function (data, status) {
+            var count = data.length || 0;
+            $("#honeypot-count").html(count);
+            if ($("#honeypot-count").html() === "") {
+                $("#honeypot-count").html(0);
+            }
+        });
+}
 
 // Update stats on page load
 $(document).ready(function() {
@@ -82,6 +93,7 @@ $(document).ready(function() {
 	updateFirewallCount();
         updateLogEntriesCount();
         updateAttacksCount();
+        updateHoneypotCount();
 
         // Cron job gets new logs every 20 minutes so update this number every 20 minutes
         setIntervalAdapted(updateLogEntriesCount, 20, 5);
