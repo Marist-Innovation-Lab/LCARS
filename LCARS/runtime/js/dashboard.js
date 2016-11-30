@@ -95,8 +95,9 @@ $(document).ready(function() {
         updateAttacksCount();
         updateHoneypotCount();
 
-        // Cron job gets new logs every 20 minutes so update this number every 20 minutes
-        setIntervalAdapted(updateLogEntriesCount, 20, 5);
+        // Cron job gets new honeypot logs every hour on the 15 minute mark so update these numbers then
+        setIntervalAdapted(updateLogEntriesCount, 60, 905);
+        setIntervalAdapted(updateHoneypotCount, 60, 905);
         // Longtail updates this number every 5 minutes so update it here every 5 minutes
         setIntervalAdapted(updateAttacksCount, 5, 5);
 });

@@ -205,7 +205,7 @@ $(document).ready(function() {
     getTimeLastAttacked();
     setLogsLastRefreshedTime();
 
-    // Attempt to call function every hour on the 15 minute but its broken :(
+    // Call functions to refresh logs every hour on the 15 minute (thats when the cron job runs)
     setIntervalAdapted(getTimeLastAttacked, 60, 905);
     setIntervalAdapted(setLogsLastRefreshedTime, 60, 905);
     setIntervalAdapted(refreshLongtailImage, 5, 5);
@@ -223,14 +223,26 @@ $(document).ready(function() {
  * http://stackoverflow.com/questions/28532731/how-to-run-a-javascript-function-every-10-minutes-specifically-on-the-10-minute
  */
 function setIntervalAdapted(myFunction, minuteInterval, secondsOffset) {
-    var currentSeconds = new Date().getTime() / 1000; // / 1000 converts time from milliseconds to seconds
+    var date = new Date();
+    var currentSeconds = (date.getMinutes() * 60) + (date.getSeconds());
     // converts the specified interval to seconds
     var interval = minuteInterval * 60;
+    var secondsSinceLastTimerTrigger;
+    var secondsUntilNextTimerTrigger;
     // set offset to 0 if none specified
-    if (typeof secondsOffset === 'undefined') { secondsOffset = 0; }    
-    var secondsSinceLastTimerTrigger = currentSeconds % interval;
-    var secondsUntilNextTimerTrigger = interval - secondsSinceLastTimerTrigger + secondsOffset;
-    
+    if (typeof secondsOffset === 'undefined') { secondsOffset = 0; }
+
+    if (minuteInterval === 60 && secondsOffset > 0) {
+        if (currentSeconds < secondsOffset) {
+            secondsUntilNextTimerTrigger = secondsOffset - seconds;
+        } else {
+            secondsUntilNextTimerTrigger = (interval - currentSeconds) + secondsOffset;
+        }
+    } else {
+        secondsSinceLastTimerTrigger = currentSeconds % interval;
+        secondsUntilNextTimerTrigger = interval - secondsSinceLastTimerTrigger + secondsOffset;
+    }
+
     // If current time is :33 and the interval is 20, timeout needs to be set to run the function once time reaches :40
     // And then call the built in setInterval to execute the function every 20 minutes from this point
     setTimeout(function() {
