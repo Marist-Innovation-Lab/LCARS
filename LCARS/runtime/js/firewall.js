@@ -150,10 +150,12 @@ function buildAddRequest(target, chain, protocol, address, address2) {
 
 // Sends ajax request to add new rule
 function addNewRule(URL) {
+    // var first = (new Date()).getTime();
     $.ajax({
             url: URL,
             type: 'PUT',
             success: function() {
+                // console.log("Milliseconds for request: " + ((new Date()).getTime() - first));
                 updateLog("Add", URL);
                 resetDropdownSelections();
                 return getFirewallData();
