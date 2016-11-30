@@ -37,8 +37,8 @@ function viewHoneypotLogs() {
         }
 
         if(button === "plot") {
-          $("#log-modal").find("h4").text("Settings for hive plot:");
-          $(".modal-body").html(honeypot_settings_html);
+          $("#plot-modal").find("h4").text("Settings for hive plot:");
+          $("#plot-data").html(honeypot_settings_html);
           $.get("/lcars/runtime/logs/"+host.toLowerCase()+".log", function(x){
             currentLog = x;
             console.log(x);
@@ -122,25 +122,35 @@ function clearModal() {
 }
 
 
-// Get the time each honeypot was last attacked
-function getTimeLastAttacked() {
+// Populate the Longtail HP table with info about each active honeypot, including hostname and time it was last attacked
+function populateHoneypots() {
     $.getJSON(
-       lcarsAPI + "hpattacktime",
+       lcarsAPI + "hpinfo",
        function (data, status) {
           if (status === "success") {
+              $("#honeypots").empty();
 
-              hpTable = $("#honeypots tr");
-              for (var i = 0; i < data.length; i++) {
-                  hpTable.each( function() {
-                      hpTableHostname = $(this).find("td:nth-child(2)").text();
-                      hpTableLastAttacked = $(this).find("td:nth-child(5)");
-                      hostname = data[i].hostname;
-                      time = data[i].time;
-                      if (hpTableHostname === hostname) {
-                          hpTableLastAttacked.html(time);
-                      }
-                  });
-              }
+              $.each(data, function(i, item) {
+                  var hostname = data[i].hostname;
+                  var loc;
+                  if (hostname.includes("AWS")) {
+                      loc = "AWS Cloud";
+                  } else {
+                      loc = "Marist";
+                  }
+ 
+                  $("#honeypots").append('<tr><th scope="row">' + (i+1) + '</th>'
+                                       + '<td>' + hostname + '</td>'
+                                       + '<td>SSH</td>'
+                                       + '<td>' + loc + '</td>'
+                                       + '<td>' + data[i].time + '</td>'
+                                       + '<td>'
+                                         + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal"><span title="View" class="glyphicon glyphicon-list"></span></button>'
+                                         + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#plot-modal"><span title="Plot" class="fa fa-share-alt"</span></button>'
+                                         + '<button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>'
+                                       + '</td></tr>');
+
+              });
 
           }
        }
@@ -190,14 +200,14 @@ function switchLogTab() {
 }
 
 $(document).ready(function() {
+    populateHoneypots();
     viewHoneypotLogs();
     viewBlackridgeLogs();
     viewParsedLogs();
-    getTimeLastAttacked();
     setLogsLastRefreshedTime();
 
-    // Attempt to call function every hour on the 15 minute but its broken :(
-    setIntervalAdapted(getTimeLastAttacked, 60, 905);
+    // Call functions to refresh logs every hour on the 15 minute (thats when the cron job runs)
+    setIntervalAdapted(populateHoneypots, 60, 905);
     setIntervalAdapted(setLogsLastRefreshedTime, 60, 905);
     setIntervalAdapted(refreshLongtailImage, 5, 5);
 
@@ -214,14 +224,26 @@ $(document).ready(function() {
  * http://stackoverflow.com/questions/28532731/how-to-run-a-javascript-function-every-10-minutes-specifically-on-the-10-minute
  */
 function setIntervalAdapted(myFunction, minuteInterval, secondsOffset) {
-    var currentSeconds = new Date().getTime() / 1000; // / 1000 converts time from milliseconds to seconds
+    var date = new Date();
+    var currentSeconds = (date.getMinutes() * 60) + (date.getSeconds());
     // converts the specified interval to seconds
     var interval = minuteInterval * 60;
+    var secondsSinceLastTimerTrigger;
+    var secondsUntilNextTimerTrigger;
     // set offset to 0 if none specified
-    if (typeof secondsOffset === 'undefined') { secondsOffset = 0; }    
-    var secondsSinceLastTimerTrigger = currentSeconds % interval;
-    var secondsUntilNextTimerTrigger = interval - secondsSinceLastTimerTrigger + secondsOffset;
-    
+    if (typeof secondsOffset === 'undefined') { secondsOffset = 0; }
+
+    if (minuteInterval === 60 && secondsOffset > 0) {
+        if (currentSeconds < secondsOffset) {
+            secondsUntilNextTimerTrigger = secondsOffset - seconds;
+        } else {
+            secondsUntilNextTimerTrigger = (interval - currentSeconds) + secondsOffset;
+        }
+    } else {
+        secondsSinceLastTimerTrigger = currentSeconds % interval;
+        secondsUntilNextTimerTrigger = interval - secondsSinceLastTimerTrigger + secondsOffset;
+    }
+
     // If current time is :33 and the interval is 20, timeout needs to be set to run the function once time reaches :40
     // And then call the built in setInterval to execute the function every 20 minutes from this point
     setTimeout(function() {

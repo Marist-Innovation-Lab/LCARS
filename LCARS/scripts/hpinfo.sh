@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-# This script gets the date/time all honeypots were most recently attacked
+# This script returns information about active honeypots including the hostname and the date/time it was most recently attacked
 # Returns an array of JSON objects, hopefully making it easier to handle elsewhere in our code
 #
 
 
 # Directory where all the honeypot logs are stored
-log_dir="/var/www/html/lcars/runtime/logs"
+log_dir="/var/www/html/lcars/runtime/logs/longtail"
 
 # Begin the JSON output array with an opening square bracket
 output="["
