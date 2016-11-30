@@ -76,7 +76,7 @@ function updateAttacksCount() {
 
 function updateHoneypotCount() {
     $.getJSON(
-        lcarsAPI + "hpattacktime",
+        lcarsAPI + "hpinfo",
         function (data, status) {
             var count = data.length || 0;
             $("#honeypot-count").html(count);

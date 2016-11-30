@@ -233,10 +233,10 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
 
       //
-      // hpattacktime - GET only - Gets the most recent attack time for all honeypots
+      // hpattacktime - GET only - Gets infomation about active honeypots including hostname and most recent attack time
       //
-      } else if (methodIsGET && command.equals("hpattacktime")) {
-         sb = responseGetTimeHPLastAttacked();
+      } else if (methodIsGET && command.equals("hpinfo")) {
+         sb = responseGetHPInfo();
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
 
@@ -559,7 +559,7 @@ public class APIrest extends NanoHTTPD {
              "+-- GET  /date                               - current date\n" +             
              "+-- GET  /time                               - current time\n" +
              "+-- GET  /datetime                           - current date and time\n" +
-             "+-- GET  /hpattacktime                       - most recent attack time for all honeypots\n" +
+             "+-- GET  /hpinfo                             - information about all active honeypots\n" +
              "+-- GET  /logentries                         - number of recorded log entries today\n" +
              "+-- GET  /osversion                          - version info about LCARS server operating system\n" +
              "+-- GET  /interfacedetails                   - info about LCARS server interfaces\n" +
@@ -635,8 +635,8 @@ public class APIrest extends NanoHTTPD {
       return sb;
    }
    
-   private StringBuilder responseGetTimeHPLastAttacked() {
-      String[] command = new String[]{"/var/www/html/lcars/scripts/lastAttacked.sh"};
+   private StringBuilder responseGetHPInfo() {
+      String[] command = new String[]{"/var/www/html/lcars/scripts/hpinfo.sh"};
       return runShellScript(command);
    }
 

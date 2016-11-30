@@ -122,12 +122,13 @@ function clearModal() {
 }
 
 
-// Get the time each honeypot was last attacked
-function getTimeLastAttacked() {
+// Populate the Longtail HP table with info about each active honeypot, including hostname and time it was last attacked
+function populateHoneypots() {
     $.getJSON(
-       lcarsAPI + "hpattacktime",
+       lcarsAPI + "hpinfo",
        function (data, status) {
           if (status === "success") {
+              $("#honeypots").empty();
 
               $.each(data, function(i, item) {
                   var hostname = data[i].hostname;
@@ -199,14 +200,14 @@ function switchLogTab() {
 }
 
 $(document).ready(function() {
+    populateHoneypots();
     viewHoneypotLogs();
     viewBlackridgeLogs();
     viewParsedLogs();
-    getTimeLastAttacked();
     setLogsLastRefreshedTime();
 
     // Call functions to refresh logs every hour on the 15 minute (thats when the cron job runs)
-    setIntervalAdapted(getTimeLastAttacked, 60, 905);
+    setIntervalAdapted(populateHoneypots, 60, 905);
     setIntervalAdapted(setLogsLastRefreshedTime, 60, 905);
     setIntervalAdapted(refreshLongtailImage, 5, 5);
 
