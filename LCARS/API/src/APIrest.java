@@ -233,7 +233,7 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
 
       //
-      // hpattacktime - GET only - Gets infomation about active honeypots including hostname and most recent attack time
+      // hpinfo - GET only - Gets infomation about active honeypots including hostname and most recent attack time
       //
       } else if (methodIsGET && command.equals("hpinfo")) {
          sb = responseGetHPInfo();
