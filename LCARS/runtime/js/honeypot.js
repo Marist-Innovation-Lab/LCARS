@@ -39,10 +39,10 @@ function viewHoneypotLogs() {
         if(button === "plot") {
           $("#plot-modal").find("h4").text("Settings for hive plot:");
           $("#plot-data").html(honeypot_settings_html);
-          $.get("/lcars/runtime/logs/"+host.toLowerCase()+".log", function(x){
+          $.get("/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json", function(x){
             currentLog = x;
             console.log(x);
-          });
+          },'html');
           genAxisNameSelectors();
 
         }
@@ -235,7 +235,7 @@ function setIntervalAdapted(myFunction, minuteInterval, secondsOffset) {
 
     if (minuteInterval === 60 && secondsOffset > 0) {
         if (currentSeconds < secondsOffset) {
-            secondsUntilNextTimerTrigger = secondsOffset - seconds;
+            secondsUntilNextTimerTrigger = secondsOffset - currentSeconds;
         } else {
             secondsUntilNextTimerTrigger = (interval - currentSeconds) + secondsOffset;
         }
