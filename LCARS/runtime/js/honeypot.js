@@ -28,6 +28,7 @@ function viewHoneypotLogs() {
         var button = $(this).children("span").attr("title").toLowerCase();
         var host = $(this).closest("tr").find("td:nth-child(2)").text();
         var type = $(this).closest("tr").find("td:nth-child(3)").text();
+        var date = $(this).closest("tr").find("td:nth-child(5)").text();
 
         if (button === "view") {        
             $("#log-modal").find("h4").text("Today's Log Data for " + type + " Honeypot: " + host);
@@ -51,6 +52,36 @@ function viewHoneypotLogs() {
           $("#log-modal").find("h4").text("Settings for graph:");
 
         }
+
+        if (button === "to sql") {
+            var formatDate = date.replace(/ /g, "T");
+            var tableName = host + "_" + formatDate;
+            var columns;
+            var createString = "CREATE TABLE IF NOT EXISTS " + tableName + " ( \n";
+            var insertString = "INSERT INTO " + tableName + " VALUES ( \n";
+
+            $.get("/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json", function(data) {
+                var lines = data.split('\n');
+                // Read the first line and determine the columns to create based on JSON attributes
+                columns = Object.keys(JSON.parse(lines[0]));
+                $.each(columns, function(i, val) { 
+                    var dataVals;
+                    if (i < columns.length-1) { 
+                        createString = createString + "   " + val + " text, \n";
+                    } else {
+                        createString = createString + "   " + val + " text \n);";
+                    }
+                });
+                
+                for (var i = 0; i < lines.length; i++) {
+                    if (lines[i]) {   // Only process lines that are not empty
+                        jsObj = JSON.parse(lines[i]);
+                    }
+                }
+                console.log(createString + "\n" + insertString);              
+
+            }, 'html');
+        }   
     });
 
 }
@@ -148,6 +179,7 @@ function populateHoneypots() {
                                          + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal"><span title="View" class="glyphicon glyphicon-list"></span></button>'
                                          + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#plot-modal"><span title="Plot" class="fa fa-share-alt"</span></button>'
                                          + '<button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>'
+                                         + '<button type="button" class="btn btn-default btn-xs"><span title="To SQL" class="fa fa-database"</span></button>'
                                        + '</td></tr>');
 
               });
