@@ -30,17 +30,20 @@ function viewHoneypotLogs() {
         var type = $(this).closest("tr").find("td:nth-child(3)").text();
         var date = $(this).closest("tr").find("td:nth-child(5)").text();
 
+        var rawLog = "/lcars/runtime/logs/longtail/"+host.toLowerCase()+".log";
+        var parsedLog = "/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json";
+
         if (button === "view") {        
             $("#log-modal").find("h4").text("Today's Log Data for " + type + " Honeypot: " + host);
             $("#log-identifier").html(host.toLowerCase());
     
-            $("#log-data").load("/lcars/runtime/logs/longtail/"+host.toLowerCase()+".log");
+            $("#log-data").load(rawLog);
         }
 
         if(button === "plot") {
           $("#plot-modal").find("h4").text("Settings for hive plot:");
           $("#plot-data").html(honeypot_settings_html);
-          $.get("/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json", function(x){
+          $.get(parsedLog, function(x){
             currentLog = x;
             console.log(x);
           },'html');
@@ -56,9 +59,8 @@ function viewHoneypotLogs() {
         if (button === "to sql") {
             var formatDate = date.replace(/ /g, "T");
             var tableName = host + "_" + formatDate;
-            var fileToConvert = "/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json";
 
-            jsonToSQL(fileToConvert, tableName);
+            jsonToSQL(parsedLog, tableName);
 
         }
 
@@ -76,11 +78,14 @@ function viewBlackridgeLogs() {
         var host = $(this).closest("tr").find("td:nth-child(2)").text();
         var date = $(this).closest("tr").find("select").val();
 
+        var rawLog = "/lcars/runtime/logs/blackridge/" + date;
+        var parsedLog = "/lcars/runtime/logs/blackridge/parsed_json/"+date+".json";
+
         if (button === "view") {
             $("#log-modal").find("h4").text(date + " BlackRidge Log Data for: " + host);
             $("#log-identifier").html(date);
 
-            $("#log-data").load("/lcars/runtime/logs/blackridge/" + date);
+            $("#log-data").load(rawLog);
         }
 
         if(button === "plot") {
@@ -95,9 +100,8 @@ function viewBlackridgeLogs() {
 
         if (button === "to sql") {
             var tableName = host + "_" + date;
-            var fileToConvert = "/lcars/runtime/logs/blackridge/parsed_json/"+date+".json";
 
-            jsonToSQL(fileToConvert, tableName);
+            jsonToSQL(parsedLog, tableName);
 
         }
 
