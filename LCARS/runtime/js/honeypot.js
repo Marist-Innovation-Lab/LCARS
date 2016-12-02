@@ -56,41 +56,12 @@ function viewHoneypotLogs() {
         if (button === "to sql") {
             var formatDate = date.replace(/ /g, "T");
             var tableName = host + "_" + formatDate;
-            var createString = "CREATE TABLE IF NOT EXISTS \"" + tableName + "\" ( \n";
-            var insertString = "INSERT INTO \"" + tableName + "\" VALUES \n";
+            var fileToConvert = "/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json";
 
-            $.get("/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json", function(data) {
-                var lines = data.split('\n');
-                
-                for (var i = 0; i < lines.length; i++) {
-                    if (lines[i]) {   // Only process lines that are not empty
-                        jsObj = JSON.parse(lines[i]);
+            jsonToSQL(fileToConvert, tableName);
 
-                        var valString = "   (";
-                        for (key in jsObj) {
-                            // Read the first line and determine the columns to create based on JSON attributes
-                            if (i === 0) {
-                                createString = createString + "   " + key + " text, \n";
-                            }
+        }
 
-                            value = jsObj[key];
-                            value = value.replace(/'/g, "''");   // Escape single quotes that appear in values
-                            valString = valString + "'" + value + "', ";
-                        }
-
-                        valString = valString.replace(/, $/g, "),\n");
-                        insertString = insertString + valString;
-                    }
-                }
-
-                // Reformat last line of string with appropriate semi-colon endings
-                createString = createString.replace(/, \n$/g, "\n);\n");
-                insertString = insertString.replace(/,\n$/g, ";");
-
-                $("#sql-commands").append(createString + "\n" + insertString);
-
-            }, 'html');
-        }   
     });
 
 }
@@ -151,6 +122,46 @@ function viewParsedLogs() {
             $("#log-data").load(rawFile);
         }
     });
+}
+
+
+// Function to convert parsed JSON log file to SQL 'create table' and 'insert' statements
+function jsonToSQL(logFile, tableName) {
+    var createString = "CREATE TABLE IF NOT EXISTS \"" + tableName + "\" ( \n";
+    var insertString = "INSERT INTO \"" + tableName + "\" VALUES \n";
+
+    $.get(logFile, function(data) {
+        var lines = data.split('\n');
+
+        for (var i = 0; i < lines.length; i++) {
+            if (lines[i]) {   // Only process lines that are not empty
+                jsObj = JSON.parse(lines[i]);
+
+                var valString = "   (";
+                for (key in jsObj) {
+                    // Read the first line and determine the columns to create based on JSON attributes
+                    if (i === 0) {
+                        createString = createString + "   " + key + " text, \n";
+                    }
+
+                    value = jsObj[key];
+                    value = value.replace(/'/g, "''");   // Escape single quotes that appear in values
+                    valString = valString + "'" + value + "', ";
+                }
+
+                valString = valString.replace(/, $/g, "),\n");
+                insertString = insertString + valString;
+            }
+        }
+
+        // Reformat last line of string with appropriate semi-colon endings
+        createString = createString.replace(/, \n$/g, "\n);\n");
+        insertString = insertString.replace(/,\n$/g, ";");
+
+        $("#sql-commands").append(createString + "\n" + insertString);
+
+    }, 'html'); 
+
 }
 
 
