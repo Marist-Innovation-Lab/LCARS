@@ -92,6 +92,15 @@ function viewBlackridgeLogs() {
           $("#log-modal").find("h4").text("Settings for graph:");
 
         }
+
+        if (button === "to sql") {
+            var tableName = host + "_" + date;
+            var fileToConvert = "/lcars/runtime/logs/blackridge/parsed_json/"+date+".json";
+
+            jsonToSQL(fileToConvert, tableName);
+
+        }
+
     });
 
 }
