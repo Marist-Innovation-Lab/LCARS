@@ -1,3 +1,4 @@
+
 <html>
   <head>
     <title>Hive Plot
@@ -6,7 +7,7 @@
   <style>
     .link {
       fill: none;
-      stroke-width: .5px;
+      stroke-width: 3px;
       stroke: grey;
     }
     .axis, .node {
@@ -24,6 +25,7 @@
     }
   </style>
   <body>
+<p id="info" style="height: 25px"></p>
     <script src="./js/d3_hiveplots/d3.v3.min.js">
     </script>
     <script src="./js/d3_hiveplots/hive.js">
@@ -34,10 +36,9 @@
       var nodes;
       var svg;
       var nodeMaps = {};
-      var jsonLine;
       var formData;
       var linkWeightMap = new Map();
-      var info = window.parent.document.getElementById("info");
+      var info = document.getElementById("info");
       // Generates SVG hive plot based on incoming data.
       // The incoming data is a Map with the following format:
       //    A key "axisConnections" with an array of JSON objects detailing which axis should link to which other (e.g. {"source":"sourceAxis","dest":"destAxis"})
@@ -53,9 +54,7 @@
 
         // Grab form data from parent frame.
         var logData = window.opener.currentLog;
-        var data = logData.value.trim();
-        var lines = data.split("\n");
-        
+        var lines = logData.trim().split("\n");
         // Sets up nodes and links for hive plot.
         // Example JSON: {"src": "1.9.157.132", "src_port": "11155", "dest": "148.100.49.187", "dest_port": "23"}
         // Each line of JSON creates up to 4 different nodes, and up to 3 different links.
@@ -69,6 +68,7 @@
           maxY = 1;
         }
 
+        // Sets up what data goes on what axis. JSON data is placed on an axis corresponding to its key.
         for (var i = 0; i < lines.length; i++){ // For each line of JSON
           jsonLine = JSON.parse(lines[i]);
           // Add to corresponding maps based on data
@@ -97,8 +97,6 @@
         // Group all the node maps into one array to pass to d3 code
         nodes = [];
 
-        console.log(formData.get("axisConnections"));
-
         // Populate nodes array
         formData.get("axisNames").forEach(function(d){
           genNodes(nodeMaps[d]);
@@ -110,8 +108,9 @@
         // console.log(JSON.stringify(links, null, 4));
         // console.log(nodes);
         // console.log(linkWeightMap);
+        // console.log(formData.get("axisConnections"));
 
-        // D3.js code for rendering plot begins here
+        // d3.js code for rendering plot begins here
         var width = 1000,
             height = 800,
             innerRadius = 40,
@@ -148,7 +147,7 @@
           .attr("x1", radius.range()[0])
           .attr("x2", radius.range()[1]);
 
-        var showWeights = window.parent.document.getElementById("linkWeight");
+        var showWeights = window.opener.document.getElementById("linkWeight");
 
         if(showWeights.checked){
           if(getHighestWeight > 7){

@@ -21,6 +21,7 @@
 
     <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="js/honeypot.js"></script>
+    <script src="js/d3_hiveplots/d3.v3.min.js"></script>
   </head>
 
   <body class="nav-md">
@@ -313,7 +314,28 @@
                    </div>
                  </div>
                </div>
-               <!-- /Modal pop-up for VIEW buttons -->
+               <!-- /Modal pop-up for PLOT buttons -->
+               <!-- Modal pop-up for GRAPH buttons -->
+               <div id="graph-modal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+                 <div class="modal-dialog modal-lg">
+                   <div class="modal-content">
+   
+                     <div class="modal-header">
+                       <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                       </button>
+                       <h4 class="modal-title"></h4><span id="log-identifier" class="sr-only"></span>
+                     </div>
+                     <div class="modal-body" style="height: 400px; overflow:auto;">
+                       <p id="graph-data">
+                       </p>
+                     </div>
+                     <div class="modal-footer">
+                       <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+               <!-- /Modal pop-up for GRAPH buttons -->
             <!--
             <div class="col-md-3 col-sm-3 col-xs-12">
                <div class="x_panel">

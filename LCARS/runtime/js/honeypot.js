@@ -1,23 +1,7 @@
 
 var lcarsAPI = "http://10.10.7.84:8081/";
+var gstarAddress = "http://10.10.7.84/gstarstudio"
 var currentLog = "";
-var honeypot_settings_html = `<p><b>Settings</b></p>
-Number of axes: 
-<select id="numAxes" onchange="genAxisNameSelectors()">
-  <option value="2">2</option>
-  <option value="3">3</option>
-  <option value="4">4</option>
-</select>
-<br>
-Axis names:
-<span id="axisNames"></span>
-<br>
-Axis connections:
-<br>
-<span id="connections"></span>
-<br>
-<input type="checkbox" id="linkWeight" checked> Show link weights <br>
-<a type="button" class="btn btn-primary" onclick="makePlot()" data-dismiss="modal">Plot</a>`;
 
 function viewHoneypotLogs() {
     $("#honeypots").on("click", "td button", function() {
@@ -37,22 +21,25 @@ function viewHoneypotLogs() {
         }
 
         if(button === "plot") {
-          $("#plot-modal").find("h4").text("Settings for hive plot:");
-          $("#plot-data").html(honeypot_settings_html);
-          $.get("/lcars/runtime/logs/"+host.toLowerCase()+".log", function(x){
+          $.get("/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json", function(x){
             currentLog = x;
-            console.log(x);
-          });
-          genAxisNameSelectors();
+          },'html');
 
+          // $("#plot-modal").find("h4").text("Settings for hive plot:");
+          // $("#plot-data").html(hiveplot_settings_html);
+          // genAxisNameSelectors();
         }
 
         if(button === "to graph") {
-          $("#log-modal").find("h4").text("Settings for graph:");
+          $.get("/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json", function(x){
+            makeGraph(x);
+          },'html');
 
+          // $("#graph-modal").find("h4").text("Settings for graph:");
+          // $("#graph-data").html(graph_settings_html);
+          // genAxisNameSelectors();
         }
     });
-
 }
 
 function viewBlackridgeLogs() {
@@ -73,16 +60,25 @@ function viewBlackridgeLogs() {
         }
 
         if(button === "plot") {
-          $("#log-modal").find("h4").text("Settings for hive plot:");
+          $.get("/lcars/runtime/logs/blackridge/parsed_json/"+host.toLowerCase()+".log.json", function(x){
+            currentLog = x;
+          },'html');
 
+          // $("#plot-modal").find("h4").text("Settings for hive plot:");
+          // $("#plot-data").html(hiveplot_settings_html);
+          // genAxisNameSelectors();
         }
 
         if(button === "to graph") {
-          $("#log-modal").find("h4").text("Settings for graph:");
+          $.get("/lcars/runtime/logs/blackridge/parsed_json/"+host.toLowerCase()+".log.json", function(x){
+            currentLog = x;
+          },'html');
 
+          // $("#graph-modal").find("h4").text("Settings for graph:");
+          // $("#graph-data").html(graph_settings_html);
+          // genAxisNameSelectors();
         }
     });
-
 }
 
 
@@ -230,3 +226,36 @@ function setIntervalAdapted(myFunction, minuteInterval, secondsOffset) {
     }, secondsUntilNextTimerTrigger*1000);
 }
 
+// Creates gstar plot based on log data
+function makeGraph(data){
+    // var gstarWnd = window.open(gstarAddress);
+    // var gstarTextArea = gstarWnd.document.getElementById("ace_content");
+    var output = document.getElementById("logDataOutput");
+    var lines = data.split("\n");
+    var dataKeys = JSON.parse(lines[0]).keys();
+    var jsonLine;
+    var colorScale = d3.scale.category10()
+    var colors = {};
+
+    dataKeys.forEach(function(key){
+      colors[key] = colorScale();
+    });
+    console.log(colors)
+
+    output.innerHTML = "";
+    output.innerHTML = output.innerHTML + "new graph<br>";
+
+    for (var i = 0; i < lines.length; i++){
+      jsonLine = JSON.parse(lines[i]);
+      dataKeys.forEach(function(key){
+        output.innerHTML = output.innerHTML + "add vertex " + jsonLine[key] + " with attributes(color=" + colors[key] + ")" + "<br>";
+      });
+    }
+
+    for (var i = 0; i < lines.length; i++) {
+      jsonLine = JSON.parse(lines[i]);
+      for (var j = 0; j < dataKeys.length - 1; j++){
+        output.innerHTML = output.innerHTML + "add edge " + jsonLine[dataKeys[j]] + " - " + jsonLine[dataKeys[j + 1]] + "<br>";
+      }
+    }
+}
