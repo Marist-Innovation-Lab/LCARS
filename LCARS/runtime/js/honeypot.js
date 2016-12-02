@@ -56,8 +56,8 @@ function viewHoneypotLogs() {
         if (button === "to sql") {
             var formatDate = date.replace(/ /g, "T");
             var tableName = host + "_" + formatDate;
-            var createString = "CREATE TABLE IF NOT EXISTS " + tableName + " ( \n";
-            var insertString = "INSERT INTO " + tableName + " VALUES \n";
+            var createString = "CREATE TABLE IF NOT EXISTS \"" + tableName + "\" ( \n";
+            var insertString = "INSERT INTO \"" + tableName + "\" VALUES \n";
 
             $.get("/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json", function(data) {
                 var lines = data.split('\n');
