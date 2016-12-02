@@ -340,7 +340,7 @@ function makeGraph(data){
     // var gstarTextArea = gstarWnd.document.getElementById("ace_content");
     var output = document.getElementById("logDataOutput");
     var lines = data.split("\n");
-    var dataKeys = JSON.parse(lines[0]).keys();
+    var dataKeys = Object.keys(JSON.parse(lines[0]));
     var jsonLine;
     var colorScale = d3.scale.category10()
     var colors = {};
@@ -348,7 +348,6 @@ function makeGraph(data){
     dataKeys.forEach(function(key){
       colors[key] = colorScale();
     });
-    console.log(colors)
 
     output.innerHTML = "";
     output.innerHTML = output.innerHTML + "new graph<br>";
