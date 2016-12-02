@@ -171,10 +171,29 @@ function jsonToSQL(logFile, tableName) {
         createString = createString.replace(/, \n$/g, "\n);\n");
         insertString = insertString.replace(/,\n$/g, ";");
 
-        $("#sql-commands").append(createString + "\n" + insertString);
+        // Append the createString and insertString statements to the textbox
+        // jQuery append() function doesn't work as expected with textareas, so val() is used
+        var currentSQLText = $("#sql-commands").val();
+        $("#sql-commands").val(currentSQLText + createString + "\n" + insertString + "\n\n");
 
     }, 'html'); 
 
+}
+
+
+// Clears out SQL Commands text area if clear button is clicked
+function clearSQLCommands() {
+    $("#clear-sql-commands").on("click", function() {
+        $("#sql-commands").val("");
+    });
+}
+
+
+// Clears out G* Commands text area if clear button is clicked
+function clearGstarCommands() {
+    $("#clear-gstar-commands").on("click", function() {
+        $("#logDataOutput").val("");
+    });
 }
 
 
@@ -269,6 +288,8 @@ $(document).ready(function() {
     viewHoneypotLogs();
     viewBlackridgeLogs();
     viewParsedLogs();
+    clearSQLCommands();
+    clearGstarCommands();
     setLogsLastRefreshedTime();
 
     // Call functions to refresh logs every hour on the 15 minute (thats when the cron job runs)
