@@ -134,6 +134,26 @@ function viewParsedLogs() {
 }
 
 
+// Launch G* Studio in a new tab and populate the editor panes with commands from LCARS
+function launchGstar() {
+    // Get textarea values for G* commands and SQL Commands
+    var gstarCommands = $("#logDataOutput").val();
+    var sqlCommands = $("#sql-commands").val();
+
+    // Launch G* Studio in a new tab
+    var gstarWindow = window.open("/gstarstudio", "_blank");
+    gstarWindow.focus();
+
+    // On page load, populate the graph and database editors with their respective data
+    gstarWindow.onload = function() {
+        var graphEditor = gstarWindow.document.getElementById("text-editor");
+        var dbEditor = gstarWindow.document.getElementById("database-editor");
+        graphEditor.innerHTML = gstarCommands;
+        dbEditor.innerHTML = sqlCommands;
+    }
+}
+
+
 // Function to convert parsed JSON log file to SQL 'create table' and 'insert' statements
 function jsonToSQL(logFile, tableName) {
     var createString = "CREATE TABLE IF NOT EXISTS \"" + tableName + "\" ( \n";
