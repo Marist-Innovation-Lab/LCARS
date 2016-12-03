@@ -145,7 +145,7 @@ function launchGstar() {
     gstarWindow.focus();
 
     // On page load, populate the graph and database editors with their respective data
-    $(gstarWindow).bind("load", function() {    
+    $(gstarWindow).on("load", function() {
         var graphEditor = gstarWindow.document.getElementById("text-editor");
         var dbEditor = gstarWindow.document.getElementById("database-editor");
         graphEditor.innerHTML = gstarCommands;
