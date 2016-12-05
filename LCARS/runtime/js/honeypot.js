@@ -253,8 +253,8 @@ function populateHoneypots() {
                                        + '<td>' + data[i].time + '</td>'
                                        + '<td>'
                                          + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal"><span title="View" class="glyphicon glyphicon-list"></span></button>'
-                                         + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#plot-modal"><span title="Plot" class="fa fa-share-alt"</span></button>'
-                                         + '<button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>'
+                                         + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#plot-modal"><span title="Plot" class="fa fa-line-chart"</span></button>'
+                                         + '<button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-share-alt"</span></button>'
                                          + '<button type="button" class="btn btn-default btn-xs"><span title="To SQL" class="fa fa-database"</span></button>'
                                        + '</td></tr>');
 
