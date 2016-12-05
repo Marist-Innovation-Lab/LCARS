@@ -170,6 +170,7 @@ function jsonToSQL(logFile, tableName) {
                 for (key in jsObj) {
                     // Read the first line and determine the columns to create based on JSON attributes
                     if (i === 0) {
+                        pkString = pkString + key + ", ";
                         createString = createString + "   " + key + " text, \n";
                     }
 
@@ -179,12 +180,18 @@ function jsonToSQL(logFile, tableName) {
                 }
 
                 valString = valString.replace(/, $/g, "),\n");
-                insertString = insertString + valString;
+                // Only include unique entries, so check if the insert string already contains this data,
+                // and if it doesn't, add it.
+                if (!insertString.includes(valString)) {
+                    insertString = insertString + valString;
+                }
             }
         }
 
+        // Append primary key string to create string
+        createString = createString + pkString;
         // Reformat last line of string with appropriate semi-colon endings
-        createString = createString.replace(/, \n$/g, "\n);\n");
+        createString = createString.replace(/, $/g, ")\n);\n");
         insertString = insertString.replace(/,\n$/g, ";");
 
         // Append the createString and insertString statements to the textbox
