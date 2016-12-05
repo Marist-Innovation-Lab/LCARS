@@ -157,6 +157,7 @@ function launchGstar() {
 // Function to convert parsed JSON log file to SQL 'create table' and 'insert' statements
 function jsonToSQL(logFile, tableName) {
     var createString = "CREATE TABLE IF NOT EXISTS \"" + tableName + "\" ( \n";
+    var pkString = "  primary key(";
     var insertString = "INSERT INTO \"" + tableName + "\" VALUES \n";
 
     $.get(logFile, function(data) {
