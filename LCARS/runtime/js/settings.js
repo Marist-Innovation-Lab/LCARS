@@ -19,6 +19,41 @@ function genConnections(x){
 	}
 }
 
+function makePrebakedPlot(data){
+	var formData = new Map();
+	var lines = data.split("\n");
+    var dataKeys = Object.keys(JSON.parse(lines[0]));
+    var names = [];
+    dataKeys.forEach(function(key){
+    	names.push(key);
+    });
+
+   	while (names.length > 4){
+   		names.pop();
+   	}
+
+    formData.set("axisNames", names);
+
+    var connections = [];
+
+    for(var i = 0; i < names.length - 1; i++){
+    	var source = names[i];
+    	var target = names[i + 1];
+    	var connectionObject = {
+			"source": source,
+			"target": target
+		};
+		connections.push(connectionObject);
+    }
+
+    formData.set("axisConnections", connections);
+	// Open new window, and create hive plot
+	var wnd = window.open("./hiveplot.html");
+	wnd.addEventListener('load', function(){
+		wnd.spawnPlot(formData);	
+	});
+}
+
 function makePlot(){
 	// Send form options to create hiveplot
 	var formData = new Map();
@@ -47,7 +82,7 @@ function makePlot(){
 	var wnd = window.open("./hiveplot.html");
 	wnd.addEventListener('load', function(){
 		wnd.spawnPlot(formData);	
-	})
+	});
 	
 	// document.getElementById("hiveFrame").contentWindow.spawnPlot(pressed, formData);
 

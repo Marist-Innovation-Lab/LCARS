@@ -70,6 +70,7 @@
 
         // Sets up what data goes on what axis. JSON data is placed on an axis corresponding to its key.
         for (var i = 0; i < lines.length; i++){ // For each line of JSON
+          if(!lines[i]){continue;}
           jsonLine = JSON.parse(lines[i]);
           // Add to corresponding maps based on data
           formData.get("axisNames").forEach(function(axisName){ // For each axis
@@ -147,7 +148,7 @@
           .attr("x1", radius.range()[0])
           .attr("x2", radius.range()[1]);
 
-        var showWeights = window.opener.document.getElementById("linkWeight");
+        var showWeights = window.opener.linkWeight;
 
         if(showWeights.checked){
           if(getHighestWeight > 7){

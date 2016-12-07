@@ -3,6 +3,7 @@
 var lcarsAPI = "http://10.10.7.84:8081/";
 var gstarAddress = "http://10.10.7.84/gstarstudio"
 var currentLog = "";
+var linkWeight = false;
 
 function viewHoneypotLogs() {
     $("#honeypots").on("click", "td button", function() {
@@ -28,6 +29,7 @@ function viewHoneypotLogs() {
         if(button === "plot") {
           $.get("/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json", function(x){
             currentLog = x;
+            makePrebakedPlot(x);
           },'html');
 
           // $("#plot-modal").find("h4").text("Settings for hive plot:");
@@ -37,7 +39,7 @@ function viewHoneypotLogs() {
 
         if(button === "to graph") {
           $.get("/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json", function(x){
-            makeGraph(x);
+            makePrebakedGraph(x);
           },'html');
 
           // $("#graph-modal").find("h4").text("Settings for graph:");
@@ -78,7 +80,7 @@ function viewBlackridgeLogs() {
 
         if(button === "plot") {
           $.get("/lcars/runtime/logs/blackridge/parsed_json/"+host.toLowerCase()+".log.json", function(x){
-            currentLog = x;
+            makePrebakedPlot(x);
           },'html');
 
           // $("#plot-modal").find("h4").text("Settings for hive plot:");
@@ -88,7 +90,7 @@ function viewBlackridgeLogs() {
 
         if(button === "to graph") {
           $.get("/lcars/runtime/logs/blackridge/parsed_json/"+host.toLowerCase()+".log.json", function(x){
-            currentLog = x;
+            makePrebakedGraph(x);
           },'html');
 
           // $("#graph-modal").find("h4").text("Settings for graph:");
@@ -253,7 +255,7 @@ function populateHoneypots() {
                                        + '<td>' + data[i].time + '</td>'
                                        + '<td>'
                                          + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal"><span title="View" class="glyphicon glyphicon-list"></span></button>'
-                                         + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#plot-modal"><span title="Plot" class="fa fa-line-chart"</span></button>'
+                                         + '<button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-line-chart"</span></button>'
                                          + '<button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-share-alt"</span></button>'
                                          + '<button type="button" class="btn btn-default btn-xs"><span title="To SQL" class="fa fa-database"</span></button>'
                                        + '</td></tr>');
@@ -363,7 +365,7 @@ function setIntervalAdapted(myFunction, minuteInterval, secondsOffset) {
 }
 
 // Creates gstar plot based on log data
-function makeGraph(data){
+function makePrebackedGraph(data){
     // var gstarWnd = window.open(gstarAddress);
     // var gstarTextArea = gstarWnd.document.getElementById("ace_content");
     var output = document.getElementById("logDataOutput");
@@ -373,6 +375,7 @@ function makeGraph(data){
     var colorChoices = ["red","orange","cyan","blue","yellow","green","purple","pink","brown","grey"];
     var colors = {};
 
+    // Assign colors to key types
     dataKeys.forEach(function(key){
       colors[key] = colorChoices.pop();
     });
@@ -401,10 +404,81 @@ function makeGraph(data){
     for (var i = 0; i < lines.length; i++) {
       if(!lines[i]){continue;}
       jsonLine = JSON.parse(lines[i]);
-      for (var j = 0; j < dataKeys.length; j++){
+      for (var j = 0; j < dataKeys.length - 1; j++){
         result = result + "add edge " + jsonLine[dataKeys[j]] + " - " + jsonLine[dataKeys[j + 1]] + "\n";
       }
     }
     
     output.innerHTML = output.innerHTML + result;
+}
+
+function makePrebakedPlot(data){
+  var formData = new Map();
+  var lines = data.split("\n");
+    var dataKeys = Object.keys(JSON.parse(lines[0]));
+    var names = [];
+    dataKeys.forEach(function(key){
+      names.push(key);
+    });
+
+    while (names.length > 4){
+      names.pop();
+    }
+
+    formData.set("axisNames", names);
+
+    var connections = [];
+
+    for(var i = 0; i < names.length - 1; i++){
+      var source = names[i];
+      var target = names[i + 1];
+      var connectionObject = {
+      "source": source,
+      "target": target
+    };
+    connections.push(connectionObject);
+    }
+
+    formData.set("axisConnections", connections);
+  // Open new window, and create hive plot
+  var wnd = window.open("./hiveplot.html");
+  wnd.addEventListener('load', function(){
+    wnd.spawnPlot(formData);  
+  });
+}
+
+function makePlot(){
+  // Send form options to create hiveplot
+  var formData = new Map();
+  // Get axis names, and put into Map
+  var axisNames = document.getElementsByClassName("axisName");
+  var names = [];
+  Array.prototype.forEach.call(axisNames,function(d){
+    names.push(d.value.trim());
+  });
+  formData.set("axisNames", names);
+  // Get axis connections, and put into Map
+  var connections = [];
+
+  for(var i = 0; i < document.getElementsByClassName("axisName").length - 1; i++){
+    var source = document.getElementById("connection" + i + "source").value.trim();
+    var target = document.getElementById("connection" + i + "target").value.trim();
+    var connectionObject = {
+      "source": source,
+      "target": target
+    };
+    connections.push(connectionObject);
+  }
+
+  formData.set("axisConnections", connections);
+  // Open new window, and create hive plot
+  var wnd = window.open("../hiveplot.html");
+  wnd.addEventListener('load', function(){
+    wnd.spawnPlot(formData);  
+  });
+  
+  // document.getElementById("hiveFrame").contentWindow.spawnPlot(pressed, formData);
+
+  // Debugging printouts
+  // console.log(formData);
 }
