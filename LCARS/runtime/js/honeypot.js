@@ -27,7 +27,7 @@ function viewHoneypotLogs() {
         }
 
         if(button === "plot") {
-          $.get("/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json", function(x){
+          $.get(parsedLog, function(x){
             currentLog = x;
             makePrebakedPlot(x);
           },'html');
@@ -38,7 +38,7 @@ function viewHoneypotLogs() {
         }
 
         if(button === "to graph") {
-          $.get("/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json", function(x){
+          $.get(parsedLog, function(x){
             makePrebakedGraph(x);
           },'html');
 
@@ -79,7 +79,7 @@ function viewBlackridgeLogs() {
         }
 
         if(button === "plot") {
-          $.get("/lcars/runtime/logs/blackridge/parsed_json/"+host.toLowerCase()+".log.json", function(x){
+          $.get(parsedLog, function(x){
             currentLog = x;
             makePrebakedPlot(x);
           },'html');
@@ -90,7 +90,7 @@ function viewBlackridgeLogs() {
         }
 
         if(button === "to graph") {
-          $.get("/lcars/runtime/logs/blackridge/parsed_json/"+host.toLowerCase()+".log.json", function(x){
+          $.get(parsedLog, function(x){
             makePrebakedGraph(x);
           },'html');
 
@@ -168,7 +168,7 @@ function jsonToSQL(logFile, tableName) {
 
         for (var i = 0; i < lines.length; i++) {
             if (lines[i]) {   // Only process lines that are not empty
-                jsObj = JSON.parse(lines[i]);
+                var jsObj = JSON.parse(lines[i]);
 
                 var valString = "   (";
                 for (key in jsObj) {
@@ -178,7 +178,7 @@ function jsonToSQL(logFile, tableName) {
                         createString = createString + "   " + key + " text, \n";
                     }
 
-                    value = jsObj[key];
+                    var value = jsObj[key];
                     value = value.replace(/'/g, "''");   // Escape single quotes that appear in values
                     valString = valString + "'" + value + "', ";
                 }
@@ -254,12 +254,15 @@ function populateHoneypots() {
                                        + '<td>SSH</td>'
                                        + '<td>' + loc + '</td>'
                                        + '<td>' + data[i].time + '</td>'
-                                       + '<td>'
-                                         + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal"><span title="View" class="glyphicon glyphicon-list"></span></button>'
-                                         + '<button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-line-chart"</span></button>'
-                                         + '<button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-share-alt"</span></button>'
-                                         + '<button type="button" class="btn btn-default btn-xs"><span title="To SQL" class="fa fa-database"</span></button>'
-                                       + '</td></tr>');
+                                       + '<td>' 
+                                         + Number(data[i].logCount).toLocaleString()
+                                         + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal" style="float:right; margin-right:25%;"><span title="View" class="glyphicon glyphicon-list"></span></button></td>'
+                                       + '<td><div class="input-group">'
+                                         + '<div style="padding-right:5px"><input class="form-control input-xs" type="text" placeholder="Sample Size" size=1></input></div>'
+                                         + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="Plot" class="fa fa-line-chart"</span></button></div>'
+                                         + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To Graph" class="fa fa-share-alt"</span></button></div>'
+                                         + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To SQL" class="fa fa-database"</span></button></div>'
+                                       + '</div></td></tr>');
 
               });
 

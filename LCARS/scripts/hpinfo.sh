@@ -16,8 +16,9 @@ for log_file in $log_dir/*.log; do
    # Change time format so its consistent with other time formatting in LCARS
    formatted_time=`date -d "$time" +'%Y-%m-%d %H:%M:%S'`
    hostname=`awk 'END{print $2}' $log_file`
+   logCount=`wc -l < $log_file`
    # Append JSON object to the output array
-   output+='{"hostname":"'$hostname'", "time":"'$formatted_time'"}, '
+   output+='{"hostname":"'$hostname'", "time":"'$formatted_time'", "logCount":"'$logCount'"}, '
 done
 
 # Prints final output, replacing the ", " after the final JSON object with a closing square bracket
