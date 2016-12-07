@@ -80,6 +80,7 @@ function viewBlackridgeLogs() {
 
         if(button === "plot") {
           $.get("/lcars/runtime/logs/blackridge/parsed_json/"+host.toLowerCase()+".log.json", function(x){
+            currentLog = x;
             makePrebakedPlot(x);
           },'html');
 
@@ -365,7 +366,7 @@ function setIntervalAdapted(myFunction, minuteInterval, secondsOffset) {
 }
 
 // Creates gstar plot based on log data
-function makePrebackedGraph(data){
+function makePrebakedGraph(data){
     // var gstarWnd = window.open(gstarAddress);
     // var gstarTextArea = gstarWnd.document.getElementById("ace_content");
     var output = document.getElementById("logDataOutput");
