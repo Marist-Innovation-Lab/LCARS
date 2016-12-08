@@ -15,6 +15,10 @@ function viewHoneypotLogs() {
         var host = $(this).closest("tr").find("td:nth-child(2)").text();
         var type = $(this).closest("tr").find("td:nth-child(3)").text();
         var date = $(this).closest("tr").find("td:nth-child(5)").text();
+        var logCount = $(this).closest("tr").find("td:nth-child(6)").text();
+            logCount = (+logCount.replace(',', ''));   // Remove the comma and cast to a Number
+        var sampleBox = $(this).closest("tr").find("input");
+        var sampleSize = sampleBox.val();
 
         var rawLog = "/lcars/runtime/logs/longtail/"+host.toLowerCase()+".log";
         var parsedLog = "/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json";
@@ -26,37 +30,56 @@ function viewHoneypotLogs() {
             $("#log-data").load(rawLog);
         }
 
-        if(button === "plot") {
-          $.get(parsedLog, function(x){
-            currentLog = x;
-            makePrebakedPlot(x);
-          },'html');
+        if ( (sampleSize > logCount) || (sampleSize < 0) ) {
+            sampleBox.css("border", "1.5px solid red");
+        } 
+        else {
 
-          // $("#plot-modal").find("h4").text("Settings for hive plot:");
-          // $("#plot-data").html(hiveplot_settings_html);
-          // genAxisNameSelectors();
-        }
+            if(button === "plot") {
+                $.get(parsedLog, function(x){
+                    currentLog = x;
+                    makePrebakedPlot(x);
+                },'html');
 
-        if(button === "to graph") {
-          $.get(parsedLog, function(x){
-            makePrebakedGraph(x);
-          },'html');
+                // $("#plot-modal").find("h4").text("Settings for hive plot:");
+                // $("#plot-data").html(hiveplot_settings_html);
+                // genAxisNameSelectors();
+            }
 
-          // $("#graph-modal").find("h4").text("Settings for graph:");
-          // $("#graph-data").html(graph_settings_html);
-          // genAxisNameSelectors();
-        }
+            if(button === "to graph") {
+                $.get(parsedLog, function(x){
+                    makePrebakedGraph(x);
+                },'html');
 
-        if (button === "to sql") {
-            var formatDate = date.replace(/ /g, "T");
-            var tableName = host + "_" + formatDate;
+                // $("#graph-modal").find("h4").text("Settings for graph:");
+                // $("#graph-data").html(graph_settings_html);
+                // genAxisNameSelectors();
+            }
 
-            jsonToSQL(parsedLog, tableName);
- 
+            if (button === "to sql") {
+                sampleBox.removeAttr("style");
+
+                var formatDate = date.replace(/ /g, "T");
+                var tableName = host + "_" + formatDate;
+
+                $.get(parsedLog, function(logData) {
+                    var dataToAnalyze;
+                    if (!sampleSize) {
+                        dataToAnalyze = logData;
+                    } else {
+                        dataToAnalyze = getRandomSample(logData, sampleSize);
+                    }
+
+                    jsonToSQL(dataToAnalyze, tableName);
+
+                }, 'html');
+            }
+
         }
 
     });
 }
+
 
 function viewBlackridgeLogs() {
     $("#blackridge").on("click", "td button", function() {
@@ -102,7 +125,9 @@ function viewBlackridgeLogs() {
         if (button === "to sql") {
             var tableName = host + "_" + date;
 
-            jsonToSQL(parsedLog, tableName);
+            $.get(parsedLog, function(logData) {
+                jsonToSQL(logData, tableName);
+            }, 'html');
 
         }
 
@@ -157,54 +182,85 @@ function launchGstar() {
 }
 
 
+// Function to get a random sample of log data
+function getRandomSample(data, sampleSize) {
+
+    var fullData = data.split('\n');
+    var dataSize = fullData.length - 1;
+
+    var randomLineSelection = [];
+    for (var i = 0; i < sampleSize; i ++) {
+        var randomLine = Math.floor(Math.random() * dataSize);
+
+        function check(line) {
+            if (randomLineSelection.indexOf(randomLine) > -1) {
+                randomLine = Math.floor(Math.random() * dataSize);
+                check(randomLine);
+            } else {
+                randomLineSelection.push(line);
+            }
+        }
+
+        check(randomLine);
+    }
+
+    var sample = "";
+    for (var i = 0; i < fullData.length; i++) {
+        if (randomLineSelection.indexOf(i) > -1) {
+            sample = sample + fullData[i] + "\n";
+        }
+    }
+
+    return sample; 
+
+}
+
+
 // Function to convert parsed JSON log file to SQL 'create table' and 'insert' statements
-function jsonToSQL(logFile, tableName) {
+function jsonToSQL(data, tableName) {
     var createString = "CREATE TABLE IF NOT EXISTS \"" + tableName + "\" ( \n";
     var pkString = "  primary key(";
     var insertString = "INSERT INTO \"" + tableName + "\" VALUES \n";
 
-    $.get(logFile, function(data) {
-        var lines = data.split('\n');
+    var lines = data.split('\n');
 
-        for (var i = 0; i < lines.length; i++) {
-            if (lines[i]) {   // Only process lines that are not empty
-                var jsObj = JSON.parse(lines[i]);
+    for (var i = 0; i < lines.length; i++) {
+        if (lines[i]) {   // Only process lines that are not empty
+            var jsObj = JSON.parse(lines[i]);
 
-                var valString = "   (";
-                for (key in jsObj) {
-                    // Read the first line and determine the columns to create based on JSON attributes
-                    if (i === 0) {
-                        pkString = pkString + key + ", ";
-                        createString = createString + "   " + key + " text, \n";
-                    }
-
-                    var value = jsObj[key];
-                    value = value.replace(/'/g, "''");   // Escape single quotes that appear in values
-                    valString = valString + "'" + value + "', ";
+            var valString = "   (";
+            for (key in jsObj) {
+                // Read the first line and determine the columns to create based on JSON attributes
+                if (i === 0) {
+                    pkString = pkString + key + ", ";
+                    createString = createString + "   " + key + " text, \n";
                 }
 
-                valString = valString.replace(/, $/g, "),\n");
-                // Only include unique entries, so check if the insert string already contains this data,
-                // and if it doesn't, add it.
-                if (!insertString.includes(valString)) {
-                    insertString = insertString + valString;
-                }
+                var value = jsObj[key];
+                value = value.replace(/'/g, "''");   // Escape single quotes that appear in values
+                valString = valString + "'" + value + "', ";
+            }
+
+            valString = valString.replace(/, $/g, "),\n");
+            // Only include unique entries, so check if the insert string already contains this data,
+            // and if it doesn't, add it.
+            if (!insertString.includes(valString)) {
+                insertString = insertString + valString;
             }
         }
+    }
 
-        // Append primary key string to create string
-        createString = createString + pkString;
-        // Reformat last line of string with appropriate semi-colon endings
-        createString = createString.replace(/, $/g, ")\n);\n");
-        insertString = insertString.replace(/,\n$/g, ";");
- 
-        // Append the createString and insertString statements to the textbox
-        // jQuery append() function doesn't work as expected with textareas, so val() is used
-        var currentSQLText = $("#sql-commands").val();
-        $("#sql-commands").val(currentSQLText + createString + "\n" + insertString + "\n\n");
+    // Append primary key string to create string
+    createString = createString + pkString;
+    // Reformat last line of string with appropriate semi-colon endings
+    createString = createString.replace(/, $/g, ")\n);\n");
+    insertString = insertString.replace(/,\n$/g, ";");
 
-    }, 'html'); 
- 
+    // Append the createString and insertString statements to the textbox
+    // jQuery append() function doesn't work as expected with textareas, so val() is used
+    var currentSQLText = $("#sql-commands").val();
+    $("#sql-commands").val(currentSQLText + createString + "\n" + insertString + "\n\n");
+
 }
 
 
