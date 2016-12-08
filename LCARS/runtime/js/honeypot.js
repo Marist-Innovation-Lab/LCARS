@@ -19,6 +19,7 @@ function viewHoneypotLogs() {
             logCount = (+logCount.replace(',', ''));   // Remove the comma and cast to a Number
         var sampleBox = $(this).closest("tr").find("input");
         var sampleSize = sampleBox.val();
+            sampleSize = (+sampleSize.replace(',',''));
 
         var rawLog = "/lcars/runtime/logs/longtail/"+host.toLowerCase()+".log";
         var parsedLog = "/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json";
@@ -30,50 +31,46 @@ function viewHoneypotLogs() {
             $("#log-data").load(rawLog);
         }
 
-        if ( (sampleSize > logCount) || (sampleSize < 0) ) {
+        else if ( (sampleSize > logCount) || (sampleSize < 0) ) {
             sampleBox.css("border", "1.5px solid red");
         } 
+        
         else {
+            sampleBox.removeAttr("style");
 
-            if(button === "plot") {
-                $.get(parsedLog, function(x){
-                    currentLog = x;
-                    makePrebakedPlot(x);
-                },'html');
+            $.get(parsedLog, function(logData) {
+                var dataToAnalyze;
+                if (!sampleSize) {
+                    dataToAnalyze = logData;
+                } else {
+                    dataToAnalyze = getRandomSample(logData, sampleSize);
+                }
 
-                // $("#plot-modal").find("h4").text("Settings for hive plot:");
-                // $("#plot-data").html(hiveplot_settings_html);
-                // genAxisNameSelectors();
-            }
+                if (button === "plot") {
+                    //currentLog = x;
+                    makePrebakedPlot(dataToAnalyze);
 
-            if(button === "to graph") {
-                $.get(parsedLog, function(x){
-                    makePrebakedGraph(x);
-                },'html');
+                    // $("#plot-modal").find("h4").text("Settings for hive plot:");
+                    // $("#plot-data").html(hiveplot_settings_html);
+                    // genAxisNameSelectors();
+                }
 
-                // $("#graph-modal").find("h4").text("Settings for graph:");
-                // $("#graph-data").html(graph_settings_html);
-                // genAxisNameSelectors();
-            }
+                if (button === "to graph") {
+                    makePrebakedGraph(dataToAnalyze);
 
-            if (button === "to sql") {
-                sampleBox.removeAttr("style");
+                    // $("#graph-modal").find("h4").text("Settings for graph:");
+                    // $("#graph-data").html(graph_settings_html);
+                    // genAxisNameSelectors();
+                }
 
-                var formatDate = date.replace(/ /g, "T");
-                var tableName = host + "_" + formatDate;
-
-                $.get(parsedLog, function(logData) {
-                    var dataToAnalyze;
-                    if (!sampleSize) {
-                        dataToAnalyze = logData;
-                    } else {
-                        dataToAnalyze = getRandomSample(logData, sampleSize);
-                    }
+                if (button === "to sql") {
+                    var formatDate = date.replace(/ /g, "T");
+                    var tableName = host + "_" + formatDate;
 
                     jsonToSQL(dataToAnalyze, tableName);
+                }
 
-                }, 'html');
-            }
+            }, 'html');
 
         }
 
