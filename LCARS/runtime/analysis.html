@@ -143,6 +143,7 @@
                             <th>Hostname</th>
                             <th>Location</th>
                             <th>Date</th>
+                            <th>Log Count</th>
                             <th>Analyze</th>
                           </tr>
                         </thead>
@@ -151,7 +152,7 @@
                             <th scope="row">1</th>
                             <td>Gateway1</td>
                             <td>Marist</td>
-                            <td><select>
+                            <td><select id="br-date-selector">
                               <option>2016-09-10</option>
                               <option>2016-09-09</option>
                               <option>2016-09-08</option>
@@ -164,11 +165,14 @@
                               <option>2016-09-01</option>
                               <option>2016-08-31</option>
                             </select></td>
-                            <td>
-                              <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal"><span title="View" class="glyphicon glyphicon-list"></span></button>
-                              <button type="button" class="btn btn-default btn-xs"><span title="Plot" class="fa fa-line-chart"</span></button>
-                              <button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-share-alt"</span></button>
-                              <button type="button" class="btn btn-default btn-xs"><span title="To SQL" class="fa fa-database"</span></button>
+                            <td><span id="br-log-count">988</span>
+                              <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal" style="float:right; margin-right:25%;"><span title="View" class="glyphicon glyphicon-list"></span></button>
+                            </td>
+                            <td><div class="input-group">
+                              <div style="padding-right:5px"><input class="form-control input-xs" type="text" placeholder="Sample Size" size=1></input></div>
+                              <div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="Plot" class="fa fa-line-chart"</span></button></div>
+                              <div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To Graph" class="fa fa-share-alt"</span></button></div>
+                              <div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To SQL" class="fa fa-database"</span></button></div>
                             </td>
                           </tr> 
                         </tbody>
@@ -249,7 +253,7 @@
           <!-- row 2 -->
           <div class="row">
             
-            <div class="col-sm-6 col-md-6 col-lg-6">
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
               <div class="x_panel" style="height: 725px;">
                 <div class="x_title">
                   <h2>Hive Plot Analytics</h2>
@@ -258,7 +262,7 @@
               </div>
             </div>
 
-            <div class="col-sm-6 col-md-6 col-lg-6">
+            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
               <div class="x_panel">
                 <div class="x_title">
                   <h2>Graph and SQL Analytics</h2>

@@ -24,7 +24,7 @@ function viewHoneypotLogs() {
         var rawLog = "/lcars/runtime/logs/longtail/"+host.toLowerCase()+".log";
         var parsedLog = "/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json";
 
-        if (button === "view") { 
+        if (button === "view") {
             $("#log-modal").find("h4").text("Today's Log Data for " + type + " Honeypot: " + host);
             $("#log-identifier").html(host.toLowerCase());
  
@@ -40,7 +40,7 @@ function viewHoneypotLogs() {
 
             $.get(parsedLog, function(logData) {
                 var dataToAnalyze;
-                if (!sampleSize) {
+                if (!sampleSize || sampleSize === logCount) {
                     dataToAnalyze = logData;
                 } else {
                     dataToAnalyze = getRandomSample(logData, sampleSize);
@@ -87,6 +87,11 @@ function viewBlackridgeLogs() {
         var button = $(this).children("span").attr("title").toLowerCase();
         var host = $(this).closest("tr").find("td:nth-child(2)").text();
         var date = $(this).closest("tr").find("select").val();
+        var logCount = $(this).closest("tr").find("td span").text();
+            logCount = (+logCount.replace(',', ''));   // Remove the comma and cast to a Number
+        var sampleBox = $(this).closest("tr").find("input");
+        var sampleSize = sampleBox.val();
+            sampleSize = (+sampleSize.replace(',',''));
 
         var rawLog = "/lcars/runtime/logs/blackridge/" + date;
         var parsedLog = "/lcars/runtime/logs/blackridge/parsed_json/"+date+".json";
@@ -98,36 +103,49 @@ function viewBlackridgeLogs() {
             $("#log-data").load(rawLog);
         }
 
-        if(button === "plot") {
-          $.get(parsedLog, function(x){
-            currentLog = x;
-            makePrebakedPlot(x);
-          },'html');
-
-          // $("#plot-modal").find("h4").text("Settings for hive plot:");
-          // $("#plot-data").html(hiveplot_settings_html);
-          // genAxisNameSelectors();
+        else if ( (sampleSize > logCount) || (sampleSize < 0) ) {
+            sampleBox.css("border", "1.5px solid red");
         }
 
-        if(button === "to graph") {
-          $.get(parsedLog, function(x){
-            makePrebakedGraph(x);
-          },'html');
-
-          // $("#graph-modal").find("h4").text("Settings for graph:");
-          // $("#graph-data").html(graph_settings_html);
-          // genAxisNameSelectors();
-        }
-
-        if (button === "to sql") {
-            var tableName = host + "_" + date;
+        else {
+            sampleBox.removeAttr("style");
 
             $.get(parsedLog, function(logData) {
-                jsonToSQL(logData, tableName);
+                var dataToAnalyze;
+                if (!sampleSize || sampleSize === logCount) {
+                    dataToAnalyze = logData;
+                } else {
+                    dataToAnalyze = getRandomSample(logData, sampleSize);
+                }
+
+                if (button === "plot") {
+                    currentLog = dataToAnalyze;
+                    makePrebakedPlot(dataToAnalyze);
+
+                   // $("#plot-modal").find("h4").text("Settings for hive plot:");
+                   // $("#plot-data").html(hiveplot_settings_html);
+                   // genAxisNameSelectors();
+                }
+
+                if (button === "to graph") {
+                    makePrebakedGraph(dataToAnalyze);
+
+                    // $("#graph-modal").find("h4").text("Settings for graph:");
+                    // $("#graph-data").html(graph_settings_html);
+                    // genAxisNameSelectors();
+                }
+
+                if (button === "to sql") {
+                    var tableName = host + "_" + date;
+
+                    jsonToSQL(dataToAnalyze, tableName);
+
+                }
+
             }, 'html');
 
         }
-
+ 
     });
 }
 
@@ -155,6 +173,54 @@ function viewParsedLogs() {
         else if ($(this).text() === "View Raw") {
             $(this).html("View Parsed");
             $("#log-data").load(rawFile);
+        }
+    });
+}
+
+
+// Function to change the log count number for BlackRidge logs when the date changes
+// This is all statically set for now until we get live BlackRidge logs
+function blackridgeLogCount() {
+    $("#br-date-selector").on("change", function() {
+        var count = $("#br-log-count");
+
+        switch ($(this).val()) {
+            case "2016-09-10":
+                count.text("988");
+                console.log("why");
+                break;
+            case "2016-09-09":
+                count.text("1,279");
+                break;
+            case "2016-09-08":
+                count.text("3,586");
+                break;
+            case "2016-09-07":
+                count.text("1,338");
+                break;
+            case "2016-09-06":
+                count.text("1,386");
+                break;
+            case "2016-09-05":
+                count.text("1,597");
+                break;
+            case "2016-09-04":
+                count.text("1,654");
+                break;
+            case "2016-09-03":
+                count.text("1,570");
+                break;
+            case "2016-09-02":
+                count.text("1,870");
+                break;
+            case "2016-09-01":
+                count.text("1,689");
+                break;
+            case "2016-08-31":
+                count.text("1,052");
+                break;
+            default:
+                count.text("");
         }
     });
 }
@@ -371,6 +437,7 @@ $(document).ready(function() {
     viewHoneypotLogs();
     viewBlackridgeLogs();
     viewParsedLogs();
+    blackridgeLogCount();
     clearSQLCommands();
     clearGstarCommands();
     setLogsLastRefreshedTime();
