@@ -20,10 +20,34 @@
     <link href="css/custom.css" rel="stylesheet">
 
     <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <!-- Hive plot imports -->
     <script src="js/honeypot.js"></script>
     <script src="js/d3_hiveplots/d3.v3.min.js"></script>
+    <script src="js/d3_hiveplots/hiveplot.js"></script>
   </head>
-
+  <style>
+  /*Hive plots styling*/
+      .link {
+        fill: none;
+        stroke-width: 3px;
+        stroke: grey;
+      }
+      .axis, .node {
+        stroke: #000;
+        stroke-width: 1.5px;
+      }
+      .link.active {
+        stroke: green;
+        stroke-width: 2px;
+        stroke-opacity: 1;
+      }
+      .node.active {
+        stroke: green;
+        stroke-width: 3px;
+      }
+  </style>
+  <script src="./js/d3_hiveplots/d3.v3.min.js"></script>
+  <script src="./js/d3_hiveplots/hive.js"></script>
   <body class="nav-md">
     <div class="container body">
       <div class="main_container">
@@ -258,6 +282,9 @@
                 <div class="x_title">
                   <h2>Hive Plot Analytics</h2>
                   <div class="clearfix"></div>
+                </div>
+                <div id="hiveplot">
+                  <p id="info" style="height: 25px"></p>
                 </div>
               </div>
             </div>

@@ -542,36 +542,39 @@ function makePrebakedGraph(data){
 function makePrebakedPlot(data){
   var formData = new Map();
   var lines = data.split("\n");
-    var dataKeys = Object.keys(JSON.parse(lines[0]));
-    var names = [];
-    dataKeys.forEach(function(key){
-      names.push(key);
-    });
-
-    while (names.length > 4){
-      names.pop();
-    }
-
-    formData.set("axisNames", names);
-
-    var connections = [];
-
-    for(var i = 0; i < names.length - 1; i++){
-      var source = names[i];
-      var target = names[i + 1];
-      var connectionObject = {
-      "source": source,
-      "target": target
-    };
-    connections.push(connectionObject);
-    }
-
-    formData.set("axisConnections", connections);
-  // Open new window, and create hive plot
-  var wnd = window.open("./hiveplot.html");
-  wnd.addEventListener('load', function(){
-    wnd.spawnPlot(formData);  
+  var dataKeys = Object.keys(JSON.parse(lines[0]));
+  var names = [];
+  dataKeys.forEach(function(key){
+    names.push(key);
   });
+
+  while (names.length > 4){
+    names.pop();
+  }
+
+  formData.set("axisNames", names);
+
+  var connections = [];
+
+  for(var i = 0; i < names.length - 1; i++){
+    var source = names[i];
+    var target = names[i + 1];
+    var connectionObject = {
+    "source": source,
+    "target": target
+  };
+  connections.push(connectionObject);
+  }
+
+  formData.set("axisConnections", connections);
+  // Open new window, and create hive plot
+  // var wnd = window.open("./hiveplot.html");
+  // wnd.addEventListener('load', function(){
+  //   wnd.spawnPlot(formData);  
+  // });
+
+  // Display hive plot in div
+  spawnPlot(formData);
 }
 
 function makePlot(){
@@ -599,10 +602,13 @@ function makePlot(){
 
   formData.set("axisConnections", connections);
   // Open new window, and create hive plot
-  var wnd = window.open("../hiveplot.html");
-  wnd.addEventListener('load', function(){
-    wnd.spawnPlot(formData);  
-  });
+  // var wnd = window.open("../hiveplot.html");
+  // wnd.addEventListener('load', function(){
+  //   wnd.spawnPlot(formData);  
+  // });
+
+  // Display hive plot in div
+  spawnPlot(formData);
   
   // document.getElementById("hiveFrame").contentWindow.spawnPlot(pressed, formData);
 
