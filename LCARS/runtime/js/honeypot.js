@@ -499,6 +499,8 @@ function makePrebakedGraph(data){
     var colorChoices = ["red","orange","cyan","blue","yellow","green","purple","pink","brown","grey"];
     var colors = {};
     var result = "new graph\n";
+    var vertexStr = "";
+    var edgeStr = "";
 
     // Assign colors to key types
     dataKeys.forEach(function(key){
@@ -519,7 +521,12 @@ function makePrebakedGraph(data){
       if(!lines[i]){continue;}
       jsonLine = JSON.parse(lines[i]);
       dataKeys.forEach(function(key){
-        result = result + "add vertex " + jsonLine[key] + " with attributes(color=" + colors[key] + ")" + "\n";
+        var val = generateValue(jsonLine, key);
+        var str = "add vertex " + val + " with attributes(color=" + colors[key] + ")" + "\n";
+        // Only add new 'add vertex' statement to current string of statements if it doesn't already exist
+        if (!vertexStr.includes(str)) {
+          vertexStr = vertexStr + str;
+        }
         // result = result.replace(regex, replacer);
       });
     }
@@ -530,10 +537,30 @@ function makePrebakedGraph(data){
       if(!lines[i]){continue;}
       jsonLine = JSON.parse(lines[i]);
       for (var j = 0; j < dataKeys.length - 1; j++){
-        result = result + "add edge " + jsonLine[dataKeys[j]] + " - " + jsonLine[dataKeys[j + 1]] + "\n";
+        var val1 = generateValue(jsonLine, dataKeys[j]);
+        var val2 = generateValue(jsonLine, dataKeys[j+1]);
+        var str = "add edge " + val1 + " - " + val2 + "\n";
+        // Only add new 'add edge' statement to current string of statements if it doesn't already exist
+        if (!edgeStr.includes(str)) {
+          edgeStr = edgeStr + str;
+        }
       }
     }
 
+    // Appends the first letter of the key to the data value
+    // Ex: Changes a password of '123' to 'p_123'
+    // If the key contains an underscore, it also appends the first letter after the underscore
+    function generateValue(data, key) {
+      var value;
+      if (key.indexOf("_") > -1) {
+        value = key.charAt(0) + key.charAt(key.indexOf("_") + 1) + "_" + data[key];
+      } else {
+        value = key.charAt(0) + "_" + data[key];
+      }
+      return value;
+    }
+
+    result = result + vertexStr + edgeStr;
     //output.innerHTML = output.innerHTML + result;
     var currentGstarText = $("#logDataOutput").val();
     $("#logDataOutput").val(currentGstarText + result + "\n\n");

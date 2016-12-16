@@ -125,7 +125,7 @@ def create_json(regex_code, read_name):
 
             for i in range(len(syslog_info)):
                 records = list(syslog_info[i][0])
-                password = records[2].replace('"', 'DOUBLEQUOTE').replace('-', 'DASH')
+                password = records[2].replace('"', 'DOUBLEQUOTE').replace('-', 'DASH').replace(',', 'COMMA')
                 atck_profile = '{"src": "' + records[0] + '", "username": "' + records[1] + '", "password": "' + password + '"}'
 
                 file.writelines(str(atck_profile) + "\n")
