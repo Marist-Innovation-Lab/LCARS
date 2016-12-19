@@ -101,12 +101,12 @@ function spawnPlot(formData) {
 
   var scaleLinks = d3.scale.linear().domain([1, getHighestWeight()]).range([1,7]);
 
-  svg = d3.select(".hiveplot").append("svg")
+  svg = d3.select("#hiveplot").append("svg")
   .attr("width", width)
   .attr("height", height)
   .attr("id","svgElement")
-  .append("g")
-  .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+  .append("g");
+  // .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
   svg.selectAll(".axis")
     .data(angleDomain) // change alongside angle
