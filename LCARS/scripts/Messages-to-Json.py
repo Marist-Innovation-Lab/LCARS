@@ -103,7 +103,7 @@ def create_json(regex_code, read_name):
         syslog_info = []
         # Each isolated line is run against the ReGex, without interference from other lines before and after
         for i in syslog:
-            syslog_info.append(re.findall('IP:\s(\d+.\d+.\d+.\d+)\sPass.*:\sUsername:\s(.*)\sPassword:\s(.*)', i))
+            syslog_info.append(re.findall('IP:\s(\d+.\d+.\d+.\d+)\s.*Log:\sUsername:\s(.*)\sPassword:\s(.*)', i))
 
         # Old ReGex - Saving in case we must revert to older method.
         '''syslog_abnormal = re.findall('IP:\s(\d+.\d+.\d+.\d+)\sPass.*:\sUsername:\s(.*)\sPassword:\s(\s+)', syslog)
