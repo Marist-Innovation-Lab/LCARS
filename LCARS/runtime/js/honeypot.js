@@ -46,6 +46,10 @@ function viewHoneypotLogs() {
                     dataToAnalyze = getRandomSample(logData, sampleSize);
                 }
 
+                if (button === "custom") {
+
+                }
+
                 if (button === "plot") {
                     currentLog = dataToAnalyze;
                     makePrebakedPlot(dataToAnalyze);
@@ -116,6 +120,10 @@ function viewBlackridgeLogs() {
                     dataToAnalyze = logData;
                 } else {
                     dataToAnalyze = getRandomSample(logData, sampleSize);
+                }
+
+                if (button === "custom") {
+
                 }
 
                 if (button === "plot") {
@@ -378,6 +386,7 @@ function populateHoneypots() {
                                          + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal" style="float:right; margin-right:25%;"><span title="View" class="glyphicon glyphicon-list"></span></button></td>'
                                        + '<td><div class="input-group">'
                                          + '<div style="padding-right:5px"><input class="form-control input-xs" type="text" placeholder="Sample Size" size=1></input></div>'
+                                         + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="Custom" class="fa fa-gear"</span></button></div>'
                                          + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="Plot" class="fa fa-line-chart"</span></button></div>'
                                          + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To Graph" class="fa fa-share-alt"</span></button></div>'
                                          + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To SQL" class="fa fa-database"</span></button></div>'
