@@ -8,6 +8,7 @@ var formData;
 var linkWeightMap = new Map();
 var info;
 var firstRun = true;
+
 window.onload = function(){info = document.getElementById("info");};
 
 // Generates SVG hive plot based on incoming data.
@@ -109,11 +110,12 @@ function spawnPlot(formData) {
     angleDomain.push(name);
   });
 
-  //var angle = d3.scale.ordinal().domain(angleDomain).rangePoints([-Math.PI / 2, Math.PI / 2]), change d3.range() in axis creation alongside this
+  // var angle = d3.scale.ordinal().domain(angleDomain).range([0, majorAngle - minorAngle, majorAngle + minorAngle, 2 * majorAngle]);
 
-  var angle = d3.scale.ordinal().domain(angleDomain).range([0, majorAngle - minorAngle, majorAngle + minorAngle, 2 * majorAngle]); // change d3.range() in axis creation alongside this
-      radius = d3.scale.linear().range([innerRadius + 50, outerRadius - 50]);
+  var angle = d3.scale.ordinal().domain(angleDomain).range([0, Math.PI / 4, Math.PI / 2, 3 * Math.PI / 4]),
+      radius = d3.scale.linear().range([innerRadius + 50, outerRadius - 50]),
       color = d3.scale.ordinal().domain(angleDomain).range(["orange", "red", "teal", "blue"]);
+
       colorFunc = color; // Give color function global scope
 
   var scaleLinks = d3.scale.linear().domain([1, getHighestWeight()]).range([1,7]);
@@ -131,7 +133,7 @@ function spawnPlot(formData) {
   .attr("height", height)
   .attr("id","svgElement")
   .append("g")
-  .attr("transform", "translate(" + 50 + "," + height / 2 + ")");
+  .attr("transform", "translate(" + 50 + "," + 360 + ")");
 
   // set up legend for hive plot
   svg.append("g")
@@ -156,7 +158,7 @@ function spawnPlot(formData) {
   .attr("fill", function(d){return color(d);});
 
   svg.selectAll(".axis")
-    .data(angleDomain) // change alongside angle
+    .data(angleDomain)
     .enter().append("line")
     .attr("class", "axis")
     .attr("transform", function(d) {return "rotate(" + degrees(angle(d)) + ")";})
