@@ -85,6 +85,9 @@ function spawnPlot(formData) {
     genNodes(nodeMaps[d]);
   });
 
+  // Default info label to number of nodes
+  info.innerHTML = "Showing " + nodes.length + " nodes.";
+
   genLinkWeight();
 
   // Debugging printouts:

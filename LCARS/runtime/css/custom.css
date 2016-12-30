@@ -96,4 +96,25 @@ li>.nav.child_menu li:hover {
 .analyze-btn, .input-group-btn:last-child>.analyze-btn {
    border-radius: 3px;
    width: 25px;
-} 
+}
+
+/* Hive plots styling */
+.link {
+   fill: none;
+   stroke-width: 3px;
+   stroke: grey;
+}
+.axis, .node {
+   stroke: #000;
+   stroke-width: 1.5px;
+}
+.link.active {
+   stroke: green;
+   stroke-width: 2px;
+   stroke-opacity: 1;
+}
+.node.active {
+   stroke: green;
+   stroke-width: 3px;
+}
+ 
