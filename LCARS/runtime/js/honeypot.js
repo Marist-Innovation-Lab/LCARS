@@ -505,7 +505,8 @@ function makePrebakedGraph(data){
     var lines = data.split("\n");
     var dataKeys = Object.keys(JSON.parse(lines[0]));
     var jsonLine;
-    var colorChoices = ["red","orange","cyan","blue","yellow","green","purple","pink","brown","grey"];
+    //var colorChoices = ["red","orange","cyan","blue","yellow","green","purple","pink","brown","grey"];
+    var colorChoices = ["blue", "teal", "red", "orange"];
     var colors = {};
     var result = "new graph\n";
     var vertexStr = "";
