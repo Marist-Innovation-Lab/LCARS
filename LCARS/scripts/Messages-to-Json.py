@@ -8,7 +8,7 @@ import datetime
 # Debug Variable
 debug = False
 
-# Move FIle Variable - Whether you want to move parsed files or not
+# Move File Variable - Whether you want to move parsed files or not
 move_file = False
 
 # File to Read Path
@@ -212,7 +212,7 @@ for read_path in read_paths:
             if debug:
                 print(first_line)
 
-            if re.findall('(\d+-\d+-\d+T\d+:\d+:\d+-\d+:\d+\s\w+\s\w+-\d+\[\d+\]:\sIP:\s\d+.\d+.\d+.\d+\sPassLog:\sUsername:\s.*\sPassword:\s.*)', first_line) != []:
+            if re.findall('(\d+-\d+-\d+T\d+:\d+:\d+-\d+:\d+\s\w+\s\w+-\d+\[\d+\]:\sIP:\s\d+.\d+.\d+.\d+\s.*Log:\sUsername:\s.*\sPassword:\s.*)', first_line) != []:
                 if debug:
                     print("Longtail messages file...")
 
