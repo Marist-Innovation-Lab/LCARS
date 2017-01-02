@@ -47,7 +47,8 @@ function viewHoneypotLogs() {
                 }
 
                 if (button === "custom") {
-
+                   $("#plot-modal").find("h4").text("Settings for hive plot: " + host);
+                   $("#plot-data").html(populateHiveplotDropdown(dataToAnalyze));
                 }
 
                 if (button === "plot") {
@@ -123,6 +124,8 @@ function viewBlackridgeLogs() {
                 }
 
                 if (button === "custom") {
+                   $("#plot-modal").find("h4").text("Settings for hive plot: " + host);
+                   $("#plot-data").html(populateHiveplotDropdown(dataToAnalyze));
 
                 }
 
@@ -386,7 +389,7 @@ function populateHoneypots() {
                                          + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal" style="float:right; margin-right:25%;"><span title="View" class="glyphicon glyphicon-list"></span></button></td>'
                                        + '<td><div class="input-group">'
                                          + '<div style="padding-right:5px"><input class="form-control input-xs" type="text" placeholder="Sample Size" size=1></input></div>'
-                                         + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="Custom" class="fa fa-gear"</span></button></div>'
+                                         + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn" data-toggle="modal" data-target="#plot-modal"><span title="Custom" class="fa fa-gear"</span></button></div>'
                                          + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="Plot" class="fa fa-line-chart"</span></button></div>'
                                          + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To Graph" class="fa fa-share-alt"</span></button></div>'
                                          + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To SQL" class="fa fa-database"</span></button></div>'
@@ -557,24 +560,26 @@ function makePrebakedGraph(data){
       }
     }
 
-    // Appends the first letter of the key to the data value
-    // Ex: Changes a password of '123' to 'p_123'
-    // If the key contains an underscore, it also appends the first letter after the underscore
-    function generateValue(data, key) {
-      var value;
-      if (key.indexOf("_") > -1) {
-        value = key.charAt(0) + key.charAt(key.indexOf("_") + 1) + "_" + data[key];
-      } else {
-        value = key.charAt(0) + "_" + data[key];
-      }
-      return value;
-    }
-
-    result = result + vertexStr + edgeStr;
-    //output.innerHTML = output.innerHTML + result;
-    var currentGstarText = $("#logDataOutput").val();
-    $("#logDataOutput").val(currentGstarText + result + "\n\n");
+// Appends the first letter of the key to the data value
+// Ex: Changes a password of '123' to 'p_123'
+// If the key contains an underscore, it also appends the first letter after the underscore
+function generateValue(data, key) {
+  var value;
+  if (key.indexOf("_") > -1) {
+    value = key.charAt(0) + key.charAt(key.indexOf("_") + 1) + "_" + data[key];
+  } else {
+    value = key.charAt(0) + "_" + data[key];
+  }
+  return value;
 }
+
+result = result + vertexStr + edgeStr;
+//output.innerHTML = output.innerHTML + result;
+var currentGstarText = $("#logDataOutput").val();
+$("#logDataOutput").val(currentGstarText + result + "\n\n");
+}
+
+
 
 function makePrebakedPlot(data){
   var formData = new Map();
@@ -651,4 +656,67 @@ function makePlot(){
 
   // Debugging printouts
   // console.log(formData);
+}
+
+// Creates HTML based on incoming log data for hive plot settings
+function populateHiveplotDropdown(logData) {
+    var lines = logData.split("\n");
+    var dataKeys = Object.keys(JSON.parse(lines[0]));
+    // var html = "<p>Dataset has " + dataKeys.length + " keys. Select 2 to 4 keys to plot.</p><br>";
+    console.log(dataKeys.length);
+    if(dataKeys.length < 2){
+
+    }
+
+    var table = $('<table />').addClass("table");
+    
+    var th1 = $('<th />').text('Use');
+    var th2 = $('<th />').text('From');
+    var th3 = $('<th />').text('To');
+
+    var tr = $('<tr />');
+    var thead = $('<thead />');
+    
+    th1.appendTo(tr);
+    th2.appendTo(tr);
+    th3.appendTo(tr);
+    tr.appendTo(thead);
+
+    thead.appendTo(table);
+
+    var tbody = $('<tbody />');
+    for(var x = 0; x < dataKeys.length || x < 3; x++){
+        var row = $('<tr />');
+        var td1 = $('<td />');
+        var checkbox = $('<input type="checkbox" value="' + x + '">');
+        var label = $('<label />');
+        var span = $('<span />').addClass("checkbox");
+        checkbox.appendTo(label);
+        label.appendTo(span);
+        span.appendTo(td1);
+
+        var td2 = $('<td />');
+        var select2 = $('<select />').addClass("form-control");
+        dataKeys.forEach(function(key){
+            $('<option />', {value: key, text: key}).appendTo(select2);
+        });
+        select2.appendTo(td2);
+
+        var td3 = $('<td />');
+        var select3 = $('<select />').addClass("form-control");
+        dataKeys.forEach(function(key){
+            $('<option />', {value: key, text: key}).appendTo(select3);
+        });
+        select3.appendTo(td3);
+
+        td1.appendTo(row);
+        td2.appendTo(row);
+        td3.appendTo(row);
+
+        row.appendTo(tbody);
+    }
+
+    tbody.appendTo(table);
+
+    return table;
 }
