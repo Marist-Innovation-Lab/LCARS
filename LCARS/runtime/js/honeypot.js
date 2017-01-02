@@ -161,6 +161,75 @@ function viewBlackridgeLogs() {
 }
 
 
+function viewExperimentalLogs() {
+    $("#experimental").on("click", "td button", function() {
+
+        clearModal(); 
+
+        // Gets the text of the button that was clicked to determine which it was
+        var button = $(this).children("span").attr("title").toLowerCase();
+        var name = $(this).closest("tr").find("td:nth-child(2)").text();
+        var type = $(this).closest("tr").find("td:nth-child(3)").text();
+        var logCount = $(this).closest("tr").find("td:nth-child(6)").text();
+            logCount = (+logCount.replace(',', ''));   // Remove the comma and cast to a Number
+        var sampleBox = $(this).closest("tr").find("input");
+        var sampleSize = sampleBox.val();
+            sampleSize = (+sampleSize.replace(',',''));
+
+        var rawLog = "/lcars/runtime/logs/experimental/"+name+".log";
+        var parsedLog = "/lcars/runtime/logs/experimental/parsed_json/"+name+".log.json";
+
+        if (button === "view") {
+            $("#log-modal").find("h4").text("Experimental Log Data: " + name);
+            $("#log-identifier").html(name.toLowerCase());
+ 
+            $("#log-data").load(rawLog);
+        }
+
+        else if ( (sampleSize > logCount) || (sampleSize < 0) ) {
+            sampleBox.css("border", "1.5px solid red");
+        }
+
+        else {
+            sampleBox.removeAttr("style");
+
+            $.get(parsedLog, function(logData) {
+                var dataToAnalyze;
+                if (!sampleSize || sampleSize === logCount) {
+                    dataToAnalyze = logData;
+                } else {
+                    dataToAnalyze = getRandomSample(logData, sampleSize);
+                }
+
+                if (button === "custom") {
+                   $("#plot-modal").find("h4").text("Settings for hive plot: " + host);
+                   $("#plot-data").html(populateHiveplotDropdown(dataToAnalyze));
+                }
+
+                if (button === "plot") {
+                    currentLog = dataToAnalyze;
+                    makePrebakedPlot(dataToAnalyze);
+                }
+
+                if (button === "to graph") {
+                    makePrebakedGraph(dataToAnalyze);
+                }
+
+                if (button === "to sql") {
+                    var formatDate = date.replace(/ /g, "T");
+                    var tableName = host + "_" + formatDate;
+
+                    jsonToSQL(dataToAnalyze, tableName);
+                }
+
+            }, 'html');
+
+        }
+
+    });
+}
+
+
 function viewParsedLogs() {
     $("#data-view").on("click", function() {
         var id = $("#log-identifier").text();
@@ -669,7 +738,7 @@ function populateHiveplotDropdown(logData) {
     }
 
     var table = $('<table />').addClass("table");
-    
+
     var th1 = $('<th />').text('Use');
     var th2 = $('<th />').text('From');
     var th3 = $('<th />').text('To');

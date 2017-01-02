@@ -118,6 +118,7 @@
                     <ul id="logs-tab" class="nav nav-tabs nav-justified">
                        <li role="presentation" data-toggle="tab" class="active"><a href="#honeypot-logs"><strong>Honeypot</strong></a></li>
                        <li role="presentation" data-toggle="tab"><a href="#blackridge-logs"><strong>BlackRidge</strong></a></li>
+                       <li role="presentation" data-toggle="tab"><a href="#experimental-logs"><strong>Experimental</strong></a></li>
                     </ul>
                   </div>
                   <div class="tab-content">
@@ -179,6 +180,21 @@
                               <div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To SQL" class="fa fa-database"</span></button></div>
                             </td>
                           </tr> 
+                        </tbody>
+                      </table>
+                    </div>
+                    <div role="tabpanel" id="experimental-logs" class="tab-pane" style="height: 250px; overflow: auto;">
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Log Count</th>
+                            <th>Analyze</th>
+                          </tr>
+                        </thead>
+                        <tbody id="experimental">
                         </tbody>
                       </table>
                     </div>
@@ -316,3 +332,4 @@
     <script src="../build/js/custom.min.js"></script>
   </body>
 </html>
+
