@@ -222,8 +222,7 @@ function viewExperimentalLogs() {
                 }
 
                 if (button === "to sql") {
-                    var formatDate = date.replace(/ /g, "T");
-                    var tableName = host + "_" + formatDate;
+                    var tableName = name;  // going to need something more uniquifying here
 
                     jsonToSQL(dataToAnalyze, tableName);
                 }
@@ -467,6 +466,37 @@ function populateHoneypots() {
 }
 
 
+// Populate the Experimental logs table with info about each log
+function populateExperimentalLogs() {
+    $.getJSON(
+       lcarsAPI + "experimentallogs",
+       function (data, status) {
+          if (status === "success") {
+              $("#experimental").empty();
+
+              $.each(data, function(i, item) {
+
+                  $("#experimental").append('<tr><th scope="row">' + (i+1) + '</th>'
+                                          + '<td>' + data[i].name + '</td>'
+                                          + '<td>' + data[i].type + '</td>'
+                                          + '<td>'
+                                            + Number(data[i].logCount).toLocaleString()
+                                            + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal" style="float:right; margin-right:25%;"><span title="View" class="glyphicon glyphicon-list"></span></button></td>'
+                                          + '<td><div class="input-group">'
+                                            + '<div style="padding-right:5px"><input class="form-control input-xs" type="text" placeholder="Sample Size" size=1></input></div>'
+                                            + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn" data-toggle="modal" data-target="#plot-modal"><span title="Custom" class="fa fa-gear"</span></button></div>'
+                                            + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="Plot" class="fa fa-line-chart"</span></button></div>'
+                                            + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To Graph" class="fa fa-share-alt"</span></button></div>'
+                                            + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To SQL" class="fa fa-database"</span></button></div>'
+                                          + '</div></td></tr>');
+
+              });
+          }
+       }
+    );
+}
+
+
 function setLogsLastRefreshedTime() {
    var date = new Date();
    var mins = date.getMinutes();
@@ -510,8 +540,10 @@ function switchLogTab() {
 
 $(document).ready(function() {
     populateHoneypots();
+    populateExperimentalLogs();
     viewHoneypotLogs();
     viewBlackridgeLogs();
+    viewExperimentalLogs();
     viewParsedLogs();
     blackridgeLogCount();
     clearSQLCommands();
