@@ -27,7 +27,6 @@ function viewHoneypotLogs() {
         if (button === "view") {
             $("#log-modal").find("h4").text("Today's Log Data for " + type + " Honeypot: " + host);
             $("#log-identifier").html(host.toLowerCase());
- 
             $("#log-data").load(rawLog);
         }
 
@@ -47,25 +46,30 @@ function viewHoneypotLogs() {
                 }
 
                 if (button === "custom") {
-                   $("#plot-modal").find("h4").text("Settings for hive plot: " + host);
-                   $("#plot-data").html(populateHiveplotDropdown(dataToAnalyze));
+                    // Clear modal first
+                    $("#plot-button").off("click");
+                    $('#plot-modal').find('#modal-sample-size').remove();
+                    $('#plot-modal').find('#modal-sample-size-info').remove();
+                    $("#plot-data").html("");
+
+
+                    $("#plot-modal").find("h4").text("Settings for hive plot: " + host);
+                    $("#plot-data").append(populateHiveplotDropdown(dataToAnalyze, logCount));
+                    $("#plot-button").on("click", function(){
+                        currentLog = getRandomSample(logData, $('#modal-sample-size').val());
+                        if(makeCustomPlot()){
+                            $('#plot-modal').modal('hide');
+                        }
+                    });
                 }
 
                 if (button === "plot") {
                     currentLog = dataToAnalyze;
                     makePrebakedPlot(dataToAnalyze);
-
-                    // $("#plot-modal").find("h4").text("Settings for hive plot:");
-                    // $("#plot-data").html(hiveplot_settings_html);
-                    // genAxisNameSelectors();
                 }
 
                 if (button === "to graph") {
                     makePrebakedGraph(dataToAnalyze);
-
-                    // $("#graph-modal").find("h4").text("Settings for graph:");
-                    // $("#graph-data").html(graph_settings_html);
-                    // genAxisNameSelectors();
                 }
 
                 if (button === "to sql") {
@@ -159,7 +163,6 @@ function viewBlackridgeLogs() {
  
     });
 }
-
 
 function viewParsedLogs() {
     $("#data-view").on("click", function() {
@@ -619,61 +622,87 @@ function makePrebakedPlot(data){
   spawnPlot(formData);
 }
 
-function makePlot(){
-  // Send form options to create hiveplot
-  var formData = new Map();
-  // Get axis names, and put into Map
-  var axisNames = document.getElementsByClassName("axisName");
-  var names = [];
-  Array.prototype.forEach.call(axisNames,function(d){
-    names.push(d.value.trim());
-  });
-  formData.set("axisNames", names);
-  // Get axis connections, and put into Map
-  var connections = [];
+// Makes custom hive plot.
+function makeCustomPlot(){
+    var selected = [];
+    var names = [];
+    var connections = [];
+    var fromNames = [];
+    var toNames = [];
 
-  for(var i = 0; i < document.getElementsByClassName("axisName").length - 1; i++){
-    var source = document.getElementById("connection" + i + "source").value.trim();
-    var target = document.getElementById("connection" + i + "target").value.trim();
-    var connectionObject = {
-      "source": source,
-      "target": target
-    };
-    connections.push(connectionObject);
-  }
+    $('#plot-data input:checked').each(function() {
+        selected.push($(this).attr('value'));
+    });
 
-  formData.set("axisConnections", connections);
-  // Open new window, and create hive plot
-  // var wnd = window.open("../hiveplot.html");
-  // wnd.addEventListener('load', function(){
-  //   wnd.spawnPlot(formData);  
-  // });
+    selected.forEach(function(d){
+        if(!names.includes($('#fromSelect' + d).val())){
+            names.push($('#fromSelect' + d).val());    
+        }
+        if(!names.includes($('#toSelect' + d).val())){
+            names.push($('#toSelect' + d).val());    
+        }
 
-  // Display hive plot in div
-  spawnPlot(formData);
-  
-  // document.getElementById("hiveFrame").contentWindow.spawnPlot(pressed, formData);
+        fromNames.push($('#fromSelect' + d).val());
+        toNames.push($('#toSelect' + d).val());
 
-  // Debugging printouts
-  // console.log(formData);
+    });
+
+    // Check if sample size field contains positive integer
+    if(!isNaN($('#modal-sample-size').val()) && 
+       parseInt(Number($('#modal-sample-size').val())) == $('#modal-sample-size').val() && 
+       !isNaN(parseInt($('#modal-sample-size').val(), 10)) &&
+       parseInt(Number($('#modal-sample-size').val())) > 0) {
+    } else {
+        $("#error").html("Sample size requires a positive integer.");
+        return false;
+    }
+    // Check if no rows selected
+    if(selected.length === 0){
+        $("#error").html("You must select at least one row to plot");
+        return false;
+    }
+
+    for(var x = 0; x < fromNames.length; x++){
+        // Validate custom options
+        if(fromNames[x] === toNames[x]){
+            $("#error").html("You cannot link an axis to itself.");
+            return false;
+        }   
+        // add more checks
+
+        // populate connections
+        var source = fromNames[x];
+        var target = toNames[x];
+        var connectionObject = {
+            "source":source,
+            "target":target
+        };
+        connections.push(connectionObject);
+    }
+
+    var formData = new Map();
+    formData.set("axisNames", names);
+    formData.set("axisConnections", connections);
+
+    // Display hive plot in div
+    spawnPlot(formData);
+    return true;
 }
 
 // Creates HTML based on incoming log data for hive plot settings
-function populateHiveplotDropdown(logData) {
+function populateHiveplotDropdown(logData, logCount) {
     var lines = logData.split("\n");
     var dataKeys = Object.keys(JSON.parse(lines[0]));
-    // var html = "<p>Dataset has " + dataKeys.length + " keys. Select 2 to 4 keys to plot.</p><br>";
-    console.log(dataKeys.length);
-    if(dataKeys.length < 2){
-
-    }
-
     var table = $('<table />').addClass("table");
-    
+    var caption = $('<caption />').text('Choose 2 to 4 rows to graph and select a sample size. Check the "Use" checkboxes to use the corresponding rows in the hive plot.');
+    var error = $('<div />').attr('id', 'error').attr('style','color:red;');
+
+    error.appendTo($("#plot-data"));
+    caption.appendTo(table);
+
     var th1 = $('<th />').text('Use');
     var th2 = $('<th />').text('From');
     var th3 = $('<th />').text('To');
-
     var tr = $('<tr />');
     var thead = $('<thead />');
     
@@ -685,7 +714,7 @@ function populateHiveplotDropdown(logData) {
     thead.appendTo(table);
 
     var tbody = $('<tbody />');
-    for(var x = 0; x < dataKeys.length || x < 3; x++){
+    for(var x = 1; x < dataKeys.length || x < 3; x++){
         var row = $('<tr />');
         var td1 = $('<td />');
         var checkbox = $('<input type="checkbox" value="' + x + '">');
@@ -696,14 +725,14 @@ function populateHiveplotDropdown(logData) {
         span.appendTo(td1);
 
         var td2 = $('<td />');
-        var select2 = $('<select />').addClass("form-control");
+        var select2 = $('<select />').addClass("form-control").attr('id','fromSelect' + x );
         dataKeys.forEach(function(key){
             $('<option />', {value: key, text: key}).appendTo(select2);
         });
         select2.appendTo(td2);
 
         var td3 = $('<td />');
-        var select3 = $('<select />').addClass("form-control");
+        var select3 = $('<select />').addClass("form-control").attr('id','toSelect' + x );
         dataKeys.forEach(function(key){
             $('<option />', {value: key, text: key}).appendTo(select3);
         });
@@ -717,6 +746,21 @@ function populateHiveplotDropdown(logData) {
     }
 
     tbody.appendTo(table);
+
+    var sampleSizeInfo = $('<span />').attr('id','modal-sample-size-info')
+        .attr('style','float:left;font-size:135%;margin-right:5px;margin-top:3px;')
+        .text('Choose a sample size (max '+ logCount +').');
+
+
+    var sampleSize = $('<input />').addClass('form-control input-md')
+        .attr('style','width:20%;float:left;')
+        .attr('id','modal-sample-size')
+        .attr('type', 'text')
+        .attr('placeholder','Sample Size')
+        .attr('size','1');
+
+    $('#plot-modal').find('.modal-footer').append(sampleSizeInfo);
+    $('#plot-modal').find('.modal-footer').append(sampleSize);
 
     return table;
 }

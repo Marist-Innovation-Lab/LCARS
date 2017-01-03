@@ -101,7 +101,7 @@ li>.nav.child_menu li:hover {
 /* Hive plots styling */
 .link {
    fill: none;
-   stroke-width: 3px;
+   stroke-width: 2px;
    stroke: grey;
 }
 .axis, .node {
