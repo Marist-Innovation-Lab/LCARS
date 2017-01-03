@@ -26,7 +26,10 @@ function viewHoneypotLogs() {
 
         if (button === "view") {
             $("#log-modal").find("h4").text("Today's Log Data for " + type + " Honeypot: " + host);
-            $("#log-identifier").html(host.toLowerCase());
+            // Set the hidden span tags in the modal to the log file paths so they can be read by the viewParsedLog function
+            // Tried viewParsedLog(rawLog, parsedLog) here and it does not work
+            $("#rawPath").html(rawLog);
+            $("#parsedPath").html(parsedLog);
  
             $("#log-data").load(rawLog);
         }
@@ -103,7 +106,8 @@ function viewBlackridgeLogs() {
 
         if (button === "view") {
             $("#log-modal").find("h4").text(date + " BlackRidge Log Data for: " + host);
-            $("#log-identifier").html(date);
+            $("#rawPath").html(rawLog);
+            $("#parsedPath").html(parsedLog);
 
             $("#log-data").load(rawLog);
         }
@@ -170,18 +174,20 @@ function viewExperimentalLogs() {
         var button = $(this).children("span").attr("title").toLowerCase();
         var name = $(this).closest("tr").find("td:nth-child(2)").text();
         var type = $(this).closest("tr").find("td:nth-child(3)").text();
-        var logCount = $(this).closest("tr").find("td:nth-child(6)").text();
+        var logCount = $(this).closest("tr").find("td:nth-child(4)").text();
             logCount = (+logCount.replace(',', ''));   // Remove the comma and cast to a Number
         var sampleBox = $(this).closest("tr").find("input");
         var sampleSize = sampleBox.val();
             sampleSize = (+sampleSize.replace(',',''));
 
-        var rawLog = "/lcars/runtime/logs/experimental/"+name+".log";
-        var parsedLog = "/lcars/runtime/logs/experimental/parsed_json/"+name+".log.json";
+        var filename = name + "." + type;
+        var rawLog = "/lcars/runtime/logs/experimental/"+filename+".log";
+        var parsedLog = "/lcars/runtime/logs/experimental/parsed_json/"+filename+".log.json";
 
         if (button === "view") {
             $("#log-modal").find("h4").text("Experimental Log Data: " + name);
-            $("#log-identifier").html(name.toLowerCase());
+            $("#rawPath").html(rawLog);
+            $("#parsedPath").html(parsedLog);
  
             $("#log-data").load(rawLog);
         }
@@ -232,20 +238,9 @@ function viewExperimentalLogs() {
 
 function viewParsedLogs() {
     $("#data-view").on("click", function() {
-        var id = $("#log-identifier").text();
-        var parsedFile;
-        var rawFile;
+        var parsedFile = $("#parsedPath").text();
+        var rawFile = $("#rawPath").text();
         
-        // Longtail Log
-        if (id.match(/[A-Za-z]+/g)) {
-            parsedFile = "/lcars/runtime/logs/longtail/parsed_json/"+id+".log.json";   
-            rawFile = "/lcars/runtime/logs/longtail/"+id+".log";
-        // BlackRidge Log
-        } else {
-            parsedFile = "/lcars/runtime/logs/blackridge/parsed_json/"+id+".json";
-            rawFile = "/lcars/runtime/logs/blackridge/"+id;
-        }
-
         if ($(this).text() === "View Parsed") {
             $(this).html("View Raw");
             $("#log-data").load(parsedFile);
