@@ -57,11 +57,12 @@ function viewHoneypotLogs() {
                     $('#plot-modal').find('#modal-sample-size-info').remove();
                     $("#plot-data").html("");
 
-
+                    // Set up hive plot modal
                     $("#plot-modal").find("h4").text("Settings for hive plot: " + host);
                     $("#plot-data").append(populateHiveplotDropdown(dataToAnalyze, logCount));
                     $("#plot-button").on("click", function(){
                         currentLog = getRandomSample(logData, $('#modal-sample-size').val());
+                        // If the hive plot creation is sucessful, close the modal
                         if(makeCustomPlot()){
                             $('#plot-modal').modal('hide');
                         }
@@ -134,9 +135,22 @@ function viewBlackridgeLogs() {
                 }
 
                 if (button === "custom") {
-                   $("#plot-modal").find("h4").text("Settings for hive plot: " + host);
-                   $("#plot-data").html(populateHiveplotDropdown(dataToAnalyze));
+                    // Clear modal first
+                    $("#plot-button").off("click");
+                    $('#plot-modal').find('#modal-sample-size').remove();
+                    $('#plot-modal').find('#modal-sample-size-info').remove();
+                    $("#plot-data").html("");
 
+                    // Set up hive plot modal
+                    $("#plot-modal").find("h4").text("Settings for hive plot: " + host);
+                    $("#plot-data").append(populateHiveplotDropdown(dataToAnalyze, logCount));
+                    $("#plot-button").on("click", function(){
+                        currentLog = getRandomSample(logData, $('#modal-sample-size').val());
+                        // If the hive plot creation is sucessful, close the modal
+                        if(makeCustomPlot()){
+                            $('#plot-modal').modal('hide');
+                        }
+                    });
                 }
 
                 if (button === "plot") {
@@ -213,8 +227,22 @@ function viewExperimentalLogs() {
                 }
 
                 if (button === "custom") {
-                   $("#plot-modal").find("h4").text("Settings for hive plot: " + host);
-                   $("#plot-data").html(populateHiveplotDropdown(dataToAnalyze));
+                    // Clear modal first
+                    $("#plot-button").off("click");
+                    $('#plot-modal').find('#modal-sample-size').remove();
+                    $('#plot-modal').find('#modal-sample-size-info').remove();
+                    $("#plot-data").html("");
+
+                    // Set up hive plot modal
+                    $("#plot-modal").find("h4").text("Settings for hive plot: " + name);
+                    $("#plot-data").append(populateHiveplotDropdown(dataToAnalyze, logCount));
+                    $("#plot-button").on("click", function(){
+                        currentLog = getRandomSample(logData, $('#modal-sample-size').val());
+                        // If the hive plot creation is sucessful, close the modal
+                        if(makeCustomPlot()){
+                            $('#plot-modal').modal('hide');
+                        }
+                    });
                 }
 
                 if (button === "plot") {
@@ -755,7 +783,7 @@ function makeCustomPlot(){
     }
     // Check if no rows selected
     if(selected.length === 0){
-        $("#error").html("You must select at least one row to plot");
+        $("#error").html("You must select at least one row to plot.");
         return false;
     }
 
@@ -791,7 +819,7 @@ function populateHiveplotDropdown(logData, logCount) {
     var lines = logData.split("\n");
     var dataKeys = Object.keys(JSON.parse(lines[0]));
     var table = $('<table />').addClass("table");
-    var caption = $('<caption />').text('Choose 2 to 4 rows to graph and select a sample size. Check the "Use" checkboxes to use the corresponding rows in the hive plot.');
+    var caption = $('<caption />').text('Choose 1 to 3 rows to graph and select a sample size. Check the "Use" checkboxes to use the corresponding rows in the hive plot.');
     var error = $('<div />').attr('id', 'error').attr('style','color:red;');
 
     error.appendTo($("#plot-data"));
