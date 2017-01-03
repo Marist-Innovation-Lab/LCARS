@@ -13,7 +13,7 @@ move_file = False
 
 # File to Read Path
 #read_path = "read_folder/"
-read_paths = ["/var/www/html/lcars/runtime/logs/longtail/", "/var/www/html/lcars/runtime/logs/blackridge/"]
+read_paths = ["/var/www/html/lcars/runtime/logs/longtail/", "/var/www/html/lcars/runtime/logs/blackridge/", "/var/www/html/lcars/runtime/logs/experimental/"]
 
 # File to Store Path
 #json_store_path = "valid_json/"
