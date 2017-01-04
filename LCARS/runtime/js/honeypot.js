@@ -35,6 +35,18 @@ function viewHoneypotLogs() {
             $("#log-data").load(rawLog);
         }
 
+        else if (button === "save as experimental") {
+            // Format the date-time string to append to the end of the filename
+            var now = new Date();
+            var d = now.yyyymmdd();
+            var t = now.toTimeString().slice(0,5).replace(/:/g,"");
+            var dateTime = d + "_" + t;
+
+            var filename = host + "-" + dateTime + ".Honeypot";
+
+            saveLogAsExperimental(rawLog, filename);
+        }
+
         else if ( (sampleSize > logCount) || (sampleSize < 0) ) {
             sampleBox.css("border", "1.5px solid red");
         }
@@ -117,6 +129,18 @@ function viewBlackridgeLogs() {
             $("#parsedPath").html(parsedLog);
 
             $("#log-data").load(rawLog);
+        }
+
+        else if (button === "save as experimental") {
+            // Format the date-time string to append to the end of the filename
+            var now = new Date();
+            var d = now.yyyymmdd();
+            var t = now.toTimeString().slice(0,5).replace(/:/g,"");
+            var dateTime = d + "_" + t;
+
+            var filename = host + "_" + date.replace(/-/g,"") + "-" + dateTime + ".BlackRidge";
+
+            saveLogAsExperimental(rawLog, filename);
         }
 
         else if ( (sampleSize > logCount) || (sampleSize < 0) ) {
@@ -433,6 +457,19 @@ function jsonToSQL(data, tableName) {
 }
 
 
+// Saves a honeypot or BlackRidge log file to the Experimental section
+function saveLogAsExperimental(pathToRawLog, filenameToSaveAs) {
+    var dataObject = { 'pathToLog': pathToRawLog, 'filename': filenameToSaveAs };
+    $.ajax({
+            url: lcarsAPI + "savelog/",
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(dataObject),
+            success: function() { populateExperimentalLogs(); } //TODO notify user that it was saved successfully
+    });
+}
+
+
 // Clears out SQL Commands text area if clear button is clicked
 function clearSQLCommands() {
     $("#clear-sql-commands").on("click", function() {
@@ -481,7 +518,8 @@ function populateHoneypots() {
                                        + '<td>' + data[i].time + '</td>'
                                        + '<td>' 
                                          + Number(data[i].logCount).toLocaleString()
-                                         + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal" style="float:right; margin-right:25%;"><span title="View" class="glyphicon glyphicon-list"></span></button></td>'
+                                         + '<button type="button" class="btn btn-default btn-xs" style="float:right; margin-right:25%;"><span title="Save As Experimental" class="fa fa-save"></span></button>'
+                                         + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal" style="float:right;"><span title="View" class="glyphicon glyphicon-list"></span></button></td>'
                                        + '<td><div class="input-group">'
                                          + '<div style="padding-right:5px"><input class="form-control input-xs" type="text" placeholder="Sample Size" size=1></input></div>'
                                          + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn" data-toggle="modal" data-target="#plot-modal"><span title="Custom" class="fa fa-gear"</span></button></div>'
@@ -627,6 +665,20 @@ function setIntervalAdapted(myFunction, minuteInterval, secondsOffset) {
         myFunction();
     }, secondsUntilNextTimerTrigger*1000);
 }
+
+
+// Formats date in YYYYMMDD format
+// http://stackoverflow.com/questions/3066586/get-string-in-yyyymmdd-format-from-js-date-object
+Date.prototype.yyyymmdd = function() {
+  var mm = this.getMonth() + 1; // getMonth() is zero-based
+  var dd = this.getDate();
+
+  return [this.getFullYear(),
+          (mm>9 ? '' : '0') + mm,
+          (dd>9 ? '' : '0') + dd
+         ].join('');
+};
+
 
 // Creates gstar plot based on log data
 function makePrebakedGraph(data){

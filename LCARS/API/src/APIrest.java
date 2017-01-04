@@ -307,6 +307,15 @@ public class APIrest extends NanoHTTPD {
          sb = responsePutLcarsLog(reqJSON);
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
+
+      //
+      // savelog - POST only - Save a honeypot or BlackRidge log as an experimental log
+      //
+      } else if (methodIsPOST && command.equals("savelog")) {
+         sb = responsePostExperimentalLog(reqJSON);
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+
       //
       // profiles - GET/PUT/DELETE - Get everything in Profiles table / Insert new profile / Delete all profiles
       //    Example PUT: 
@@ -592,6 +601,7 @@ public class APIrest extends NanoHTTPD {
              "+-- PUT  /orchestration                      - create a new orchestrated response using body JSON: {\"pid\" : \"Profile ID\", \"rrid\" : \"Recipe ID\"}\n" +
              "+-- PUT  /lcarslog                           - create a new LCARS log entry using body JSON: {\"category\" : \"Entry Type\", \"message\" : \"Entry Message\"}\n" +
              "\n" +
+             "+-- POST /savelog                            - save existing honeypot or BlackRidge log as an Experimental log using body JSON: {\"pathToLog\": \"Path to existing log\", \"filename\": \"Filename to save as\"}\n" +
              "+-- POST /profiles/[pid]                     - update existing profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
              "+-- POST /responserecipes/[rrid]             - update existing recipe using body JSON: {\"name\": \"Profile Name\"}\n" +
              "+-- POST /responsedetails/[rdid]             - update an existing response detail in a recipe using body JSON: {\"rrid\" : \"Recipe ID\", \"ruleorder\" : \"Order Number\", \"target\" : \"[drop, accept, reject]\",\n" +
@@ -700,6 +710,14 @@ public class APIrest extends NanoHTTPD {
        sb.append(makeJSON(messageKey, "200 OK"));
        
        return sb;
+   }
+
+   private StringBuilder responsePostExperimentalLog(JsonObject reqJSON) {
+       String pathToLog = reqJSON.get("pathToLog").getAsString();
+       String filename = reqJSON.get("filename").getAsString();
+
+       String[] command = new String[]{"/var/www/html/lcars/scripts/saveAsExperimental.sh", pathToLog, filename};
+       return runShellScript(command);
    }
 
    private StringBuilder responseGetProfiles() {
