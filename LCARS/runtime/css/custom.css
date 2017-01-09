@@ -117,4 +117,11 @@ li>.nav.child_menu li:hover {
    stroke: green;
    stroke-width: 3px;
 }
- 
+
+#weight-checkbox-label {
+   float: right;
+}
+
+#weight-checkbox {
+   float: right;
+}

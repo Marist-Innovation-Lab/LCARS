@@ -89,6 +89,37 @@ function spawnPlot(formData) {
   // Default info label to number of nodes
   info.innerHTML = "Showing " + nodes.length + " nodes.";
 
+  var weightSpan = $('#weight-span');
+  if(!weightSpan.html()){
+    var weightLabel = $('<label />')
+      .attr('for', 'weight-checkbox')
+      .attr('id', 'weight-checkbox-label')
+      .text('Show link weights');
+    var weightCheckbox = $('<input />')
+      .attr('type', 'checkbox')
+      .attr('id', 'weight-checkbox')
+      .on('click', function(){
+        if($(this).prop('checked')){
+          linkWeight = true;
+          if (lastPlotType === "custom") {
+            makeCustomPlot();
+          } else if (lastPlotType === "prebaked") {
+            makePrebakedPlot(currentLog);
+          }
+        } else {
+          linkWeight = false;
+          if (lastPlotType === "custom") {
+            makeCustomPlot();
+          } else if (lastPlotType === "prebaked") {
+            makePrebakedPlot(currentLog);
+          }
+        }
+      });
+
+    weightLabel.appendTo(weightSpan);
+    weightCheckbox.appendTo(weightSpan);
+  }
+
   genLinkWeight();
 
   // Debugging printouts:
@@ -167,8 +198,8 @@ function spawnPlot(formData) {
 
   var showWeights = linkWeight;
 
-  if(showWeights.checked){
-    if(getHighestWeight > 7){
+  if(showWeights){
+    if(getHighestWeight() > 7){
       svg.selectAll(".link")
         .data(links)
         .enter().append("path")
@@ -231,7 +262,7 @@ function degrees(radians) {
 function linkMouseOver(d){
   svg.selectAll(".link").classed("active", function(p) { return p === d; });
   svg.selectAll(".node").classed("active", function(p) { return p === d.source || p === d.target; });
-  info.innerHTML = "[" + d.source.type +"] <span style=\"color:" + colorFunc(d.source.type) + "\">" + d.source.value + "</span> TO " + "[" + d.target.type +"] <span style=\"color:" + colorFunc(d.target.type) + "\">" + d.target.value + "<br></span> Times repeated: " + linkWeightMap.get(JSON.stringify(d));
+  info.innerHTML = "[" + d.source.type +"] <span style=\"color:" + colorFunc(d.source.type) + "\">" + d.source.value + "</span> TO " + "[" + d.target.type +"] <span style=\"color:" + colorFunc(d.target.type) + "\">" + d.target.value + "</span> | Times repeated: " + linkWeightMap.get(JSON.stringify(d));
 }
 
 function nodeMouseover(d) {

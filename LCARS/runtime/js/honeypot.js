@@ -1,8 +1,7 @@
-
-
 var lcarsAPI = "http://10.10.7.84:8081/";
 var gstarAddress = "http://10.10.7.84/gstarstudio"
 var currentLog = "";
+var lastPlotType = "";
 var linkWeight = false;
 
 function viewHoneypotLogs() {
@@ -77,6 +76,7 @@ function viewHoneypotLogs() {
                         // If the hive plot creation is sucessful, close the modal
                         if(makeCustomPlot()){
                             $('#plot-modal').modal('hide');
+                            lastPlotType = "custom";
                         }
                     });
                 }
@@ -84,6 +84,7 @@ function viewHoneypotLogs() {
                 if (button === "plot") {
                     currentLog = dataToAnalyze;
                     makePrebakedPlot(dataToAnalyze);
+                    lastPlotType = "prebaked";
                 }
 
                 if (button === "to graph") {
@@ -173,6 +174,7 @@ function viewBlackridgeLogs() {
                         // If the hive plot creation is sucessful, close the modal
                         if(makeCustomPlot()){
                             $('#plot-modal').modal('hide');
+                            lastPlotType = "custom";
                         }
                     });
                 }
@@ -180,6 +182,7 @@ function viewBlackridgeLogs() {
                 if (button === "plot") {
                     currentLog = dataToAnalyze;
                     makePrebakedPlot(dataToAnalyze);
+                    lastPlotType = "prebaked";
 
                    // $("#plot-modal").find("h4").text("Settings for hive plot:");
                    // $("#plot-data").html(hiveplot_settings_html);
@@ -265,6 +268,7 @@ function viewExperimentalLogs() {
                         // If the hive plot creation is sucessful, close the modal
                         if(makeCustomPlot()){
                             $('#plot-modal').modal('hide');
+                            lastPlotType = "custom";
                         }
                     });
                 }
@@ -272,6 +276,7 @@ function viewExperimentalLogs() {
                 if (button === "plot") {
                     currentLog = dataToAnalyze;
                     makePrebakedPlot(dataToAnalyze);
+                    lastPlotType = "prebaked";
                 }
 
                 if (button === "to graph") {
@@ -927,7 +932,6 @@ function populateHiveplotDropdown(logData, logCount) {
     var sampleSizeInfo = $('<span />').attr('id','modal-sample-size-info')
         .attr('style','float:left;font-size:135%;margin-right:5px;margin-top:3px;')
         .text('Choose a sample size (max '+ logCount +').');
-
 
     var sampleSize = $('<input />').addClass('form-control input-md')
         .attr('style','width:20%;float:left;')
