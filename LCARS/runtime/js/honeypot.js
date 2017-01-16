@@ -100,8 +100,8 @@ function viewHoneypotLogs() {
                 }
 
                 if (button === "to sql") {
-                    var formatDate = date.replace(/ /g, "T");
-                    var tableName = host + "_" + formatDate;
+                    var formatDate = date.replace(/ /g, "T").replace(/(-|:)/g, "");
+                    var tableName = host + formatDate;
 
                     jsonToSQL(dataToAnalyze, tableName);
                 }
@@ -214,7 +214,7 @@ function viewBlackridgeLogs() {
                 }
 
                 if (button === "to sql") {
-                    var tableName = host + "_" + date;
+                    var tableName = host + date.replace(/-/g, "");
 
                     jsonToSQL(dataToAnalyze, tableName);
 
@@ -308,7 +308,7 @@ function viewExperimentalLogs() {
                 }
 
                 if (button === "to sql") {
-                    var tableName = name;  // going to need something more uniquifying here
+                    var tableName = name.replace(/(-|_)/g, "");  // going to need something more uniquifying here
 
                     jsonToSQL(dataToAnalyze, tableName);
                 }
