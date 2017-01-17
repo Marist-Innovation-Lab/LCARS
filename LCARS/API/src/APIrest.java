@@ -263,7 +263,15 @@ public class APIrest extends NanoHTTPD {
          sb = responseGetAttacksCount();
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
-      
+
+      //
+      // countrydata - GET only - Gets the number of attacks broken up by country
+      //
+      } else if (methodIsGET && command.equals("countrydata")) {
+         sb = responseGetCountryData();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+
       //
       // osversion - GET only - Gets the OS version information
       //
@@ -579,12 +587,13 @@ public class APIrest extends NanoHTTPD {
              "+-- GET  /hpinfo                             - information about all active honeypots\n" +
              "+-- GET  /experimentallogs                   - information about all experimental logs\n" +
              "+-- GET  /logentries                         - number of recorded log entries today\n" +
+             "+-- GET  /attacks                            - number of recorded attacks today\n" +
+             "+-- GET  /countrydata                        - number of attack separated by country of origination\n" +
              "+-- GET  /osversion                          - version info about LCARS server operating system\n" +
              "+-- GET  /interfacedetails                   - info about LCARS server interfaces\n" +
              "+-- GET  /iptables                           - info about LCARS server iptables firewall\n" +
              "+-- GET  /systeminfo                         - general info about LCARS system\n" +
              "+-- GET  /lcarslog                           - get all log entries from LCARS log\n" +
-             "+-- GET  /attacks                            - number of recorded attacks today\n" +
              "+-- GET  /profiles                           - get all profiles\n" +
              " +- GET  /profiles/[pid]                     - get a single profile\n" +
              "+-- GET  /responserecipes                    - get names and ids of all response recipes\n" +
@@ -671,6 +680,11 @@ public class APIrest extends NanoHTTPD {
 
    private StringBuilder responseGetAttacksCount() {
       String[] command = new String[]{"/var/www/html/lcars/scripts/attacksCount.sh"};
+      return runShellScript(command);
+   }
+
+   private StringBuilder responseGetCountryData() {
+      String[] command = new String[]{"/var/www/html/lcars/scripts/countryData.sh"};
       return runShellScript(command);
    }
    
