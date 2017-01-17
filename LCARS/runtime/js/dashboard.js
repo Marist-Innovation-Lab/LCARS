@@ -86,6 +86,30 @@ function updateHoneypotCount() {
         });
 }
 
+
+// Populates the Attack Originations table with country data
+function populateCountryData() {
+    $.getJSON(
+        lcarsAPI + "countrydata",
+        function (data, status) {
+            if (status === "success") {
+                $("#country-data").empty();
+                var totalAttacks = 0;
+                $.each(data, function(i, item) {
+                    var country = data[i].country;
+                    var attackCount = data[i].attacks;
+                    country = country.replace(/_/g, " ");
+                    totalAttacks += attackCount;
+                    attackCount = Number(attackCount).toLocaleString();
+                    $("#country-data").append('<tr><td>' + country + '</td>'
+                                            + '<td class="fs15 fw700 text-right">' + attackCount + '</td></tr>');
+                });
+                totalAttacks = Number(totalAttacks).toLocaleString();
+                $("#attack-heading").text(totalAttacks + " Attacks from " + data.length + " Countries");
+            }
+         });
+}
+
 // Update stats on page load
 $(document).ready(function() {
 	updateProfileCount();
@@ -94,6 +118,7 @@ $(document).ready(function() {
         updateLogEntriesCount();
         updateAttacksCount();
         updateHoneypotCount();
+        populateCountryData();
 
         // Cron job gets new honeypot logs every hour on the 15 minute mark so update these numbers then
         setIntervalAdapted(updateLogEntriesCount, 60, 905);

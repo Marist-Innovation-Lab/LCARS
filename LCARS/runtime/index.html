@@ -159,7 +159,7 @@
           <!-- row 1 -->
           <div class="row">
             <div class="col-md-4 col-sm-4 col-xs-12">
-              <div class="x_panel tile fixed_height_320 overflow_hidden">
+              <div class="x_panel tile overflow_hidden" style="height:350px;">
                 <div class="x_title">
                   <h2>Top 5 Attack Profiles</h2>
                   <div class="clearfix"></div>
@@ -226,41 +226,21 @@
             <div class="col-md-8 col-sm-8 col-xs-12">
               <div class="row">
                 <div class="col-md-12 col-sm-12 col-xs-12">
-                  <div class="x_panel">
+                  <div class="x_panel" style="height:350px;">
                     <div class="x_title">
                       <h2>Attack Originations <small>geo-data approximate (and fake)</small></h2>
                       <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
+                      <h2 class="line_30" id="attack-heading"></h2>
                       <div class="dashboard-widget-content">
-                        <div class="col-md-4 hidden-small">
-                          <h2 class="line_30">125k Attacks from 12 countries</h2>
+                        <div class="col-md-4 hidden-small" style="height:200px; overflow:auto;">
                           <table class="countries_list">
-                            <tbody>
-                              <tr>
-                                <td>China</td>
-                                <td class="fs15 fw700 text-right">73%</td>
-                              </tr>
-                              <tr>
-                                <td>North Korea</td>
-                                <td class="fs15 fw700 text-right">20%</td>
-                              </tr>
-                              <tr>
-                                <td>Russia</td>
-                                <td class="fs15 fw700 text-right">5%</td>
-                              </tr>
-                              <tr>
-                                <td>Spain</td>
-                                <td class="fs15 fw700 text-right">1%</td>
-                              </tr>
-                              <tr>
-                                <td>Others</td>
-                                <td class="fs15 fw700 text-right">1%</td>
-                              </tr>
+                            <tbody id="country-data">
                             </tbody>
                           </table>
                         </div>
-                        <div id="world-map-gdp" class="col-md-8 col-sm-12 col-xs-12" style="height:230px;"></div>
+                        <div id="world-map-gdp" class="col-md-8 col-sm-12 col-xs-12" style="height:200px;"></div>
                       </div>
                     </div>
                   </div>
