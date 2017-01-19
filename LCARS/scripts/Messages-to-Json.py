@@ -12,7 +12,7 @@ debug = False
 move_file = False
 
 # File to Read Path
-#read_path = "read_folder/"
+#read_path = "/var/www/html/lcars/runtime/logs/longtail/"
 read_paths = ["/var/www/html/lcars/runtime/logs/longtail/", "/var/www/html/lcars/runtime/logs/blackridge/", "/var/www/html/lcars/runtime/logs/experimental/"]
 
 # File to Store Path
@@ -80,7 +80,7 @@ def create_json(regex_code, read_name):
                 #results = geo_cheese.find_loc(database,ip)
 
                 #atck_profile = '{"src": "' + syslog_ip[list_num] +'", "src_port": "' + syslog_port[list_num] + '", "dest": "' + dest[list_num] + '", "dest_port": "' + dest_port[list_num] + '", "city": "' + results["city"] + '", "host": "' + results["host"] + '", "subdivision": "' + results["subdivision"] + '", "name": "' + results["name"] + '", "ip": "' + results["ip"] + '", "lat": "' + results["lat"] + '", "country": "' + results["country"] + '", "postal": "' + results["postal"] + '", "ASN": "' + results["ASN"] + '", "long": "' + results["long"] + '"}'
-                atck_profile = '{"src": "' + syslog_ip[list_num] +'", "src_port": "' + syslog_port[list_num] + '", "dest": "' + dest[list_num] + '", "dest_port": "' + dest_port[list_num] + '"}'
+                atck_profile = '{"src_ip": "' + syslog_ip[list_num] +'", "src_port": "' + syslog_port[list_num] + '", "dest_ip": "' + dest[list_num] + '", "dest_port": "' + dest_port[list_num] + '"}'
 
                 file.writelines(str(atck_profile) + "\n")
 
@@ -126,7 +126,7 @@ def create_json(regex_code, read_name):
             for i in range(len(syslog_info)):
                 records = list(syslog_info[i][0])
                 password = records[2].replace('"', 'DOUBLEQUOTE').replace('-', 'DASH').replace(',', 'COMMA')
-                atck_profile = '{"src": "' + records[0] + '", "username": "' + records[1] + '", "password": "' + password + '"}'
+                atck_profile = '{"src_ip": "' + records[0] + '", "username": "' + records[1] + '", "password": "' + password + '"}'
 
                 file.writelines(str(atck_profile) + "\n")
                 #if debug:
