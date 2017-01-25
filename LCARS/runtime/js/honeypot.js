@@ -73,18 +73,27 @@ function viewHoneypotLogs() {
                     $("#plot-modal").find("h4").text("Custom Plots and Graphs for " + host);
                     $("#plot-data").append(populateCustomDropdown(dataToAnalyze, logCount));
                     $("#plot-button").on("click", function(){
-                        currentLog = getRandomSample(logData, $('#modal-sample-size').val());
-                        // If the hive plot creation is sucessful, close the modal
+                        var sizeVal = $('#modal-sample-size').val();
+                        if(!sizeVal){sizeVal = logCount}
+                        currentLog = getRandomSample(logData, sizeVal);
+                        // If the hive plot creation is sucessful, print success message
                         if(makeCustomPlot()){
-                            $('#plot-modal').modal('hide');
+                            // $('#plot-modal').modal('hide');
+                            setStatusColor("green");
+                            $("#status").html("Successfully graphed hive plot.");
                             lastPlotType = "custom";
                         }
                     });
                     $("#graph-button").on("click", function(){
-                      currentLog = getRandomSample(logData, $('#modal-sample-size').val());
-                        // If the graph creation is sucessful, close the modal
+                      var sizeVal = $('#modal-sample-size').val();
+                      if(!sizeVal){sizeVal = logCount}
+                      currentLog = getRandomSample(logData, sizeVal);
+                        // If the graph creation is sucessful, print success message
                         if(makeCustomGraph(currentLog)){
-                            $('#plot-modal').modal('hide');
+                            // $('#plot-modal').modal('hide');
+                            setStatusColor("green");
+                            $("#status").html("Successfully created graph.");
+
                         }
                     });
                 }
@@ -180,18 +189,27 @@ function viewBlackridgeLogs() {
                     $("#plot-modal").find("h4").text("Custom Plots and Graphs for " + host);
                     $("#plot-data").append(populateCustomDropdown(dataToAnalyze, logCount));
                     $("#plot-button").on("click", function(){
-                        currentLog = getRandomSample(logData, $('#modal-sample-size').val());
-                        // If the hive plot creation is sucessful, close the modal
+                        var sizeVal = $('#modal-sample-size').val();
+                        if(!sizeVal){sizeVal = logCount}
+                        currentLog = getRandomSample(logData, sizeVal);
+                        // If the hive plot creation is sucessful, print success message
                         if(makeCustomPlot()){
-                            $('#plot-modal').modal('hide');
+                            // $('#plot-modal').modal('hide');
+                            setStatusColor("green");
+                            $("#status").html("Successfully graphed hive plot.");
                             lastPlotType = "custom";
                         }
                     });
                     $("#graph-button").on("click", function(){
-                      currentLog = getRandomSample(logData, $('#modal-sample-size').val());
-                        // If the graph creation is sucessful, close the modal
+                      var sizeVal = $('#modal-sample-size').val();
+                      if(!sizeVal){sizeVal = logCount}
+                      currentLog = getRandomSample(logData, sizeVal);
+                        // If the graph creation is sucessful, print success message
                         if(makeCustomGraph(currentLog)){
-                            $('#plot-modal').modal('hide');
+                            // $('#plot-modal').modal('hide');
+                            setStatusColor("green");
+                            $("#status").html("Successfully created graph.");
+
                         }
                     });
                 }
@@ -283,18 +301,26 @@ function viewExperimentalLogs() {
                     $("#plot-modal").find("h4").text("Custom Plots and Graphs for " + name);
                     $("#plot-data").append(populateCustomDropdown(dataToAnalyze, logCount));
                     $("#plot-button").on("click", function(){
-                        currentLog = getRandomSample(logData, $('#modal-sample-size').val());
-                        // If the hive plot creation is sucessful, close the modal
+                        var sizeVal = $('#modal-sample-size').val();
+                        if(!sizeVal){sizeVal = logCount}
+                        currentLog = getRandomSample(logData, sizeVal);
+                        // If the hive plot creation is sucessful, print success message
                         if(makeCustomPlot()){
-                            $('#plot-modal').modal('hide');
+                            // $('#plot-modal').modal('hide');
+                            setStatusColor("green");
+                            $("#status").html("Successfully graphed hive plot.");
                             lastPlotType = "custom";
                         }
                     });
                     $("#graph-button").on("click", function(){
-                      currentLog = getRandomSample(logData, $('#modal-sample-size').val());
-                        // If the graph creation is sucessful, close the modal
+                      var sizeVal = $('#modal-sample-size').val();
+                      if(!sizeVal){sizeVal = logCount}
+                      currentLog = getRandomSample(logData, sizeVal);
+                        // If the graph creation is sucessful, print success message
                         if(makeCustomGraph(currentLog)){
-                            $('#plot-modal').modal('hide');
+                            // $('#plot-modal').modal('hide');
+                            setStatusColor("green");
+                            $("#status").html("Successfully created graph.");
                         }
                     });
                 }
@@ -807,26 +833,29 @@ function makeCustomGraph(data){
      !isNaN(parseInt($('#modal-sample-size').val(), 10)) &&
      parseInt(Number($('#modal-sample-size').val())) > 0) {
   } else {
-      $("#error").html("Sample size requires a positive integer.");
+      setStatusColor("red");
+      $("#status").html("Sample size requires a positive integer.");
       return false;
   }
   // Check if no rows selected
   if(selected.length === 0){
-      $("#error").html("You must select at least one row to plot.");
+      setStatusColor("red");
+      $("#status").html("You must select at least one row to plot.");
       return false;
   }
 
   for(var x = 0; x < fromNames.length; x++){
     // Validate custom options
     if(fromNames[x] === toNames[x]){
-      $("#error").html("You cannot link an axis to itself.");
+      setStatusColor("red");
+      $("#status").html("You cannot link an axis to itself.");
       return false;
     }
   }
 
   var lines = data.split("\n");
   var jsonLine;
-  var colorChoices = ["blue", "teal", "red", "orange"];
+  var colorChoices = ["blue", "teal", "red", "orange", ];
   var colors = {};
   var result = "new graph\n";
   var vertexStr = "";
@@ -951,13 +980,17 @@ function makeCustomPlot(){
        parseInt(Number($('#modal-sample-size').val())) == $('#modal-sample-size').val() && 
        !isNaN(parseInt($('#modal-sample-size').val(), 10)) &&
        parseInt(Number($('#modal-sample-size').val())) > 0) {
+    } else if(!$('#modal-sample-size').val()){
+
     } else {
-        $("#error").html("Sample size requires a positive integer.");
+        setStatusColor("red");
+        $("#status").html("Sample size requires a positive integer.");
         return false;
     }
     // Check if no rows selected
     if(selected.length === 0){
-        $("#error").html("You must select at least one row to plot.");
+        setStatusColor("red");
+        $("#status").html("You must select at least one row to plot.");
         return false;
     }
     // Check if a field is used more than once in from/to field
@@ -973,7 +1006,8 @@ function makeCustomPlot(){
     }
 
     if(hasDuplicate(toNames) || hasDuplicate(fromNames)){
-      $("#error").html("An axis can only have one incoming link and one outgoing link.");
+      setStatusColor("red");
+      $("#status").html("An axis can only have one incoming link and one outgoing link.");
       return false;
     }
 
@@ -981,7 +1015,8 @@ function makeCustomPlot(){
     for(var x = 0; x < fromNames.length; x++){
         // Check if an axis is linked to itself
         if(fromNames[x] === toNames[x]){
-            $("#error").html("You cannot link an axis to itself.");
+            setStatusColor("red");
+            $("#status").html("You cannot link an axis to itself.");
             return false;
         }   
         
@@ -1004,13 +1039,17 @@ function makeCustomPlot(){
     return true;
 }
 
+function setStatusColor(color){
+    $("#status").css("color", color);
+}
+
 // Creates HTML based on incoming log data for hive plot and graph settings
 function populateCustomDropdown(logData, logCount) {
     var lines = logData.split("\n");
     var dataKeys = Object.keys(JSON.parse(lines[0]));
     var table = $('<table />').addClass("table");
-    var caption = $('<caption />').text('Choose up to 3 rows to output and select a sample size. Check the "Use" checkboxes to include the corresponding rows in the output.');
-    var error = $('<div />').attr('id', 'error').attr('style','color:red;');
+    var caption = $('<caption />').text('Choose rows to output and select a sample size. Check the "Use" checkboxes to include the corresponding rows in the output.');
+    var error = $('<div />').attr('id', 'status').attr('style','color:red;');
 
     error.appendTo($("#plot-data"));
     caption.appendTo(table);
@@ -1029,7 +1068,7 @@ function populateCustomDropdown(logData, logCount) {
     thead.appendTo(table);
 
     var tbody = $('<tbody />');
-    for(var x = 1; x < dataKeys.length || x < 3; x++){
+    for(var x = 1; x <= (((dataKeys.length) * (dataKeys.length - 1)) / 2); x++){
         var row = $('<tr />');
         var td1 = $('<td />');
         var checkbox = $('<input type="checkbox" value="' + x + '">');
