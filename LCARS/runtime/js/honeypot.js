@@ -1,5 +1,5 @@
 var lcarsAPI = "http://10.10.7.84:8081/";
-var gstarAddress = "http://10.10.7.84/gstarstudio"
+var gstarAddress = "http://10.10.7.72/"
 var currentLog = "";
 var lastPlotType = "";
 var linkWeight = false;
@@ -412,14 +412,14 @@ function blackridgeLogCount() {
     });
 }
 
-
 // Launch G* Studio in a new tab and populate the editor panes with commands from LCARS
+// Note: The popluation of the editor panes only works if G* is running on the same server
 function launchGstar() {
     // Get textarea values for G* commands and SQL Commands
     var gstarCommands = $("#logDataOutput").val();
     var sqlCommands = $("#sql-commands").val();
     // Launch G* Studio in a new tab
-    var gstarWindow = window.open("/gstarstudio", "_blank");
+    var gstarWindow = window.open(gstarAddress, "_blank");
     gstarWindow.focus();
 
     // On page load, populate the graph and database editors with their respective data
