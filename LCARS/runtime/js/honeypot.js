@@ -132,18 +132,18 @@ function viewBlackridgeLogs() {
         // Gets the text of the button that was clicked to determine which it was
         var button = $(this).children("span").attr("title").toLowerCase();
         var host = $(this).closest("tr").find("td:nth-child(2)").text();
-        var date = $(this).closest("tr").find("select").val();
-        var logCount = $(this).closest("tr").find("td span").text();
+        var date = $(this).closest("tr").find("td:nth-child(4)").text();
+        var logCount = $(this).closest("tr").find("td:nth-child(5)").text();
             logCount = (+logCount.replace(',', ''));   // Remove the comma and cast to a Number
         var sampleBox = $(this).closest("tr").find("input");
         var sampleSize = sampleBox.val();
             sampleSize = (+sampleSize.replace(',',''));
 
-        var rawLog = "/lcars/runtime/logs/blackridge/" + date;
-        var parsedLog = "/lcars/runtime/logs/blackridge/parsed_json/"+date+".json";
+        var rawLog = "/lcars/runtime/logs/blackridge/"+host+".log";
+        var parsedLog = "/lcars/runtime/logs/blackridge/parsed_json/"+host+".log.json";
 
         if (button === "view") {
-            $("#log-modal").find("h4").text(date + " BlackRidge Log Data for: " + host);
+            $("#log-modal").find("h4").text("BlackRidge Log Data for: " + host);
             $("#rawPath").html(rawLog);
             $("#parsedPath").html(parsedLog);
 
@@ -157,7 +157,7 @@ function viewBlackridgeLogs() {
             var t = now.toTimeString().slice(0,5).replace(/:/g,"");
             var dateTime = d + "_" + t;
 
-            var filename = host + "_" + date.replace(/-/g,"") + "-" + dateTime + ".BlackRidge";
+            var filename = host + "-" + dateTime + ".BlackRidge";
 
             saveLogAsExperimental(rawLog, filename);
         }
@@ -218,22 +218,15 @@ function viewBlackridgeLogs() {
                     currentLog = dataToAnalyze;
                     makePrebakedPlot(dataToAnalyze);
                     lastPlotType = "prebaked";
-
-                   // $("#plot-modal").find("h4").text("Settings for hive plot:");
-                   // $("#plot-data").html(hiveplot_settings_html);
-                   // genAxisNameSelectors();
                 }
 
                 if (button === "to graph") {
                     makePrebakedGraph(dataToAnalyze);
-
-                    // $("#graph-modal").find("h4").text("Settings for graph:");
-                    // $("#graph-data").html(graph_settings_html);
-                    // genAxisNameSelectors();
                 }
 
                 if (button === "to sql") {
-                    var tableName = host + date;
+                    var formatDate = date.replace(/ /g, "T");
+                    var tableName = host + formatDate;
                     tableName = tableName.replace(/[\W_]+/g, "");
 
                     jsonToSQL(dataToAnalyze, tableName);
@@ -243,9 +236,10 @@ function viewBlackridgeLogs() {
             }, 'html');
 
         }
- 
+
     });
 }
+
 
 function viewExperimentalLogs() {
     $("#experimental").on("click", "td button", function() {
@@ -364,53 +358,6 @@ function viewParsedLogs() {
     });
 }
 
-
-// Function to change the log count number for BlackRidge logs when the date changes
-// This is all statically set for now until we get live BlackRidge logs
-function blackridgeLogCount() {
-    $("#br-date-selector").on("change", function() {
-        var count = $("#br-log-count");
-
-        switch ($(this).val()) {
-            case "2016-09-10":
-                count.text("988");
-                console.log("why");
-                break;
-            case "2016-09-09":
-                count.text("1,279");
-                break;
-            case "2016-09-08":
-                count.text("3,586");
-                break;
-            case "2016-09-07":
-                count.text("1,338");
-                break;
-            case "2016-09-06":
-                count.text("1,386");
-                break;
-            case "2016-09-05":
-                count.text("1,597");
-                break;
-            case "2016-09-04":
-                count.text("1,654");
-                break;
-            case "2016-09-03":
-                count.text("1,570");
-                break;
-            case "2016-09-02":
-                count.text("1,870");
-                break;
-            case "2016-09-01":
-                count.text("1,689");
-                break;
-            case "2016-08-31":
-                count.text("1,052");
-                break;
-            default:
-                count.text("");
-        }
-    });
-}
 
 // Launch G* Studio in a new tab and populate the editor panes with commands from LCARS
 // Note: The popluation of the editor panes only works if G* is running on the same server
@@ -594,6 +541,42 @@ function populateHoneypots() {
 }
 
 
+// Populate the BlackRidge logs table with info about each BlackRidge gateway
+function populateBlackRidgeLogs() {
+    $.getJSON(
+       lcarsAPI + "blackridgelogs",
+       function (data, status) {
+          if (status === "success") {
+              $("#blackridge").empty();
+
+              $.each(data, function(i, item) {
+                  var hostname = data[i].hostname;
+
+                  $("#blackridge").append('<tr><th scope="row">' + (i+1) + '</th>'
+                                       + '<td>' + hostname + '</td>'
+                                       + '<td>Marist</td>'
+                                       + '<td>' + data[i].time + '</td>'
+                                       + '<td>'
+                                         + Number(data[i].logCount).toLocaleString()
+                                         + '<button type="button" class="btn btn-default btn-xs" style="float:right; margin-right:25%;"><span title="Save As Experimental" class="fa fa-save"></span></button>'
+                                         + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal" style="float:right;"><span title="View" class="glyphicon glyphicon-list"></span></button></td>'
+                                       + '<td><div class="input-group">'
+                                       + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn" data-toggle="modal" data-target="#plot-modal"><span title="Custom" class="fa fa-gear"</span></button></div>'
+                                       + '<div class="input-group-btn" style="padding-right:5px;padding-left:5px;border-right:thin solid;top:-2px;"></div>'
+                                         + '<div style="padding-right:5px;padding-left:10px;"><input class="form-control input-xs" type="text" placeholder="Sample Size" size=1></input></div>'
+                                         + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="Plot" class="fa fa-line-chart"</span></button></div>'
+                                         + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To Graph" class="fa fa-share-alt"</span></button></div>'
+                                         + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To SQL" class="fa fa-database"</span></button></div>'
+                                       + '</div></td></tr>');
+
+              });
+
+          }
+       }
+    );
+}
+
+
 // Populate the Experimental logs table with info about each log
 function populateExperimentalLogs() {
     $.getJSON(
@@ -669,12 +652,12 @@ function switchLogTab() {
 
 $(document).ready(function() {
     populateHoneypots();
+    populateBlackRidgeLogs();
     populateExperimentalLogs();
     viewHoneypotLogs();
     viewBlackridgeLogs();
     viewExperimentalLogs();
     viewParsedLogs();
-    blackridgeLogCount();
     clearSQLCommands();
     clearGstarCommands();
     setLogsLastRefreshedTime();

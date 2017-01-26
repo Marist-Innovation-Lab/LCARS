@@ -19,4 +19,5 @@ output="[${countryData%, }]"
 # Print
 echo $output
 
+rm data.txt
 rm index-map.shtml

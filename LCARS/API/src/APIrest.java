@@ -241,6 +241,14 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
 
       //
+      // blackridgelogs - GET only - Gets infomation about BlackRidge gateways including hostname and most recent logging time
+      //
+      } else if (methodIsGET && command.equals("blackridgelogs")) {
+         sb = responseGetBlackRidgeInfo();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+
+      //
       // experimentallogs - GET only - Gets information about experimental logs
       //
       } else if (methodIsGET && command.equals("experimentallogs")) {
@@ -585,6 +593,7 @@ public class APIrest extends NanoHTTPD {
              "+-- GET  /time                               - current time\n" +
              "+-- GET  /datetime                           - current date and time\n" +
              "+-- GET  /hpinfo                             - information about all active honeypots\n" +
+             "+-- GET  /blackridgelogs                     - information about all BlackRidge gateways\n" +
              "+-- GET  /experimentallogs                   - information about all experimental logs\n" +
              "+-- GET  /logentries                         - number of recorded log entries today\n" +
              "+-- GET  /attacks                            - number of recorded attacks today\n" +
@@ -665,6 +674,11 @@ public class APIrest extends NanoHTTPD {
    
    private StringBuilder responseGetHPInfo() {
       String[] command = new String[]{"/var/www/html/lcars/scripts/hpinfo.sh"};
+      return runShellScript(command);
+   }
+
+   private StringBuilder responseGetBlackRidgeInfo() {
+      String[] command = new String[]{"/var/www/html/lcars/scripts/blackridgeLogInfo.sh"};
       return runShellScript(command);
    }
 

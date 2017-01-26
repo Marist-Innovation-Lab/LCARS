@@ -41,7 +41,7 @@ def create_json(regex_code, read_name):
         # File To Print
         file_to_print = json_store_path + file_to_read + ".json"
         syslog = open(read_path + file_to_read).read()
-        syslog = re.findall('(Gateway1.*gwAction="DISCARD)', syslog)
+        syslog = re.findall('(.*gwAction="DISCARD)', syslog)
         #syslog = re.findall('(Gateway1.*gwAction="FORWARD)', syslog)
 
         # IP Addresses to filter
@@ -220,7 +220,7 @@ for read_path in read_paths:
                 regex_code = "Longtail"
 
             #elif re.findall('(\w+\s\d+\s\d+:\d+:\d+\sGateway1\skernel:\s\[BlackRidge\|Gateway\|\d+.\d+.\d+.\d+\]\sclass="\w+"\scategory=".*"\sctx="bump0"\ssrc="\d+.\d+.\d+.\d+"\ssrcPort="\d+"\sdest="\d+.\d+.\d+.\d+"\sdestPort="\d+"\sidentity="\w+"\sgwAction="\w+"\sgwMode="\w+")', first_line) != []:
-            elif re.findall('(\w+\s\d+\s\d+:\d+:\d+\sGateway1.*")', first_line) != []:              
+            elif re.findall('(\w+\s\d+\s\d+:\d+:\d+\s.*")', first_line) != []:
                 if debug:
                     print("BlackRidge syslog file...")
                 #read_name = str(first_file[i])

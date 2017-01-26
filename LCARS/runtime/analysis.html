@@ -146,42 +146,12 @@
                             <th>#</th>
                             <th>Hostname</th>
                             <th>Location</th>
-                            <th>Date</th>
+                            <th>Last Logged</th>
                             <th>Log Count</th>
                             <th>Analyze</th>
                           </tr>
                         </thead>
                         <tbody id="blackridge">
-                          <tr>
-                            <th scope="row">1</th>
-                            <td>Gateway1</td>
-                            <td>Marist</td>
-                            <td><select id="br-date-selector">
-                              <option>2016-09-10</option>
-                              <option>2016-09-09</option>
-                              <option>2016-09-08</option>
-                              <option>2016-09-07</option>
-                              <option>2016-09-06</option>
-                              <option>2016-09-05</option>
-                              <option>2016-09-04</option>
-                              <option>2016-09-03</option>
-                              <option>2016-09-02</option>
-                              <option>2016-09-01</option>
-                              <option>2016-08-31</option>
-                            </select></td>
-                            <td><span id="br-log-count">988</span>
-                              <button type="button" class="btn btn-default btn-xs" style="float:right; margin-right:25%;"><span title="Save As Experimental" class="fa fa-save"></span></button>
-                              <button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal" style="float:right;"><span title="View" class="glyphicon glyphicon-list"></span></button>
-                            </td>
-                            <td><div class="input-group">
-                              <div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn" data-toggle="modal" data-target="#plot-modal"><span title="Custom" class="fa fa-gear" <="" span=""></span></button></div>
-                              <div class="input-group-btn" style="padding-right:5px;padding-left:5px;border-right:thin solid;top: -2px;"></div>
-                              <div style="padding-right:5px;padding-left:10px;"><input class="form-control input-xs" type="text" placeholder="Sample Size" size=1></input></div>
-                              <div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="Plot" class="fa fa-line-chart"</span></button></div>
-                              <div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To Graph" class="fa fa-share-alt"</span></button></div>
-                              <div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To SQL" class="fa fa-database"</span></button></div>
-                            </td>
-                          </tr> 
                         </tbody>
                       </table>
                     </div>
@@ -296,7 +266,7 @@
                    <div class="clearfix"></div>
                 </div>
                 <div class="x_content" style="height: 300px;">
-                  <h4>G* Commands<button id="clear-gstar-commands" type="button" class="btn btn-default btn-xs" style="position:absolute; right:5px;"><span title="Clear" class="glyphicon glyphicon-erase"</span></button></h4>
+                  <h4>Graph Commands<button id="clear-gstar-commands" type="button" class="btn btn-default btn-xs" style="position:absolute; right:5px;"><span title="Clear" class="glyphicon glyphicon-erase"</span></button></h4>
                   <textarea class="form-control" id="logDataOutput" rows="12" style="font-family:monospace;"></textarea>           
                 </div>
                 <div class="x_content" style="height: 300px;">
