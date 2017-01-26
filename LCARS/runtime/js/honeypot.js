@@ -474,18 +474,34 @@ function saveLogAsExperimental(pathToRawLog, filenameToSaveAs) {
 }
 
 
-// Clears out SQL Commands text area if clear button is clicked
-function clearSQLCommands() {
-    $("#clear-sql-commands").on("click", function() {
-        $("#sql-commands").val("");
+// Copies contents of Graph Commands text area to clipboard
+function copyGraphCommands() {
+    $("#copy-graph-commands").on("click", function() {
+        $("#logDataOutput").select();
+        document.execCommand('copy');
+    });
+}
+
+// Copies contents of SQL Commands text area to clipboard
+function copySQLCommands() {
+    $("#copy-sql-commands").on("click", function() {
+        $("#sql-commands").select();
+        document.execCommand('copy');
     });
 }
 
 
-// Clears out G* Commands text area if clear button is clicked
-function clearGstarCommands() {
-    $("#clear-gstar-commands").on("click", function() {
+// Clears out Graph Commands text area if clear button is clicked
+function clearGraphCommands() {
+    $("#clear-graph-commands").on("click", function() {
         $("#logDataOutput").val("");
+    });
+}
+
+// Clears out SQL Commands text area if clear button is clicked
+function clearSQLCommands() {
+    $("#clear-sql-commands").on("click", function() {
+        $("#sql-commands").val("");
     });
 }
 
@@ -658,8 +674,10 @@ $(document).ready(function() {
     viewBlackridgeLogs();
     viewExperimentalLogs();
     viewParsedLogs();
+    copyGraphCommands();
+    copySQLCommands();
+    clearGraphCommands();
     clearSQLCommands();
-    clearGstarCommands();
     setLogsLastRefreshedTime();
 
     // Call functions to refresh logs every hour on the 15 minute (thats when the cron job runs)
