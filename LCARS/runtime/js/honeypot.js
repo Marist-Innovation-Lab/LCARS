@@ -1019,7 +1019,14 @@ function makeCustomPlot(){
             setStatusColor("red");
             $("#status").html("You cannot link an axis to itself.");
             return false;
-        }   
+        }
+
+        if(fromNames[0] === toNames[x]){
+           // first axis should only have outgoing link.
+           setStatusColor("red");
+            $("#status").html("The first axis can only have outgoing links.");
+            return false;
+        }  
         
         // populate connections
         var source = fromNames[x];
