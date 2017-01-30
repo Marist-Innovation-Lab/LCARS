@@ -1069,7 +1069,7 @@ function populateCustomDropdown(logData, logCount) {
     thead.appendTo(table);
 
     var tbody = $('<tbody />');
-    for(var x = 1; x <= (((dataKeys.length) * (dataKeys.length - 1)) / 2); x++){
+    for(var x = 1; x < dataKeys.length && x < 6; x++){
         var row = $('<tr />');
         var td1 = $('<td />');
         var checkbox = $('<input type="checkbox" value="' + x + '">');
