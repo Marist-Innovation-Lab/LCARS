@@ -1,6 +1,4 @@
 
-var lcarsAPI = "http://10.10.7.84:8081/"
-
 // Creates a new attack profile from modal window that opens when "Create Attack Profile" button is clicked
 function createProfile() {
 
@@ -21,7 +19,7 @@ function createProfile() {
          var dataObject = { 'name': name, 'details': details };
         
          $.ajax({
-                 url: lcarsAPI + "profiles",
+                 url: _lcarsAPI + "profiles",
                  type: 'PUT',
                  contentType: 'application/json',
                  data: JSON.stringify(dataObject),
@@ -50,7 +48,7 @@ function createResponseRecipe() {
          var dataObject = { 'name': name };
         
          $.ajax({
-                 url: lcarsAPI + "responserecipes",
+                 url: _lcarsAPI + "responserecipes",
                  type: 'PUT',
                  contentType: 'application/json',
                  data: JSON.stringify(dataObject),
@@ -261,7 +259,7 @@ function getRecipeDetailsActionButton() {
 function addResponseDetail(rrid, ruleorder, target, chain, protocol, source, dest) {
     var dataObject = { 'rrid': rrid, 'ruleorder': ruleorder, 'target': target, 'chain': chain, 'protocol': protocol, 'source': source, 'destination': dest };
     $.ajax({
-            url: lcarsAPI + "responsedetails/",
+            url: _lcarsAPI + "responsedetails/",
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(dataObject),
@@ -274,7 +272,7 @@ function addResponseDetail(rrid, ruleorder, target, chain, protocol, source, des
 function editProfile(pid, name, details) { 
     var dataObject = { 'name': name, 'details': details };
     $.ajax({
-            url: lcarsAPI + "profiles/" + pid,
+            url: _lcarsAPI + "profiles/" + pid,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(dataObject),
@@ -287,7 +285,7 @@ function editProfile(pid, name, details) {
 function editRecipe(rrid, name) {
     var dataObject = { 'name': name };
     $.ajax({
-            url: lcarsAPI + "responserecipes/" + rrid,
+            url: _lcarsAPI + "responserecipes/" + rrid,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(dataObject),
@@ -300,7 +298,7 @@ function editRecipe(rrid, name) {
 function editResponseDetail(rdid, rrid, ruleorder, target, chain, protocol, source, dest) {
     var dataObject = { 'rrid': rrid, 'ruleorder': ruleorder, 'target': target, 'chain': chain, 'protocol': protocol, 'source': source, 'destination': dest };
     $.ajax({
-            url: lcarsAPI + "responsedetails/" + rdid,
+            url: _lcarsAPI + "responsedetails/" + rdid,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(dataObject),
@@ -311,7 +309,7 @@ function editResponseDetail(rdid, rrid, ruleorder, target, chain, protocol, sour
 // Deletes a specified response recipe 
 function deleteRecipe(rrid) {
     $.ajax({
-            url: lcarsAPI + "responserecipes/" + rrid,
+            url: _lcarsAPI + "responserecipes/" + rrid,
             type: 'DELETE',
             contentType: 'application/json',
             success: function() { populateRecipes(); populateOrchestration(); }
@@ -322,7 +320,7 @@ function deleteRecipe(rrid) {
 // Deletes a specified profile
 function deleteProfile(pid) {
     $.ajax({
-            url: lcarsAPI + "profiles/" + pid,
+            url: _lcarsAPI + "profiles/" + pid,
             type: 'DELETE',
             success: function() { populateProfiles(); populateOrchestration(); }
     });
@@ -332,7 +330,7 @@ function deleteProfile(pid) {
 // Deletes a response detail
 function deleteResponseDetail(rdid, rrid) {
     $.ajax({
-           url: lcarsAPI + "responsedetails/" + rdid,
+           url: _lcarsAPI + "responsedetails/" + rdid,
            type: 'DELETE',
            success: function() { getRecipeDetails(rrid); populateRecipes(); populateOrchestration(); }
     });
@@ -341,7 +339,7 @@ function deleteResponseDetail(rdid, rrid) {
 // Gets the response recipe details for the selected response recipe
 function getRecipeDetails(rrid) {
     $.getJSON(
-      lcarsAPI + "responserecipes/" + rrid,
+      _lcarsAPI + "responserecipes/" + rrid,
       function (data, status) {
          if (status === "success") {
            $("#recipe-details").find("tbody").html("");
@@ -372,7 +370,7 @@ function getRecipeDetails(rrid) {
 // Populates Response Recipes tables in Threat Intel and Reconfigurator pages with data from the database
 function populateRecipes() {
     $.getJSON(
-      lcarsAPI + "responserecipes",
+      _lcarsAPI + "responserecipes",
       function (data, status) {
          if (status === "success") {
             $("#response-recipes").empty();
@@ -399,7 +397,7 @@ function populateRecipes() {
 // Populates Profiles table in Threat Intel page with data from the database
 function populateProfiles() {
     $.getJSON(
-      lcarsAPI + "profiles",
+      _lcarsAPI + "profiles",
       function (data, status) {
          if (status === "success") {
             $("#profiles").empty();
@@ -431,7 +429,7 @@ function onDeployResponseRecipeButtonClick() {
 // Deploys selected response recipe on Reconfigurator Page
 function deployResponseRecipe(rrid) {
      $.getJSON(
-          lcarsAPI + "responserecipes/" + rrid,
+          _lcarsAPI + "responserecipes/" + rrid,
           function (data, status) {
              if (status === "success") {
                 deployResponseRules(data);

@@ -1,82 +1,82 @@
-var lcarsAPI = "http://10.10.7.84:8081/";
-var rfwAPI   = "http://10.10.7.84:7390/";
-
 
 // Interval on which stats will update
 var updateMilliseconds = 30000;
 
 // Counts number of profiles in the database for display
 function updateProfileCount() {
-
-	$.getJSON(
-      lcarsAPI + "profiles",
-      function (data, status) {
-         if (data[0].profiles__pid) {
-         	var count = data.length || 0;
-            $("#profile-count").html(count);
-          }
-      });
-    if($("#profile-count").html() === "") {
-    	$("#profile-count").html(0);
-    }		
+    $.getJSON(
+        _lcarsAPI + "profiles",
+        function (data, status) {
+            if (data[0].profiles__pid) {
+                var count = data.length || 0;
+                $("#profile-count").html(count);
+            }
+        }
+    );
+    if ($("#profile-count").html() === "") {
+        $("#profile-count").html(0);
+    }
 }
 
 // Counts number of response recipes in the database for display
 function updateResponseCount() {
-	
-	$.getJSON(
-      lcarsAPI + "responserecipes",
-      function (data, status) {
-         if (data[0].responserecipes__rrid) {
-         	var count = data.length || 0;
-            $("#response-count").html(count);
-          }
-      });
-    if($("#response-count").html() === "") {
-    	$("#response-count").html(0);
-    }		
+    $.getJSON(
+        _lcarsAPI + "responserecipes",
+        function (data, status) {
+            if (data[0].responserecipes__rrid) {
+                var count = data.length || 0;
+                $("#response-count").html(count);
+            }
+        }
+    );
+    if ($("#response-count").html() === "") {
+        $("#response-count").html(0);
+    }
 }
 
 // Count number of rules on RFW on .84
 function updateFirewallCount() {
-	$.getJSON(
-      rfwAPI + "list",
-      function (data, status) {
-      	var count = data.length || 0;
-        $("#firewall-count").html(count);
-      });
-    if($("#firewall-count").html() === "") {
-    	$("#firewall-count").html(0);
-    }	
+    $.getJSON(
+        _rfwAPI + "list",
+        function (data, status) {
+            var count = data.length || 0;
+            $("#firewall-count").html(count);
+        }
+    );
+    if ($("#firewall-count").html() === "") {
+        $("#firewall-count").html(0);
+    }
 }
 
 // Gets the number of current log entries (according to data from Longtail)
 function updateLogEntriesCount() {
     $.getJSON(
-        lcarsAPI + "logentries",
+        _lcarsAPI + "logentries",
         function (data, status) {
            if (status === "success") {
               var count = Number(data.logCount).toLocaleString();
               $("#log-count").html(count);;
            }
-        });
+        }
+    );
 }
 
 // Get the number of current attacks (according to Longtail)
 function updateAttacksCount() {
     $.getJSON(
-        lcarsAPI + "attacks",
+        _lcarsAPI + "attacks",
         function (data, status) {
            if (status === "success") {
               var count = Number(data.attacksCount).toLocaleString();
               $("#attack-count").html(count);;
            }
-        });
+        }
+    );
 }
 
 function updateHoneypotCount() {
     $.getJSON(
-        lcarsAPI + "hpinfo",
+        _lcarsAPI + "hpinfo",
         function (data, status) {
             var count = data.length || 0;
             $("#honeypot-count").html(count);
@@ -90,7 +90,7 @@ function updateHoneypotCount() {
 // Populates the Attack Originations table with country data
 function populateCountryData() {
     $.getJSON(
-        lcarsAPI + "countrydata",
+        _lcarsAPI + "countrydata",
         function (data, status) {
             if (status === "success") {
                 $("#country-data").empty();

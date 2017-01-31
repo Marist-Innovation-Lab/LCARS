@@ -5,13 +5,11 @@
  *  The entire Marist network, 10.0.0.0/8 & 148.100.0.0/16, is whitelisted for testing
  */
  
- 
-var serverURL = "http://10.10.7.84:7390/"
 
 // Sends a request to the server to get the current firewall rules and builds out the "Firewall State" table with the data
 function getFirewallData() {
     $.getJSON(
-      serverURL + "list",
+      _rfwAPI + "list",
       function (data, status) {
          if (status === "success") {
              $("#firewall-rules").empty();
@@ -31,7 +29,7 @@ function getFirewallData() {
 // Sends a request to the server to get the whitelisted IPs and adds them to the "Whitelist" section
 function getWhitelist() {
     $.getJSON(
-      serverURL + "whitelist",
+      _rfwAPI + "whitelist",
       function (data, status) {
          if (status === "success") {
              $.each(data, function(i, item) {
@@ -45,10 +43,10 @@ function getWhitelist() {
 // Used when page is reloaded-- server was having trouble handling the two separate getJSON requests at once, but handles them fine when nested
 function initPage() {
     $.getJSON(
-      serverURL + "list",
+      _rfwAPI + "list",
       function (listData) {
           $.getJSON(
-             serverURL + "whitelist",
+             _rfwAPI + "whitelist",
              function (whitelistData) {
                  $.each(whitelistData, function(i, item) {
                      $("#whitelist").append('<tr><th scope="row">' + whitelistData[i] + '</th></tr>');
@@ -138,11 +136,11 @@ function buildAddRequest(target, chain, protocol, address, address2) {
     if ( target === "target" || chain === "chain" || protocol === "protocol" || address === "") {
         return addRuleErrorMsg();
     } else if ( chain === "forward" ) {
-        var path = serverURL + target + "/forward/any/" + protocol + "/" + address + "/any/" + address2;
+        var path = _rfwAPI + target + "/forward/any/" + protocol + "/" + address + "/any/" + address2;
         return addNewRule(path);                
     } else {
 //      var path = serverURL + target + "/" + chain + "/" + interface + "/" + protocol + "/" + address;
-        var path = serverURL + target + "/" + chain + "/any/" + protocol + "/" + address;
+        var path = _rfwAPI + target + "/" + chain + "/any/" + protocol + "/" + address;
         return addNewRule(path);
     }
     updateLog(path);
@@ -217,14 +215,14 @@ function buildDeleteRequest(rule) {
     var path;
 
     if (chain === "input") {
-        path = serverURL + target + "/input/any/" + prot + "/" + source;
+        path = _rfwAPI + target + "/input/any/" + prot + "/" + source;
     } else if (chain === "output") { 
-        path = serverURL + target + "/output/any/" + prot + "/" + dest;
+        path = _rfwAPI + target + "/output/any/" + prot + "/" + dest;
     } else {   // chain === "forward"
         if (dest === "0.0.0.0/0") {
-            path = serverURL + target + "/forward/any/" + prot + "/" + source + "/any/"
+            path = _rfwAPI + target + "/forward/any/" + prot + "/" + source + "/any/"
         } else {
-            path = serverURL + target + "/forward/any/" + prot + "/" + source + "/any/" + dest;
+            path = _rfwAPI + target + "/forward/any/" + prot + "/" + source + "/any/" + dest;
         }
     }
     

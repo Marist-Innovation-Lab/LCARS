@@ -113,8 +113,7 @@ Change line 344 of /usr/local/lib/python2.7/dist-packages/rfw/rfw.py to include 
 Starting everything
 ===================
 
-Locate everywhere /var/www/html/lcars/runtime/js where it uses 10.10.7.84 and change that to the IP address of the machine you're using
-This should probably be changed to just 1 global variable and just reference localhost... I'll do that soon
+Change the lcars and rfw IPs in /var/www/html/lcars/runtime/globals.js to your IP
 Do the same for the APIrest.java file located in ~/repos/SecureCloud/LCARS/API/src 
 
 Start a screen for the API

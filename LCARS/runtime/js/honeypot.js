@@ -1,5 +1,3 @@
-var lcarsAPI = "http://10.10.7.84:8081/";
-var gstarAddress = "http://10.10.7.72/"
 var currentLog = "";
 var lastPlotType = "";
 var linkWeight = false;
@@ -366,7 +364,7 @@ function launchGstar() {
     var gstarCommands = $("#logDataOutput").val();
     var sqlCommands = $("#sql-commands").val();
     // Launch G* Studio in a new tab
-    var gstarWindow = window.open(gstarAddress, "_blank");
+    var gstarWindow = window.open(_gstarURL, "_blank");
     gstarWindow.focus();
 
     // On page load, populate the graph and database editors with their respective data
@@ -465,7 +463,7 @@ function jsonToSQL(data, tableName) {
 function saveLogAsExperimental(pathToRawLog, filenameToSaveAs) {
     var dataObject = { 'pathToLog': pathToRawLog, 'filename': filenameToSaveAs };
     $.ajax({
-            url: lcarsAPI + "savelog/",
+            url: _lcarsAPI + "savelog/",
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(dataObject),
@@ -517,7 +515,7 @@ function clearModal() {
 // Populate the Longtail HP table with info about each active honeypot, including hostname and time it was last attacked
 function populateHoneypots() {
     $.getJSON(
-       lcarsAPI + "hpinfo",
+       _lcarsAPI + "hpinfo",
        function (data, status) {
           if (status === "success") {
               $("#honeypots").empty();
@@ -560,7 +558,7 @@ function populateHoneypots() {
 // Populate the BlackRidge logs table with info about each BlackRidge gateway
 function populateBlackRidgeLogs() {
     $.getJSON(
-       lcarsAPI + "blackridgelogs",
+       _lcarsAPI + "blackridgelogs",
        function (data, status) {
           if (status === "success") {
               $("#blackridge").empty();
@@ -596,7 +594,7 @@ function populateBlackRidgeLogs() {
 // Populate the Experimental logs table with info about each log
 function populateExperimentalLogs() {
     $.getJSON(
-       lcarsAPI + "experimentallogs",
+       _lcarsAPI + "experimentallogs",
        function (data, status) {
           if (status === "success") {
               $("#experimental").empty();
