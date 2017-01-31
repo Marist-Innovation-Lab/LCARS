@@ -27,7 +27,7 @@ public class APIrest extends NanoHTTPD {
    public static final String databaseLocalURL  = "//localhost:5432";
    public static String databaseURL = databaseLocalURL; // Either databaseRemoteURL or databaseLocalURL, default to databaseLocalURL.
    public static String databaseName = "lcars";
-   public static String databaseUser     = "gstar";
+   public static String databaseUser     = "lcars";
    public static String databasePassword = "alpacaalpaca";          // TODO: Obfuscate these somehow.
 
    public static final String messageKey = "message";  // This is the key in our JSON key-value objects for messages.

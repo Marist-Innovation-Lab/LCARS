@@ -1,0 +1,138 @@
+#######################
+   Setting up LCARS
+#######################
+
+Make and clone the repositories into the repos directory
+~$ mkdir repos
+~$ cd repos
+~/repos$ git clone https://github.com/AlanResearch/SecureCloud.git
+~/repos$ git clone https://github.com/Marist-SDN-SecureCloud/rfw.git
+
+Install Apache2 and Java if not already installed
+$ sudo apt-get install apache2 default-jdk
+
+Make directory to store runtime and related files
+~$ cd /var/www/html
+/var/www/html$ mkdir lcars
+/var/www/html$ cd lcars
+
+Copy files from repo into lcars directory
+/var/www/html/lcars$ cp -R ~/repos/SecureCloud/LCARS/runtime .
+/var/www/html/lcars$ cp -R ~/repos/SecureCloud/LCARS/scripts .
+/var/www/html/lcars$ cp -R ~/repos/SecureCloud/LCARS/build .
+/var/www/html/lcars$ cp -R ~/repos/SecureCloud/LCARS/bower.json .
+
+Populate /var/www/html/lcars with "vendors" directory.
+
+Make directories to store log files
+/var/www/html/lcars$ cd runtime
+/var/www/html/lcars/runtime$ mkdir -p logs/{blackridge,longtail,experimental}/parsed_json
+
+Add the following cron jobs to the crontab file
+$ sudo crontab -e
+Add these two lines to the end of the file:
+*/10 * * * * /var/www/html/lcars/scripts/getBlackRidgeLogs.sh
+15 * * * * /var/www/html/lcars/scripts/getLogs.sh
+
+Install osquery
+$ sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 1484120AC4E9F8A1A577AEEE97A80C63C9D8B80B
+$ sudo add-apt-repository "deb [arch=amd64] https://osquery-packages.s3.amazonaws.com/xenial xenial main"
+$ sudo apt-get update
+$ sudo apt-get install osquery
+
+Or visit: https://osquery.io/downloads/ for a possibly more updated version of this
+
+
+Setting up the database
+=======================
+
+Install PostgreSQL if not already installed
+$ sudo apt-get install postgresql postgresql-contrib
+
+Create new user
+$ sudo -u postgres createuser --interactive
+Enter name of role to add: lcars
+Shall the new role be a superuser? (y/n) y
+
+Create new database
+$ sudo -u postgres createdb lcars
+
+Set password
+$ sudo -u postgres psql
+postgres=# \password lcars
+Enter new password: alpacaalpaca
+Enter it again: alpacaalpaca
+postgres=# \q
+
+Locate pg_hba.conf file (/etc/postgresql/[version]/main/pg_hba.conf)
+Add this connection rule to the file:
+     host  all  all  0.0.0.0/0  md5
+Edit this line:
+     local all  all             peer
+Change 'peer' to 'md5'
+
+Locate postgresql.conf file (/etc/postgresql/[version]/main/postgresql.conf)
+Add this line to the file to allow all PostgreSQL to listen for remote connections:
+     listen_addresses = '*'
+     
+Restart PostgreSQL for changes to take effect
+$ sudo service postgresql restart
+
+Load database file
+$ cd ~/repos/SecureCloud/LCARS/db
+~/repos/SecureCloud/LCARS/db$ psql -U lcars -d lcars -f lcars.sql
+
+Access Postgres as lcars user
+$ psql -U lcars lcars
+
+Verify database and tables were created successfully
+lcars=# \dt
+
+Exit
+lcars=# \q
+
+
+Setting up the firewall
+=======================
+
+Install pip
+$ sudo apt-get install python-pip
+
+Install rfw
+$ sudo pip install rfw
+
+Navigate to the Marist rfw repo
+$ cd ~/repos/rfw
+
+Run the script to copy the config files to their locations
+~/repos/rfw$ ./c.sh
+
+Change line 344 of /usr/local/lib/python2.7/dist-packages/rfw/rfw.py to include your machine's IP address.
+
+
+Starting everything
+===================
+
+Locate everywhere /var/www/html/lcars/runtime/js where it uses 10.10.7.84 and change that to the IP address of the machine you're using
+This should probably be changed to just 1 global variable and just reference localhost... I'll do that soon
+Do the same for the APIrest.java file located in ~/repos/SecureCloud/LCARS/API/src 
+
+Start a screen for the API
+$ screen -S api
+
+(In the screen) Start the API 
+$ cd ~/repos/SecureCloud/LCARS/API/src/
+~/repos/SecureCloud/LCARS/API/src$ sudo ./c.sh
+~/repos/SecureCloud/LCARS/API/src$ sudo ./APIrest.sh
+
+Detach from screen
+CTRL+a d
+
+Start a new screen for rfw
+$ screen -S rfw
+
+(In the screen) Start rfw
+$ sudo rfw -v
+
+Detatch from screen
+CTRL+a d

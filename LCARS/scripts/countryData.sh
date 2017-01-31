@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 #
 # This script returns the number of attacks by broken up by country
 #
