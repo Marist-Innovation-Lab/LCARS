@@ -131,8 +131,8 @@ function spawnPlot(formData) {
   // d3.js code for rendering plot begins here
   var width = 1000,
       height = 700,
-      innerRadius = 40,
-      outerRadius = 400,
+      innerRadius = 30,
+      outerRadius = 350,
       majorAngle = 2 * Math.PI / 3,
       minorAngle = 1 * Math.PI / 12;
     
@@ -143,7 +143,7 @@ function spawnPlot(formData) {
 
   // var angle = d3.scale.ordinal().domain(angleDomain).range([0, majorAngle - minorAngle, majorAngle + minorAngle, 2 * majorAngle]);
 
-  var angle = d3.scale.ordinal().domain(angleDomain).range([-Math.PI / 2, -Math.PI / 4, 0, Math.PI / 4, Math.PI / 2, 3 * Math.PI / 4]),
+  var angle = d3.scale.ordinal().domain(angleDomain).range([-Math.PI / 4, 0, Math.PI / 4, 3 * Math.PI / 4, Math.Pi, -Math.PI / 4]),
       radius = d3.scale.linear().range([innerRadius + 50, outerRadius - 50]),
       color = d3.scale.ordinal().domain(angleDomain).range(["orange", "red", "teal", "blue","lawngreen","green"]);
 
@@ -164,12 +164,12 @@ function spawnPlot(formData) {
   .attr("height", height)
   .attr("id","svgElement")
   .append("g")
-  .attr("transform", "translate(" + 360 + "," + 360 + ")");
+  .attr("transform", "translate(" + 250 + "," + 360 + ")");
 
   // set up legend for hive plot
   svg.append("g")
   .attr("id","legend")
-  .attr("transform","translate(" + 250 + "," + -355 + ")")
+  .attr("transform","translate(" + 130 + "," + -363 + ")")
   .append("rect")
   .attr("x",10)
   .attr("y",10)
