@@ -84,6 +84,12 @@ li>.nav.child_menu li:hover {
    white-space: pre;
 }
 
+input[type=checkbox] {
+   -webkit-transform: scale(1.4,1.4);
+   -moz-transform: scale(1.4,1.4);
+   -o-transform: scale(1.4,1.4);
+}
+
 /* From: http://stackoverflow.com/questions/22920589/bootstrap-3-input-xs-smaller-than-sm#22920590  */
 .input-xs {
    height: 22px;

@@ -17,6 +17,7 @@ function viewHoneypotLogs() {
         var sampleBox = $(this).closest("tr").find("input");
         var sampleSize = sampleBox.val();
             sampleSize = (+sampleSize.replace(',',''));
+        var checkboxes = $(this).closest("tr").find("input:checked");
 
         var rawLog = "/lcars/runtime/logs/longtail/"+host.toLowerCase()+".log";
         var parsedLog = "/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json";
@@ -96,22 +97,29 @@ function viewHoneypotLogs() {
                     });
                 }
 
-                if (button === "plot") {
-                    currentLog = dataToAnalyze;
-                    makePrebakedPlot(dataToAnalyze);
-                    lastPlotType = "prebaked";
-                }
+                if (button === "generate") {
+                    var selected = [];
+                    checkboxes.each(function() {
+                        selected.push($(this).val().toLowerCase());
+                    });
 
-                if (button === "to graph") {
-                    makePrebakedGraph(dataToAnalyze);
-                }
+                    if (selected.indexOf("plot") !== -1) {
+                        currentLog = dataToAnalyze;
+                        makePrebakedPlot(dataToAnalyze);
+                        lastPlotType = "prebaked";
+                    }
 
-                if (button === "to sql") {
-                    var formatDate = date.replace(/ /g, "T");
-                    var tableName = host + formatDate;
-                    tableName = tableName.replace(/[\W_]+/g, "");
+                    if (selected.indexOf("to graph") !== -1) {
+                        makePrebakedGraph(dataToAnalyze);
+                    }
 
-                    jsonToSQL(dataToAnalyze, tableName);
+                    if (selected.indexOf("to sql") !== -1) {
+                        var formatDate = date.replace(/ /g, "T");
+                        var tableName = host + formatDate;
+                        tableName = tableName.replace(/[\W_]+/g, "");
+
+                        jsonToSQL(dataToAnalyze, tableName);
+                    }
                 }
 
             }, 'html');
@@ -136,6 +144,7 @@ function viewBlackridgeLogs() {
         var sampleBox = $(this).closest("tr").find("input");
         var sampleSize = sampleBox.val();
             sampleSize = (+sampleSize.replace(',',''));
+        var checkboxes = $(this).closest("tr").find("input:checked");
 
         var rawLog = "/lcars/runtime/logs/blackridge/"+host+".log";
         var parsedLog = "/lcars/runtime/logs/blackridge/parsed_json/"+host+".log.json";
@@ -212,23 +221,29 @@ function viewBlackridgeLogs() {
                     });
                 }
 
-                if (button === "plot") {
-                    currentLog = dataToAnalyze;
-                    makePrebakedPlot(dataToAnalyze);
-                    lastPlotType = "prebaked";
-                }
+                if (button === "generate") {
+                    var selected = [];
+                    checkboxes.each(function() {
+                        selected.push($(this).val().toLowerCase());
+                    });
 
-                if (button === "to graph") {
-                    makePrebakedGraph(dataToAnalyze);
-                }
+                    if (selected.indexOf("plot") !== -1) {
+                        currentLog = dataToAnalyze;
+                        makePrebakedPlot(dataToAnalyze);
+                        lastPlotType = "prebaked";
+                    }
 
-                if (button === "to sql") {
-                    var formatDate = date.replace(/ /g, "T");
-                    var tableName = host + formatDate;
-                    tableName = tableName.replace(/[\W_]+/g, "");
+                    if (selected.indexOf("to graph") !== -1) {
+                        makePrebakedGraph(dataToAnalyze);
+                    }
 
-                    jsonToSQL(dataToAnalyze, tableName);
+                    if (selected.indexOf("to sql") !== -1) {
+                        var formatDate = date.replace(/ /g, "T");
+                        var tableName = host + formatDate;
+                        tableName = tableName.replace(/[\W_]+/g, "");
 
+                        jsonToSQL(dataToAnalyze, tableName);
+                    }
                 }
 
             }, 'html');
@@ -253,6 +268,7 @@ function viewExperimentalLogs() {
         var sampleBox = $(this).closest("tr").find("input");
         var sampleSize = sampleBox.val();
             sampleSize = (+sampleSize.replace(',',''));
+        var checkboxes = $(this).closest("tr").find("input:checked");
 
         var filename = name + "." + type;
         var rawLog = "/lcars/runtime/logs/experimental/"+filename+".log";
@@ -317,20 +333,27 @@ function viewExperimentalLogs() {
                     });
                 }
 
-                if (button === "plot") {
-                    currentLog = dataToAnalyze;
-                    makePrebakedPlot(dataToAnalyze);
-                    lastPlotType = "prebaked";
-                }
+                if (button === "generate") {
+                    var selected = [];
+                    checkboxes.each(function() {
+                        selected.push($(this).val().toLowerCase());
+                    });
 
-                if (button === "to graph") {
-                    makePrebakedGraph(dataToAnalyze);
-                }
+                    if (selected.indexOf("plot") !== -1) {
+                        currentLog = dataToAnalyze;
+                        makePrebakedPlot(dataToAnalyze);
+                        lastPlotType = "prebaked";
+                    }
 
-                if (button === "to sql") {
-                    var tableName = name.replace(/[\W_]+/g, "");  // going to need something more uniquifying here
+                    if (selected.indexOf("to graph") !== -1) {
+                        makePrebakedGraph(dataToAnalyze);
+                    }
 
-                    jsonToSQL(dataToAnalyze, tableName);
+                    if (selected.indexOf("to sql") !== -1) {
+                        var tableName = name.replace(/[\W_]+/g, "");  // going to need something more uniquifying here
+
+                        jsonToSQL(dataToAnalyze, tableName);
+                    }
                 }
 
             }, 'html');
@@ -542,9 +565,10 @@ function populateHoneypots() {
                                        + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn" data-toggle="modal" data-target="#plot-modal"><span title="Custom" class="fa fa-gear"</span></button></div>'
                                        + '<div class="input-group-btn" style="padding-right:5px;padding-left:5px;border-right:thin solid;top:-2px;"></div>'
                                          + '<div style="padding-right:5px;padding-left:10px;"><input class="form-control input-xs" type="text" placeholder="Sample Size" size=1></input></div>'
-                                         + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="Plot" class="fa fa-line-chart"</span></button></div>'
-                                         + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To Graph" class="fa fa-share-alt"</span></button></div>'
-                                         + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To SQL" class="fa fa-database"</span></button></div>'
+                                         + '<div style="padding-left:10px; padding-right:10px; padding-bottom:7px;" class="input-group-btn"><input type="checkbox" title="Plot" value="Plot"></input></div>'
+                                         + '<div style="padding-right:10px; padding-bottom:7px;" class="input-group-btn"><input type="checkbox" title="To Graph" value="To Graph"></input></div>'
+                                         + '<div style="padding-right:10px; padding-bottom:7px;" class="input-group-btn"><input type="checkbox" title="To SQL" value="To SQL"></input></div>'
+                                         + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="Generate" class="fa fa-magic"</span></button></div>'
                                        + '</div></td></tr>');
 
               });
@@ -578,9 +602,10 @@ function populateBlackRidgeLogs() {
                                        + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn" data-toggle="modal" data-target="#plot-modal"><span title="Custom" class="fa fa-gear"</span></button></div>'
                                        + '<div class="input-group-btn" style="padding-right:5px;padding-left:5px;border-right:thin solid;top:-2px;"></div>'
                                          + '<div style="padding-right:5px;padding-left:10px;"><input class="form-control input-xs" type="text" placeholder="Sample Size" size=1></input></div>'
-                                         + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="Plot" class="fa fa-line-chart"</span></button></div>'
-                                         + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To Graph" class="fa fa-share-alt"</span></button></div>'
-                                         + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To SQL" class="fa fa-database"</span></button></div>'
+                                         + '<div style="padding-left:10px; padding-right:10px; padding-bottom:7px;" class="input-group-btn"><input type="checkbox" title="Plot" value="Plot"></input></div>'
+                                         + '<div style="padding-right:10px; padding-bottom:7px;" class="input-group-btn"><input type="checkbox" title="To Graph" value="To Graph"></input></div>'
+                                         + '<div style="padding-right:10px; padding-bottom:7px;" class="input-group-btn"><input type="checkbox" title="To SQL" value="To SQL"></input></div>'
+                                         + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="Generate" class="fa fa-magic"</span></button></div>'
                                        + '</div></td></tr>');
 
               });
@@ -609,11 +634,12 @@ function populateExperimentalLogs() {
                                             + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal" style="float:right; margin-right:25%;"><span title="View" class="glyphicon glyphicon-list"></span></button></td>'
                                           + '<td><div class="input-group">'
                                             + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn" data-toggle="modal" data-target="#plot-modal"><span title="Custom" class="fa fa-gear"</span></button></div>'
-                                       + '<div class="input-group-btn" style="padding-right:5px;padding-left:5px;border-right:thin solid;top:-2px;"></div>'
-                                         + '<div style="padding-right:5px;padding-left:10px;"><input class="form-control input-xs" type="text" placeholder="Sample Size" size=1></input></div>'
-                                            + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="Plot" class="fa fa-line-chart"</span></button></div>'
-                                            + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To Graph" class="fa fa-share-alt"</span></button></div>'
-                                            + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To SQL" class="fa fa-database"</span></button></div>'
+                                            + '<div class="input-group-btn" style="padding-right:5px;padding-left:5px;border-right:thin solid;top:-2px;"></div>'
+                                            + '<div style="padding-right:5px;padding-left:10px;"><input class="form-control input-xs" type="text" placeholder="Sample Size" size=1></input></div>'
+                                            + '<div style="padding-left:10px; padding-right:10px; padding-bottom:7px;" class="input-group-btn"><input type="checkbox" title="Plot" value="Plot"></input></div>'
+                                            + '<div style="padding-right:10px; padding-bottom:7px;" class="input-group-btn"><input type="checkbox" title="To Graph" value="To Graph"></input></div>'
+                                            + '<div style="padding-right:10px; padding-bottom:7px;" class="input-group-btn"><input type="checkbox" title="To SQL" value="To SQL"></input></div>'
+                                            + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="Generate" class="fa fa-magic"</span></button></div>'
                                           + '</div></td></tr>');
 
               });
