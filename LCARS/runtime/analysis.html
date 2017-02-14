@@ -115,16 +115,17 @@
             <div class="col-md-12 col-sm-12 col-xs-12">
                <div class="x_panel">
                   <div class="x_title">
-                    <h2>Log Data <small id="last-refreshed" style="display: inline;"></small></h2>
+                    <h2>Logs <small id="last-refreshed" style="display: inline;"></small></h2>
                     <div class="clearfix"></div></div><div>
                     <ul id="logs-tab" class="nav nav-tabs nav-justified">
-                       <li role="presentation" data-toggle="tab" class="active"><a href="#honeypot-logs"><strong>Honeypot</strong></a></li>
+                       <li role="presentation" data-toggle="tab" class="active"><a href="#longtail-logs"><strong>Longtail</strong></a></li>
                        <li role="presentation" data-toggle="tab"><a href="#blackridge-logs"><strong>BlackRidge</strong></a></li>
+                       <li role="presentation" data-toggle="tab"><a href="#lcars-logs"><strong>LCARS</strong></a></li>
                        <li role="presentation" data-toggle="tab"><a href="#experimental-logs"><strong>Experimental</strong></a></li>
                     </ul>
                   </div>
                   <div class="tab-content">
-                    <div role="tabpanel" id="honeypot-logs" class="tab-pane active" style="height: 250px; overflow: auto;">
+                    <div role="tabpanel" id="longtail-logs" class="tab-pane active" style="height: 250px; overflow: auto;">
                       <table class="table table-hover">
                         <thead>
                           <tr>
@@ -141,7 +142,7 @@
                             </th>
                           </tr>
                         </thead>
-                        <tbody id="honeypots">
+                        <tbody id="longtail">
                         </tbody>
                       </table>
                     </div>
@@ -162,6 +163,23 @@
                           </tr>
                         </thead>
                         <tbody id="blackridge">
+                        </tbody>
+                      </table>
+                    </div>
+                    <div role="tabpanel" id="lcars-logs" class="tab-pane" style="height: 250px; overflow: auto;">
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Log Count</th>
+                            <th style="position:relative;">Analyze
+                              <span style="position:absolute; right:92px; bottom:10px;" title="Plot" class="fa fa-line-chart"></span>
+                              <span style="position:absolute; right:71px; bottom:10px;" title="To Graph" class="fa fa-share-alt"></span>
+                              <span style="position:absolute; right:49px; bottom:10px;" title="To SQL" class="fa fa-database"></span>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody id="lcars">
                         </tbody>
                       </table>
                     </div>

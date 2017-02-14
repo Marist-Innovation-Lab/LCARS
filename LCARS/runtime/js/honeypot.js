@@ -2,8 +2,8 @@ var currentLog = "";
 var lastPlotType = "";
 var linkWeight = false;
 
-function viewHoneypotLogs() {
-    $("#honeypots").on("click", "td button", function() {
+function viewLongtailLogs() {
+    $("#longtail").on("click", "td button", function() {
 
         clearModal(); 
 
@@ -23,7 +23,7 @@ function viewHoneypotLogs() {
         var parsedLog = "/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json";
 
         if (button === "view") {
-            $("#log-modal").find("h4").text("Today's Log Data for " + type + " Honeypot: " + host);
+            $("#log-modal").find("h4").text("Today's Log Data for " + type + " Longtail honeypot: " + host);
             // Set the hidden span tags in the modal to the log file paths so they can be read by the viewParsedLog function
             // Tried viewParsedLog(rawLog, parsedLog) here and it does not work
             $("#rawPath").html(rawLog);
@@ -40,7 +40,7 @@ function viewHoneypotLogs() {
             var t = now.toTimeString().slice(0,5).replace(/:/g,"");
             var dateTime = d + "_" + t;
 
-            var filename = host + "-" + dateTime + ".Honeypot";
+            var filename = host + "-" + dateTime + ".Longtail";
 
             saveLogAsExperimental(rawLog, filename);
         }
@@ -482,7 +482,7 @@ function jsonToSQL(data, tableName) {
 }
 
 
-// Saves a honeypot or BlackRidge log file to the Experimental section
+// Saves a log file to the Experimental section
 function saveLogAsExperimental(pathToRawLog, filenameToSaveAs) {
     var dataObject = { 'pathToLog': pathToRawLog, 'filename': filenameToSaveAs };
     $.ajax({
@@ -536,12 +536,12 @@ function clearModal() {
 
 
 // Populate the Longtail HP table with info about each active honeypot, including hostname and time it was last attacked
-function populateHoneypots() {
+function populateLongtailHPs() {
     $.getJSON(
        _lcarsAPI + "hpinfo",
        function (data, status) {
           if (status === "success") {
-              $("#honeypots").empty();
+              $("#longtail").empty();
 
               $.each(data, function(i, item) {
                   var hostname = data[i].hostname;
@@ -552,7 +552,7 @@ function populateHoneypots() {
                       loc = "Marist";
                   }
  
-                  $("#honeypots").append('<tr><th scope="row">' + (i+1) + '</th>'
+                  $("#longtail").append('<tr><th scope="row">' + (i+1) + '</th>'
                                        + '<td>' + hostname + '</td>'
                                        + '<td>SSH</td>'
                                        + '<td>' + loc + '</td>'
@@ -691,10 +691,10 @@ function switchLogTab() {
 }
 
 $(document).ready(function() {
-    populateHoneypots();
+    populateLongtailHPs();
     populateBlackRidgeLogs();
     populateExperimentalLogs();
-    viewHoneypotLogs();
+    viewLongtailLogs();
     viewBlackridgeLogs();
     viewExperimentalLogs();
     viewParsedLogs();
@@ -705,7 +705,7 @@ $(document).ready(function() {
     setLogsLastRefreshedTime();
 
     // Call functions to refresh logs every hour on the 15 minute (thats when the cron job runs)
-    setIntervalAdapted(populateHoneypots, 60, 905);
+    setIntervalAdapted(populateLongtailHPs, 60, 905);
     setIntervalAdapted(setLogsLastRefreshedTime, 60, 905);
     setIntervalAdapted(refreshLongtailImage, 5, 5);
 
