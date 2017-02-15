@@ -21,7 +21,7 @@ Begin implementing an automated "Threat Eliminator" with a manual "trigger" acti
   -- logs everything with that id
 
 Enhance LCARS with a
-Universal Log TRanslator And Parser with Intermediate Management and Profiling"
+Universal Log TRanslator And Parser with Intermediate Management and Profiling
   -- input from many sources (Graylog, Longtail, Dolos, GRAPH, SDN controllers, BlackRidge Gateways, others)
   -- ETL-like format standardization
   -- enrich in many ways (geo-tags, pre-calculations, summaries, meta-data, etc.)
