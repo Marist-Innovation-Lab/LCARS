@@ -2,36 +2,43 @@
 LCARS Roadmap
 =============
 
-[updated February 14, 2017]
+[updated February 15, 2017]
 
 Long-term 
 =========
 
-Add epistemological guidance the GUI.
-  Dashboard: Be Attentive
-  Analysis: Be Reasonable
-  Threat Intelligence: Be Intelligent
-  Reconfigurator: Be Responsible
-
-Implement an API honeypot.
+Implement an API honeypot called GRAPH: G* Realistic Application Programming Handler
   The G* API attracted a lot of unwanted attention when it was deployed on AWS.
-  We could do something similar (or the same) and collect the data.
+  We could do something similar (or the same), collect the data, log it, and analyze it with LCARS.
 
-Unify the Reconfigurator Log with the overall LCARS log.
-Then delete the Reconfigurator Log and use that space for Firewall State. 
+Continue to research and prototype Machine Learning techniques for log analysis in this context.
 
-Increase the LCARS log attentiveness. (Log more activity)
-
-Begin implementing automation with a manual "trigger" action for attack profiles that...
+Begin implementing an automated "Threat Eliminator" with a manual "trigger" action for attack profiles that...
   -- notes the start (current) time
   -- generates a unique id for this action
   -- deploys the orchestrated response 
   -- notes the finish time (when the response has been fully deployed)
   -- logs everything with that id
 
+Enhance LCARS with a
+Universal Log TRanslator And Parser with Intermediate Management and Profiling"
+  -- input from many sources (Graylog, Longtail, Dolos, GRAPH, SDN controllers, BlackRidge Gateways, others)
+  -- ETL-like format standardization
+  -- enrich in many ways (geo-tags, pre-calculations, summaries, meta-data, etc.)
+
+
 
 Short-term 
 ==========
+
+General
+-------
+Add epistemological guidance the GUI.
+  Dashboard: Be Attentive
+  Analysis: Be Reasonable
+  Threat Intelligence: Be Intelligent
+  Reconfigurator: Be Responsible
+
 
 Dashboard
 ---------
@@ -42,12 +49,11 @@ Dashboard
 
 Analysis
 --------
-- rename "Log Data" to "Logs"
-- rename the "Honeypot" tab to "Longtail"
+- continue work on ML (see above)
 - add a tab for "LCARS" logs
    -- populate it with daily snapshots of the LCARS log
    -- enhance our parser to make it into analyzable JSON
-- default "show link weights" to on in Hive Plots
+- default "show link weights" to ON in Hive Plots
 
 
 Threat Intelligence
@@ -57,10 +63,18 @@ Threat Intelligence
 
 Reconfigurator
 --------------
+- develop a test environment to test integration with...
+  -- BlackRidge
+  -- virtual routers
+  -- SDN controller
+  -- other firewalls
+  ... all of which need to be set up in a test environment we control
 - add ability to send REST requests to a BlackRidge device and test extensively
 
 
 System Monitoring
 -----------------
-- use a cooler font for the LCARS log
-- rename "Iptables" to "iptables"
+- Use a cooler font for the LCARS log.
+- Rename "Iptables" to "iptables".
+- Unify the Reconfigurator Log with the overall LCARS log. Then delete the Reconfigurator Log and use that space for Firewall State. 
+-  Increase the LCARS log attentiveness. (Log more activity)
