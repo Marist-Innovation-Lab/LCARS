@@ -33,48 +33,48 @@ Short-term
 
 General
 -------
-Add epistemological guidance the GUI.
-  Dashboard: Be Attentive
-  Analysis: Be Reasonable
-  Threat Intelligence: Be Intelligent
-  Reconfigurator: Be Responsible
+[x] Add epistemological guidance the GUI.
+      Dashboard: Be Attentive
+      Analysis: Be Reasonable
+      Threat Intelligence: Be Intelligent
+      Reconfigurator: Be Responsible
 
 
 Dashboard
 ---------
-- make the "Top 5" chart real
-- make the "Attack Origins" world map real (and rename)
-- rename "Honeypot Classifiers" to "Longtail Activity"
+ -  make the "Top 5" chart real
+ -  make the "Attack Origins" world map real (and rename)
+[x] rename "Honeypot Classifiers" to "Longtail Activity"
 
 
 Analysis
 --------
-- continue work on ML (see above)
-- add a tab for "LCARS" logs
-   -- populate it with daily snapshots of the LCARS log
-   -- enhance our parser to make it into analyzable JSON
-- default "show link weights" to ON in Hive Plots
+ -  continue work on ML (see above)
+[x] add a tab for "LCARS" logs
+    -- populate it with daily snapshots of the LCARS log
+    -- enhance our parser to make it into analyzable JSON
+[x] default "show link weights" to ON in Hive Plots
 
 
 Threat Intelligence
 -------------------
-- add ability to specify REST requests to a BlackRidge device in response recipe details
+ - add ability to specify REST requests to a BlackRidge device in response recipe details
 
 
 Reconfigurator
 --------------
-- develop a test environment to test integration with...
-  -- BlackRidge
-  -- virtual routers
-  -- SDN controller
-  -- other firewalls
-  ... all of which need to be set up in a test environment we control
-- add ability to send REST requests to a BlackRidge device and test extensively
+ - develop a test environment to test integration with...
+   -- BlackRidge
+   -- virtual routers
+   -- SDN controller
+   -- other firewalls
+   ... all of which need to be set up in a test environment we control
+ - add ability to send REST requests to a BlackRidge device and test extensively
 
 
 System Monitoring
 -----------------
-- Use a cooler font for the LCARS log.
-- Rename "Iptables" to "iptables".
-- Unify the Reconfigurator Log with the overall LCARS log. Then delete the Reconfigurator Log and use that space for Firewall State. 
--  Increase the LCARS log attentiveness. (Log more activity)
+ -  Use a cooler font for the LCARS log.
+[x] Rename "Iptables" to "iptables".
+ -  Unify the Reconfigurator Log with the overall LCARS log. Then delete the Reconfigurator Log and use that space for Firewall State. 
+ -  Increase the LCARS log attentiveness. (Log more activity)

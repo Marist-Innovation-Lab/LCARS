@@ -94,10 +94,11 @@ function spawnPlot(formData) {
     var weightLabel = $('<label />')
       .attr('for', 'weight-checkbox')
       .attr('id', 'weight-checkbox-label')
-      .text('Show link weights');
+      .html('&nbsp;Show link weights');
     var weightCheckbox = $('<input />')
       .attr('type', 'checkbox')
       .attr('id', 'weight-checkbox')
+      .prop('checked', true)
       .on('click', function(){
         if($(this).prop('checked')){
           linkWeight = true;
@@ -116,6 +117,7 @@ function spawnPlot(formData) {
         }
       });
 
+    linkWeight = true;
     weightLabel.appendTo(weightSpan);
     weightCheckbox.appendTo(weightSpan);
   }
