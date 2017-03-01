@@ -23,7 +23,7 @@ function viewLongtailLogs() {
         var parsedLog = "/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json";
 
         if (button === "view") {
-            $("#log-modal").find("h4").text("Today's Log Data for " + type + " Longtail honeypot: " + host);
+            $("#log-modal").find("h4").text("Today's Log Data for " + type + " LongTail honeypot: " + host);
             // Set the hidden span tags in the modal to the log file paths so they can be read by the viewParsedLog function
             // Tried viewParsedLog(rawLog, parsedLog) here and it does not work
             $("#rawPath").html(rawLog);
@@ -40,7 +40,7 @@ function viewLongtailLogs() {
             var t = now.toTimeString().slice(0,5).replace(/:/g,"");
             var dateTime = d + "_" + t;
 
-            var filename = host + "-" + dateTime + ".Longtail";
+            var filename = host + "-" + dateTime + ".LongTail";
 
             saveLogAsExperimental(rawLog, filename);
         }
@@ -535,7 +535,7 @@ function clearModal() {
 }
 
 
-// Populate the Longtail HP table with info about each active honeypot, including hostname and time it was last attacked
+// Populate the LongTail HP table with info about each active honeypot, including hostname and time it was last attacked
 function populateLongtailHPs() {
     $.getJSON(
        _lcarsAPI + "hpinfo",
@@ -678,7 +678,7 @@ function setLogsLastRefreshedTime() {
 
 function refreshLongtailImage() {
     // The ? + Math.random() appended to the URL below allows the image to actually refresh, without it the browser recognizes
-    // that the URL path is the same and won't grab the new image from the Longtail site     
+    // that the URL path is the same and won't grab the new image from the LongTail site
     $("#longtail-img").attr("src", "http://longtail.it.marist.edu/honey/dashboard_number_of_attacks.png?"+Math.random());
 }
 
