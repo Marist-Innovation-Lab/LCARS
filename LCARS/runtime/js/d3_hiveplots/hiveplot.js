@@ -131,10 +131,10 @@ function spawnPlot(formData) {
   // console.log(formData.get("axisConnections"));
 
   // d3.js code for rendering plot begins here
-  var width = 1000,
-      height = 700,
+  var width = $("#hiveplot").width(),
+      height = 600,
       innerRadius = 30,
-      outerRadius = 350,
+      outerRadius = 250,
       majorAngle = 2 * Math.PI / 3,
       minorAngle = 1 * Math.PI / 12;
     
@@ -143,10 +143,17 @@ function spawnPlot(formData) {
     angleDomain.push(name);
   });
 
-  // var angle = d3.scale.ordinal().domain(angleDomain).range([0, majorAngle - minorAngle, majorAngle + minorAngle, 2 * majorAngle]);
+  var angleRange = [0, majorAngle - minorAngle, 2 * majorAngle];
+  if (angleDomain.length === 4) {
+     angleRange.splice(2, 0, majorAngle + minorAngle)
+  }
 
-  var angle = d3.scale.ordinal().domain(angleDomain).range([-Math.PI / 4, 0, Math.PI / 4, 3 * Math.PI / 4, Math.Pi, -Math.PI / 4]),
-      radius = d3.scale.linear().range([innerRadius + 50, outerRadius - 50]),
+  var angle = d3.scale.ordinal()
+     .domain(angleDomain)
+     .range(angleRange);
+
+  //var angle = d3.scale.ordinal().domain(angleDomain).range([-Math.PI / 4, 0, Math.PI / 4, 3 * Math.PI / 4, Math.Pi, -Math.PI / 4]),
+  var radius = d3.scale.linear().range([innerRadius, outerRadius]),
       color = d3.scale.ordinal().domain(angleDomain).range(["orange", "red", "teal", "blue","lawngreen","green"]);
 
       colorFunc = color; // Give color function global scope
@@ -166,17 +173,17 @@ function spawnPlot(formData) {
   .attr("height", height)
   .attr("id","svgElement")
   .append("g")
-  .attr("transform", "translate(" + 250 + "," + 360 + ")");
+  .attr("transform", "translate(" + width/2 + "," + 350 + ")");
 
   // set up legend for hive plot
   svg.append("g")
   .attr("id","legend")
-  .attr("transform","translate(" + 130 + "," + -363 + ")")
+  .attr("transform","translate(" + (((width/2)* -1) - 8) + "," + -355 + ")")
   .append("rect")
   .attr("x",10)
   .attr("y",10)
-  .attr("width",125)
-  .attr("height",100)
+  .attr("width",100)
+  .attr("height", angleDomain.length * 25)
   .attr("fill","none")
   .attr("stroke","black");
 
