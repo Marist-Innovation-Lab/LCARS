@@ -319,7 +319,6 @@ public class APIrest extends NanoHTTPD {
          sb = responseGetModels();
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
-      }
          
       //
       // lcarslog - GET/PUT - Get all log entries from the LCARS log / Create new LCARS log entry
