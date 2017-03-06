@@ -311,6 +311,15 @@ public class APIrest extends NanoHTTPD {
          sb = responseGetSystemInfo();
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
+
+      //
+      // models - GET only - Gets list of neural network models LCARS knows about (stored in model directory, ending in .yaml)
+      //
+      } else if (methodIsGET && command.equals("models")) {
+         sb = responseGetModels();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+      }
          
       //
       // lcarslog - GET/PUT - Get all log entries from the LCARS log / Create new LCARS log entry
@@ -610,6 +619,7 @@ public class APIrest extends NanoHTTPD {
              "+-- GET  /responsedetails                    - get all response details and recipe association\n" +
              "+-- GET  /orchestration                      - get orchestration for all profiles\n" + 
              " +- GET  /orchestration/[pid]                - get orchestration for one profile\n" + 
+             "+-- GET  /models                             - get neural network models LCARS knows about (in models directory)\n" +
              "\n" +
              "+-- PUT  /profiles                           - create a new profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
              "+-- PUT  /responserecipes                    - create a new response recipe using body JSON: {\"name\": \"Recipe Name\"}\n" +
@@ -705,6 +715,11 @@ public class APIrest extends NanoHTTPD {
    private StringBuilder responseGetOsVersion() {
       //return runShellScript("osqueryi --json 'select * from os_version'");
       String[] command = new String[]{"/var/www/html/lcars/scripts/osquery.sh", "osversion"};
+      return runShellScript(command);
+   }
+
+   private StringBuilder responseGetModels() {
+      String[] command = new String[]{"/var/www/html/lcars/scripts/getModels.sh"};
       return runShellScript(command);
    }
    
