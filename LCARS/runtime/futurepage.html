@@ -19,7 +19,10 @@
     <!-- Custom Theme Style -->
     <link href="../build/css/custom.min.css" rel="stylesheet">
 
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="js/ML.js"></script>
+    <script src="js/globals.js"></script>
+
 
   </head>
 
@@ -116,8 +119,12 @@
                       <th>#</th>
                       <th>Model</th>
                       <th>Description</th>
+                      <th>Actions</th>
                       </tr>
                     </thead>
+                    <tbody id="models">
+                      
+                    </tbody>
                   </table>
                 </div>
               </div>
@@ -134,7 +141,7 @@
                 </div>
                 <div class="x_content" style="height: 300px">
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <h2>Input</h2>
+                    <h2>Log</h2>
                     <textarea class="form-control" rows="12" style="font-family:monospace;"></textarea>
                   </div>
                   <div class="col-md-6 col-sm-6 col-xs-12">
