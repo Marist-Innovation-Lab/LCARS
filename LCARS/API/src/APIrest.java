@@ -341,6 +341,14 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
 
       //
+      // predict - POST only - predict outcome using given model for given matrix 
+      //
+      } else if (methodIsPOST && command.equals("predict")) {
+         sb = responsePostPrediction(reqJSON);
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+
+      //
       // profiles - GET/PUT/DELETE - Get everything in Profiles table / Insert new profile / Delete all profiles
       //    Example PUT: 
       //        URL - localhost:8081/profiles
@@ -760,6 +768,15 @@ public class APIrest extends NanoHTTPD {
 
        String[] command = new String[]{"/var/www/html/lcars/scripts/saveAsExperimental.sh", pathToLog, filename};
        return runShellScript(command);
+   }
+
+   private StringBuilder responsePostPrediction(JsonObject reqJSON) {
+      String modelName = reqJSON.get("model_name").getAsString();
+      String modelWeights = reqJSON.get("model_weights").getAsString();
+      String matrix = reqJSON.get("matrix").getAsString();
+
+      String[] command = new String[]{"python /var/www/html/lcars/scripts/ML.py", modelName, modelWeights, matrix};
+      return runShellScript(command);
    }
 
    private StringBuilder responseGetProfiles() {
