@@ -955,9 +955,14 @@ function makePrebakedPlot(data){
 
   var connections = [];
 
-  for(var i = 0; i < names.length - 1; i++){
+  for(var i = 0; i < names.length; i++){
     var source = names[i];
-    var target = names[i + 1];
+    var target;
+    if (i === names.length - 1) {
+        target = names[0];
+    } else {
+        target = names[i + 1];
+    }
     var connectionObject = {
     "source": source,
     "target": target
@@ -1045,13 +1050,15 @@ function makeCustomPlot(){
             return false;
         }
 
+        /*
         if(fromNames[0] === toNames[x]){
            // first axis should only have outgoing link.
            setStatusColor("red");
             $("#status").html("The first axis can only have outgoing links.");
             return false;
-        }  
-        
+        }
+        */
+
         // populate connections
         var source = fromNames[x];
         var target = toNames[x];
@@ -1100,7 +1107,7 @@ function populateCustomDropdown(logData, logCount) {
     thead.appendTo(table);
 
     var tbody = $('<tbody />');
-    for(var x = 1; x < dataKeys.length && x < 6; x++){
+    for(var x = 0; x < dataKeys.length; x++){
         var row = $('<tr />');
         var td1 = $('<td />');
         var checkbox = $('<input type="checkbox" value="' + x + '">');
