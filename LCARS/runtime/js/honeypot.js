@@ -77,7 +77,6 @@ function viewLongtailLogs() {
                         currentLog = getRandomSample(logData, sizeVal);
                         // If the hive plot creation is sucessful, print success message
                         if(makeCustomPlot()){
-                            // $('#plot-modal').modal('hide');
                             setStatusColor("green");
                             $("#status").html("Successfully graphed hive plot.");
                             lastPlotType = "custom";
@@ -89,10 +88,8 @@ function viewLongtailLogs() {
                       currentLog = getRandomSample(logData, sizeVal);
                         // If the graph creation is sucessful, print success message
                         if(makeCustomGraph(currentLog)){
-                            // $('#plot-modal').modal('hide');
                             setStatusColor("green");
                             $("#status").html("Successfully created graph.");
-
                         }
                     });
                 }
@@ -201,7 +198,6 @@ function viewBlackridgeLogs() {
                         currentLog = getRandomSample(logData, sizeVal);
                         // If the hive plot creation is sucessful, print success message
                         if(makeCustomPlot()){
-                            // $('#plot-modal').modal('hide');
                             setStatusColor("green");
                             $("#status").html("Successfully graphed hive plot.");
                             lastPlotType = "custom";
@@ -213,10 +209,8 @@ function viewBlackridgeLogs() {
                       currentLog = getRandomSample(logData, sizeVal);
                         // If the graph creation is sucessful, print success message
                         if(makeCustomGraph(currentLog)){
-                            // $('#plot-modal').modal('hide');
                             setStatusColor("green");
                             $("#status").html("Successfully created graph.");
-
                         }
                     });
                 }
@@ -314,7 +308,6 @@ function viewExperimentalLogs() {
                         currentLog = getRandomSample(logData, sizeVal);
                         // If the hive plot creation is sucessful, print success message
                         if(makeCustomPlot()){
-                            // $('#plot-modal').modal('hide');
                             setStatusColor("green");
                             $("#status").html("Successfully graphed hive plot.");
                             lastPlotType = "custom";
@@ -326,7 +319,6 @@ function viewExperimentalLogs() {
                       currentLog = getRandomSample(logData, sizeVal);
                         // If the graph creation is sucessful, print success message
                         if(makeCustomGraph(currentLog)){
-                            // $('#plot-modal').modal('hide');
                             setStatusColor("green");
                             $("#status").html("Successfully created graph.");
                         }
@@ -766,13 +758,9 @@ Date.prototype.yyyymmdd = function() {
 
 // Creates gstar plot based on log data
 function makePrebakedGraph(data){
-    // var gstarWnd = window.open(gstarAddress);
-    // var gstarTextArea = gstarWnd.document.getElementById("ace_content");
-    //var output = document.getElementById("logDataOutput");
     var lines = data.split("\n");
     var dataKeys = Object.keys(JSON.parse(lines[0]));
     var jsonLine;
-    //var colorChoices = ["red","orange","cyan","blue","yellow","green","purple","pink","brown","grey"];
     var colorChoices = ["blue", "teal", "red", "orange"];
     var colors = {};
     var result = "new graph\n";
@@ -784,16 +772,6 @@ function makePrebakedGraph(data){
       colors[key] = colorChoices.pop();
     });
 
-    //output.innerHTML = "";
-    //output.innerHTML = output.innerHTML + "new graph\n";
-    //result = "";
-
-    // function replacer(match) {
-    //   return match.substring(1,match.length);
-    // }
-
-    // var regex = /#....../g;
-
     for (var i = 0; i < lines.length; i++){
       if(!lines[i]){continue;}
       jsonLine = JSON.parse(lines[i]);
@@ -804,11 +782,8 @@ function makePrebakedGraph(data){
         if (!vertexStr.includes(str)) {
           vertexStr = vertexStr + str;
         }
-        // result = result.replace(regex, replacer);
       });
     }
-
-    //output.innerHTML = output.innerHTML + result;
 
     for (var i = 0; i < lines.length; i++) {
       if(!lines[i]){continue;}
@@ -825,7 +800,6 @@ function makePrebakedGraph(data){
     }
 
     result = result + vertexStr + edgeStr;
-    //output.innerHTML = output.innerHTML + result;
     var currentGstarText = $("#logDataOutput").val();
     $("#logDataOutput").val(currentGstarText + result + "\n\n");
 }
@@ -971,11 +945,6 @@ function makePrebakedPlot(data){
   }
 
   formData.set("axisConnections", connections);
-  // Open new window, and create hive plot
-  // var wnd = window.open("./hiveplot.html");
-  // wnd.addEventListener('load', function(){
-  //   wnd.spawnPlot(formData);  
-  // });
 
   // Display hive plot in div
   spawnPlot(formData);
@@ -1041,7 +1010,6 @@ function makeCustomPlot(){
       return false;
     }
 
-
     for(var x = 0; x < fromNames.length; x++){
         // Check if an axis is linked to itself
         if(fromNames[x] === toNames[x]){
@@ -1049,15 +1017,6 @@ function makeCustomPlot(){
             $("#status").html("You cannot link an axis to itself.");
             return false;
         }
-
-        /*
-        if(fromNames[0] === toNames[x]){
-           // first axis should only have outgoing link.
-           setStatusColor("red");
-            $("#status").html("The first axis can only have outgoing links.");
-            return false;
-        }
-        */
 
         // populate connections
         var source = fromNames[x];
