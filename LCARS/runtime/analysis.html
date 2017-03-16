@@ -16,10 +16,12 @@
     <!-- Custom Theme Style -->
     <link href="../build/css/custom.min.css" rel="stylesheet">
     
+    <!-- LCARS Styles -->
     <link href="css/custom.css" rel="stylesheet">
 
-    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
-    
+    <!-- jQuery -->
+    <script src="../vendors/jquery/dist/jquery.min.js"></script>
+
     <script src="js/globals.js"></script>
     <script src="js/honeypot.js"></script>
     <!-- Hive plot imports -->
@@ -68,7 +70,7 @@
             </div>
             <!-- /sidebar menu -->
 
-            <!-- /menu footer buttons -->
+            <!-- menu footer buttons -->
             <div class="sidebar-footer hidden-small">
               <a data-toggle="tooltip" data-placement="top" title="Settings">
                 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
@@ -103,7 +105,7 @@
                      <span style="color:maroon; font-weight: bold;">C</span>loud
                      <span style="color:maroon; font-weight: bold;">A</span>pplication for
                      <span style="color:maroon; font-weight: bold;">R</span>ealtime
-                     <span style="color:maroon; font-weight: bold;">S</span>ecurity &nbsp;                     
+                     <span style="color:maroon; font-weight: bold;">S</span>ecurity &nbsp;
                   </h4>
               </div>
             </nav>
@@ -120,7 +122,9 @@
                <div class="x_panel">
                   <div class="x_title">
                     <h2>Logs <small id="last-refreshed" style="display: inline;"></small></h2>
-                    <div class="clearfix"></div></div><div>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div>
                     <ul id="logs-tab" class="nav nav-tabs nav-justified">
                        <li role="presentation" data-toggle="tab" class="active"><a href="#longtail-logs"><strong>LongTail</strong></a></li>
                        <li role="presentation" data-toggle="tab"><a href="#blackridge-logs"><strong>BlackRidge</strong></a></li>
@@ -129,6 +133,7 @@
                     </ul>
                   </div>
                   <div class="tab-content">
+                    <!-- LongTail tab -->
                     <div role="tabpanel" id="longtail-logs" class="tab-pane active" style="height: 250px; overflow: auto;">
                       <table class="table table-hover">
                         <thead>
@@ -150,6 +155,8 @@
                         </tbody>
                       </table>
                     </div>
+                    <!-- /LongTail tab -->
+                    <!-- BlackRidge tab -->
                     <div role="tabpanel" id="blackridge-logs" class="tab-pane" style="height: 250px; overflow: auto;">
                       <table class="table table-hover">
                         <thead>
@@ -170,6 +177,8 @@
                         </tbody>
                       </table>
                     </div>
+                    <!-- /BlackRidge tab -->
+                    <!-- LCARS tab -->
                     <div role="tabpanel" id="lcars-logs" class="tab-pane" style="height: 250px; overflow: auto;">
                       <table class="table table-hover">
                         <thead>
@@ -187,6 +196,8 @@
                         </tbody>
                       </table>
                     </div>
+                    <!-- /LCARS tab -->
+                    <!-- Experimental tab -->
                     <div role="tabpanel" id="experimental-logs" class="tab-pane" style="height: 250px; overflow: auto;">
                       <table class="table table-hover">
                         <thead>
@@ -206,15 +217,15 @@
                         </tbody>
                       </table>
                     </div>
+                    <!-- /Experimental tab -->
                   </div>
                </div>
             </div>
 
-               <!-- Modal pop-up for VIEW buttons -->
-               <div id="log-modal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-                 <div class="modal-dialog modal-lg">
-                   <div class="modal-content">
-   
+            <!-- Modal pop-up for VIEW buttons -->
+            <div id="log-modal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+               <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
                      <div class="modal-header">
                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                        </button>
@@ -228,19 +239,19 @@
                        <button id="data-view" type="button" class="btn btn-primary">View Parsed</button>
                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                      </div>
-                   </div>
-                 </div>
+                  </div>
                </div>
-               <!-- /Modal pop-up for VIEW buttons -->
-               <!-- Modal pop-up for PLOT buttons -->
-               <div id="plot-modal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-                 <div class="modal-dialog modal-lg">
-                   <div class="modal-content">
-   
+            </div>
+            <!-- /Modal pop-up for VIEW buttons -->
+
+            <!-- Modal pop-up for custom PLOT buttons -->
+            <div id="plot-modal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+               <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
                      <div class="modal-header">
                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                        </button>
-                       <h4 class="modal-title"></h4><span id="log-identifier" class="sr-only"></span>
+                       <h4 class="modal-title"></h4>
                      </div>
                      <div class="modal-body" style="height: 400px; overflow:auto;">
                        <p id="plot-data">
@@ -251,38 +262,17 @@
                        <button id="graph-button" type="button" class="btn btn-primary">To Graph</button>
                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                      </div>
-                   </div>
-                 </div>
+                  </div>
                </div>
-               <!-- /Modal pop-up for PLOT buttons -->
-               <!-- Modal pop-up for GRAPH buttons -->
-               <div id="graph-modal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
-                 <div class="modal-dialog modal-lg">
-                   <div class="modal-content">
-   
-                     <div class="modal-header">
-                       <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
-                       </button>
-                       <h4 class="modal-title"></h4><span id="log-identifier" class="sr-only"></span>
-                     </div>
-                     <div class="modal-body" style="height: 400px; overflow:auto;">
-                       <p id="graph-data">
-                       </p>
-                     </div>
-                     <div class="modal-footer">
-                       <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                     </div>
-                   </div>
-                 </div>
-               </div>
-               <!-- /Modal pop-up for GRAPH buttons -->
+            </div>
+            <!-- /Modal pop-up for custom PLOT buttons -->
           
           </div>
-          <!--/row 1 -->
+          <!-- /row 1 -->
          
           <!-- row 2 -->
           <div class="row">
-            
+
             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
               <div class="x_panel" style="height: 725px;">
                 <div class="x_title">
@@ -303,28 +293,26 @@
                 </div>
                 <div class="x_content" style="height: 300px;">
                   <h4>Graph Commands
-                     <button id="copy-graph-commands" type="button" class="btn btn-default btn-xs" style="position:absolute; right:35px;"><span title="Copy To Clipboard" class="glyphicon glyphicon-copy"</span></button>
-                     <button id="clear-graph-commands" type="button" class="btn btn-default btn-xs" style="position:absolute; right:5px;"><span title="Clear" class="glyphicon glyphicon-erase"</span></button>
+                     <button id="copy-graph-commands" type="button" class="btn btn-default btn-xs" style="position:absolute; right:35px;"><span title="Copy To Clipboard" class="glyphicon glyphicon-copy"></span></button>
+                     <button id="clear-graph-commands" type="button" class="btn btn-default btn-xs" style="position:absolute; right:5px;"><span title="Clear" class="glyphicon glyphicon-erase"></span></button>
                   </h4>
-                  <textarea class="form-control" id="logDataOutput" rows="12" style="font-family:monospace;"></textarea>           
+                  <textarea class="form-control" id="logDataOutput" rows="12" style="font-family:monospace;"></textarea>
                 </div>
                 <div class="x_content" style="height: 300px;">
                   <h4>SQL Commands
-                     <button id="copy-sql-commands" type="button" class="btn btn-default btn-xs" style="position:absolute; right:35px;"><span title="Copy To Clipboard" class="glyphicon glyphicon-copy"</span></button>
-                     <button id="clear-sql-commands" type="button" class="btn btn-default btn-xs" style="position:absolute; right:5px;"><span title="Clear" class="glyphicon glyphicon-erase"</span></button>
+                     <button id="copy-sql-commands" type="button" class="btn btn-default btn-xs" style="position:absolute; right:35px;"><span title="Copy To Clipboard" class="glyphicon glyphicon-copy"></span></button>
+                     <button id="clear-sql-commands" type="button" class="btn btn-default btn-xs" style="position:absolute; right:5px;"><span title="Clear" class="glyphicon glyphicon-erase"></span></button>
                   </h4>
                   <textarea class="form-control" id="sql-commands" rows="12" style="font-family:monospace;"></textarea>
                 </div>
                 <div class="x_content" style="height:40px;">
-                   <input type="button" class="btn btn-primary" value="Launch BiG* Data Studio &rarr;" onclick="launchGstar()" style="position:absolute; right:0; bottom:0;"></input>
-                <div>
+                   <input type="button" class="btn btn-primary" value="Launch BiG* Data Studio &rarr;" onclick="launchGstar()" style="position:absolute; right:0; bottom:0;">
+                </div>
               </div>
             </div>
-           </div>
           </div>
-          <!--/row 2 -->
+          <!-- /row 2 -->
          
-         </div>
         </div>
         <!-- /page content -->
 
@@ -339,13 +327,11 @@
       </div>
     </div>
 
-    <!-- jQuery -->
-    <script src="../vendors/jquery/dist/jquery.min.js"></script>
     <!-- Bootstrap -->
     <script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-
     <!-- Custom Theme Scripts -->
     <script src="../build/js/custom.min.js"></script>
+
   </body>
 </html>
 

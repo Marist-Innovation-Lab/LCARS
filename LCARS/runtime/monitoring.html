@@ -13,19 +13,17 @@
     <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="../vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
-
-    <link href="css/custom.css" rel="stylesheet">
-
     <!-- Custom Theme Style -->
     <link href="../build/css/custom.min.css" rel="stylesheet">
 
-    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <!-- LCARS Styles -->
+    <link href="css/custom.css" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="../vendors/jquery/dist/jquery.min.js"></script>
 
     <script src="js/globals.js"></script>
     <script src="js/monitoring.js"></script>
-
-    <!-- Chart.js -->
-    <script src="../vendors/Chart.js/dist/Chart.min.js"></script>
 
   </head>
 
@@ -68,7 +66,7 @@
             </div>
             <!-- /sidebar menu -->
 
-            <!-- /menu footer buttons -->
+            <!-- menu footer buttons -->
             <div class="sidebar-footer hidden-small">
               <a data-toggle="tooltip" data-placement="top" title="Settings">
                 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
@@ -98,7 +96,7 @@
                      <span style="color:maroon; font-weight: bold;">C</span>loud
                      <span style="color:maroon; font-weight: bold;">A</span>pplication for
                      <span style="color:maroon; font-weight: bold;">R</span>ealtime
-                     <span style="color:maroon; font-weight: bold;">S</span>ecurity &nbsp;                     
+                     <span style="color:maroon; font-weight: bold;">S</span>ecurity &nbsp;
                   <h4>
               </div>
             </nav>
@@ -108,25 +106,29 @@
 
         <!-- page content -->
         <div class="right_col" role="main">
+
+          <!-- row 1 -->
           <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
                <div class="x_panel">
                  <div class="x_title">
-                   <h2>LCARS log</h2>
+                   <h2>LCARS Log</h2>
                    <div class="clearfix"></div>
                  </div>
                  <div class="x_content">
-                     <div class="bs-example" data-example-id="simple-jumbotron">
-                       <div class="jumbotron" style="height: 250px; overflow: auto;">
+                   <div class="bs-example" data-example-id="simple-jumbotron">
+                      <div class="jumbotron" style="height: 250px; overflow: auto;">
                          <p id="lcars-log">
-                            
                          </p>
-                       </div>
-                     </div>
+                      </div>
+                   </div>
                  </div>
                </div>
             </div>
           </div>
+          <!-- /row 1 -->
+
+          <!-- row 2 -->
           <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
                <div class="x_panel">
@@ -151,8 +153,9 @@
                </div>
             </div>
           </div>
-        </div> 
+          <!-- /row 2 -->
 
+        </div> 
         <!-- /page content -->
 
         <!-- footer content -->
@@ -166,12 +169,10 @@
       </div>
     </div>
 
-    <!-- jQuery -->
-    <script src="../vendors/jquery/dist/jquery.min.js"></script>
     <!-- Bootstrap -->
     <script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-
-    <link href="css/custom.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="../vendors/Chart.js/dist/Chart.min.js"></script>
     <!-- Custom Theme Scripts -->
     <script src="../build/js/custom.min.js"></script>
 
