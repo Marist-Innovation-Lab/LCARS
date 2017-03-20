@@ -5,11 +5,9 @@ import json
 from io import StringIO
 from keras.models import model_from_yaml
 
-print("arg1:",sys.argv[1])
-print("arg2:",sys.argv[2])
-print("arg3:",sys.argv[3])
-
 messages = []
+
+messages.append({"log":("Ran " + sys.argv[0])})
 
 yaml_file = open("../models/" + sys.argv[1],'r')
 loaded_model_yaml = yaml_file.read()
@@ -20,7 +18,10 @@ messages.append({"message":"Loaded model."})
 loaded_model.load_weights("../models/" + sys.argv[2])
 messages.append({"message":("Loaded corresponding weights: " + sys.argv[2])})
 
-matrix = numpy.loadtxt(StringIO(sys.argv[3])).reshape(1,5625)
+
+test_matrix = unicode(open("../tests/" + sys.argv[3],'r').read())
+
+matrix = numpy.loadtxt(StringIO(test_matrix),delimiter=',').reshape(1,5625)
 prediction = loaded_model.predict(matrix)
 result = numpy.argmax(prediction)
     
@@ -30,6 +31,3 @@ elif result == 1:
     messages.append({"message":("Result: fully connected " + "( " + str(prediction[0][result]) + " )")})
 
 print(json.dumps(messages))
-
-
-

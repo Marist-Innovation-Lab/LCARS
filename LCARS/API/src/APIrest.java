@@ -775,7 +775,7 @@ public class APIrest extends NanoHTTPD {
       String modelWeights = reqJSON.get("model_weights").getAsString();
       String matrix = reqJSON.get("matrix").getAsString();
 
-      String[] command = new String[]{"python /var/www/html/lcars/scripts/ML.py", modelName, modelWeights, matrix};
+      String[] command = new String[]{"python","/var/www/html/lcars/scripts/ML.py", modelName, modelWeights, matrix};
       return runShellScript(command);
    }
 

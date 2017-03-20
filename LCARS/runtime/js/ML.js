@@ -30,7 +30,7 @@ function populateModels(){
 function predict(model_name, matrix){
 	dataObject = {'model_name':model_name, 'model_weights': model_name.replace("yaml","h5"), 'matrix':matrix};
 	$.ajax({
-            url: _lcarsAPI + "predict/",
+            url: _lcarsAPI + "predict",
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(dataObject),
