@@ -5,7 +5,6 @@ currentModel = "";
 $(document).ready(function() {
   populateModels();
   populateTests();
-  registerButtons();
 });
 
 // Fills list of models using call to API
@@ -56,24 +55,25 @@ function predict(model_name, matrix){
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(dataObject),
-            success: function(data) { console.log(data); }
+            success: function(data) { parseData(data); }
   });
 }
 
-// Adds onclick events to buttons
-function registerButtons(){
-  registerPredictButton();
-  registerTableButtons();
-}
+// Called when prediction data must be displayed
+function parseData(data){
+  try {
+    var jsonObj = JSON.parse(data);
+    var logTA = $('#log-textarea');
+    var outputTA = $('#output-textarea');
+    jsonObj.forEach(function(d){
+      if (!(typeof d.log === "undefined"))
+        logTA.val(logTA.val() + d.log + '\n');
+      if (!(typeof d.message === "undefined"))
+        outputTA.val(outputTA.val() + d.message + '\n');
+    });
+  } catch (ex) {
+    console.error(ex);
+  }
+  
 
-function registerTableButtons(){
-  $("#models").on("click", "td button", function() {
-    currentModel = $(this).closest("tr").find("td:nth-child(2)").text();
-  });
-}
-
-function registerPredictButton(){
-  $('#predict-button').click(function() {
-    predict(currentModel, $('#predict-data').val());
-  });
 }
