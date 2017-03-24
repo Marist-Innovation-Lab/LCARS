@@ -319,7 +319,15 @@ public class APIrest extends NanoHTTPD {
          sb = responseGetModels();
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
-         
+      
+      //
+      // tests - GET only - Gets list of neural network test matrices that LCARS knows about (inside tests directory)
+      //
+      } else if (methodIsGET && command.equals("tests")) {
+         sb = responseGetTests();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+
       //
       // lcarslog - GET/PUT - Get all log entries from the LCARS log / Create new LCARS log entry
       //
@@ -727,6 +735,11 @@ public class APIrest extends NanoHTTPD {
 
    private StringBuilder responseGetModels() {
       String[] command = new String[]{"/var/www/html/lcars/scripts/getModels.sh"};
+      return runShellScript(command);
+   }
+
+   private StringBuilder responseGetTests() {
+      String[] command = new String[]{"/var/www/html/lcars/scripts/getTests.sh"};
       return runShellScript(command);
    }
    
