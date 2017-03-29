@@ -135,3 +135,9 @@ input[type=checkbox] {
 .radio-inline {
    display: inline;
 }
+
+#predict-button {
+   padding: 10px 100px;
+   font-size: 20px;
+   width: 50%;
+}

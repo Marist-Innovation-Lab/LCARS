@@ -157,8 +157,14 @@
             </div>
           </div>
           <!-- /row 2 -->
-
           <!-- row 3 -->
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+              <button id="predict-button" type="button" class="btn btn-primary">Predict</button>
+            </div>
+          </div>
+          <!-- /row 3 -->
+          <!-- row 4 -->
           <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
               <div class="x_panel">
@@ -168,18 +174,28 @@
                 </div>
                 <div class="x_content" style="height: 300px">
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <h2>Log</h2>
+                    <h2>Log 
+                      <button id="clear-log" type="button" class="btn btn-default btn-xs" style="position:absolute; right:5px;">
+                        <span title="Clear" class="glyphicon glyphicon-erase">
+                        </span>
+                      </button>
+                    </h2>
                     <textarea id="log-textarea" class="form-control" rows="12" style="font-family:monospace;"></textarea>
                   </div>
                   <div class="col-md-6 col-sm-6 col-xs-12">
-                    <h2>Output</h2>
+                    <h2>Output 
+                      <button id="clear-output" type="button" class="btn btn-default btn-xs" style="position:absolute; right:5px;">
+                        <span title="Clear" class="glyphicon glyphicon-erase">
+                        </span>
+                      </button>
+                    </h2>
                     <textarea id="output-textarea" class="form-control" rows="12" style="font-family:monospace;"></textarea>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <!-- /row 3 -->
+          <!-- /row 4 -->
 
         </div>
         <!-- /page content -->

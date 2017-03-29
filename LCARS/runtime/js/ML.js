@@ -1,10 +1,13 @@
 // ML.js - javascript functions for ML dash in LCARS 
 
 currentModel = "";
+
 // Populate data on page load
 $(document).ready(function() {
   populateModels();
   populateTests();
+  registerPredictButton();
+  registerClearButtons();
 });
 
 // Fills list of models using call to API
@@ -47,6 +50,35 @@ function populateTests(){
   });
 }
 
+// Adds onclick functionality to the predict button.
+function registerPredictButton(){
+  $('#predict-button').click(function() {
+    modelName = $('input[name=model_radios]:checked').val();
+    testName = $('input[name=test_radios]:checked').val();
+
+    if (typeof modelName === 'undefined' || typeof testName === 'undefined'){
+      var logTA = $('#log-textarea');
+      logTA.val(logTA.val() + "You must select a model and a test to make a prediction." + '\n');
+    } else {
+      predict(modelName, testName);
+    }
+  });
+}
+
+// Adds onclick functionality to clear buttons.
+function registerClearButtons(){
+  var logTA = $('#log-textarea');
+  var outputTA = $('#output-textarea');
+
+  $('#clear-log').click(function() {
+    logTA.val("");
+  });
+
+  $('#clear-output').click(function() {
+    outputTA.val("");
+  });
+}
+
 // Predicts an outcome, given a model and a test case to predict for
 function predict(model_name, matrix){
   dataObject = {'model_name':model_name, 'model_weights': model_name.replace("yaml","h5"), 'matrix':matrix};
@@ -74,6 +106,4 @@ function parseData(data){
   } catch (ex) {
     console.error(ex);
   }
-  
-
 }
