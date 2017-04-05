@@ -22,9 +22,11 @@ function populateModels(){
           $("#models").append('<tr><th scope="row">' + (i+1) + '</th>'
             + '<td>' + name + '</td>'
             + '<td>' + 'Put description here' + '</td>'
-            + '<td>' + '<span class="radio-inline"><input name="model_radios" type="radio" value=' + name +'></span></td>'  
+            + '<td>' + '<span class="radio-inline"><input name="model_radios" type="radio" value=' + name +'></span></td>'
+            + '<td>' + '<button onclick="populateModal()" type="button" class="btn btn-default btn-xs analyze-btn" data-toggle="modal" data-target="#settings-modal">'
+            + '<span title="Settings" class="fa fa-gear"></span></button></td>'
             + '</tr>'
-            );
+          );
         });
       }
   });
@@ -79,15 +81,52 @@ function registerClearButtons(){
   });
 }
 
+function populateModal(){
+  $("#models").on("click","td button", function(){
+    var modelName = $(this).closest("tr").find("td:nth-child(2)").text();
+    $("#settings-modal").find("h4").text("Settings for model: " + modelName);
+    var dataObject = {'model_name':modelName};
+    $.ajax({
+      url: _lcarsAPI + "config",
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(dataObject),
+      success: function(data) {
+        var result = JSON.parse(data);
+        var table = $('<table />').addClass("table");
+        var tr = $('<tr />');
+        var th1 = $('<th />').text('Setting');
+        var th2 = $('<th />').text('Value');
+        th1.appendTo(tr);
+        th2.appendTo(tr);
+        var thead = $('<thead />');
+        var tbody = $('<tbody />');
+        var bodyData;
+
+        tr.appendTo(thead);
+        thead.appendTo(table);
+
+        result.forEach(function(d){
+          $('<tr />').append($('<td />').text(Object.keys(d)[0])).append($('<td />').append($('<input type="text" value="'+ d[Object.keys(d)[0]] +'">'))).appendTo(tbody);
+        });
+
+        tbody.appendTo(table);
+        $('#settings-data').empty();
+        $('#settings-data').append(table);
+      }
+    });
+  });
+}
+
 // Predicts an outcome, given a model and a test case to predict for
 function predict(model_name, matrix){
   dataObject = {'model_name':model_name, 'model_weights': model_name.replace("yaml","h5"), 'matrix':matrix};
   $.ajax({
-            url: _lcarsAPI + "predict",
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(dataObject),
-            success: function(data) { parseData(data); }
+    url: _lcarsAPI + "predict",
+    type: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify(dataObject),
+    success: function(data) { parseData(data); }
   });
 }
 

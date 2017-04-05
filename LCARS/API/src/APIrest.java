@@ -357,6 +357,14 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
 
       //
+      // config - POST only - get the configuration options for a model from ML.ini
+      //
+      } else if (methodIsPOST && command.equals("config")) {
+         sb = responsePostConfig(reqJSON);
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+
+      //
       // profiles - GET/PUT/DELETE - Get everything in Profiles table / Insert new profile / Delete all profiles
       //    Example PUT: 
       //        URL - localhost:8081/profiles
@@ -788,6 +796,13 @@ public class APIrest extends NanoHTTPD {
       String modelWeights = reqJSON.get("model_weights").getAsString();
       String matrix = reqJSON.get("matrix").getAsString();
       String[] command = new String[]{"python","/var/www/html/lcars/scripts/ML.py", modelName, modelWeights, matrix};
+      
+      return runShellScript(command);
+   }
+
+   private StringBuilder responsePostConfig(JsonObject reqJSON) {
+      String modelName = reqJSON.get("model_name").getAsString();
+      String[] command = new String[]{"/var/www/html/lcars/scripts/getConfigOptions.sh", modelName};
       
       return runShellScript(command);
    }
@@ -1363,8 +1378,13 @@ public class APIrest extends NanoHTTPD {
       try {
           Process executeScript = Runtime.getRuntime().exec(pathToScript);
           BufferedReader reader = new BufferedReader(new InputStreamReader(executeScript.getInputStream()));
+          BufferedReader errorReader = new BufferedReader(new InputStreamReader(executeScript.getErrorStream()));
           while ((line = reader.readLine()) != null) {
               sb.append(line);
+          }
+
+          while((line = errorReader.readLine()) != null) {
+            writeLog(line);
           }
 
       } catch (IOException e) {
@@ -1373,7 +1393,6 @@ public class APIrest extends NanoHTTPD {
 
       return sb;
    }
-
 
    /**
     * Write to the error log database tables and text stream.

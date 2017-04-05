@@ -121,6 +121,7 @@
                       <th>Model</th>
                       <th>Description</th>
                       <th>Use This?</th>
+                      <th>Settings</th>
                       </tr>
                     </thead>
                     <tbody id="models">
@@ -199,6 +200,27 @@
 
         </div>
         <!-- /page content -->
+
+        <!-- Modal pop-up for settings -->
+        <div id="settings-modal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+         <div class="modal-dialog modal-md">
+          <div class="modal-content">
+           <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+             </button>
+             <h4 class="modal-title"></h4><span id="rawPath" class="sr-only"></span><span id="parsedPath" class="sr-only"></span>
+           </div>
+           <div class="modal-body" style="height: 400px; overflow:auto;">
+             <p id="settings-data">
+             </p>
+           </div>
+           <div class="modal-footer">
+             <button type="button" class="btn btn-default" data-dismiss="modal">Confirm</button>
+           </div>
+          </div>
+         </div>
+        </div>
+        <!-- /Modal pop-up for settings -->
 
         <!-- footer content -->
         <footer>
