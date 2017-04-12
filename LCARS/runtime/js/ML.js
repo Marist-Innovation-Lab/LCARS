@@ -8,6 +8,8 @@ $(document).ready(function() {
   populateTests();
   registerPredictButton();
   registerClearButtons();
+  registerSaveButton();
+  populateModal();
 });
 
 // Fills list of models using call to API
@@ -23,7 +25,7 @@ function populateModels(){
             + '<td>' + name + '</td>'
             + '<td>' + 'Put description here' + '</td>'
             + '<td>' + '<span class="radio-inline"><input name="model_radios" type="radio" value=' + name +'></span></td>'
-            + '<td>' + '<button onclick="populateModal()" type="button" class="btn btn-default btn-xs analyze-btn" data-toggle="modal" data-target="#settings-modal">'
+            + '<td>' + '<button type="button" class="btn btn-default btn-xs analyze-btn" data-toggle="modal" data-target="#settings-modal">'
             + '<span title="Settings" class="fa fa-gear"></span></button></td>'
             + '</tr>'
           );
@@ -81,6 +83,40 @@ function registerClearButtons(){
   });
 }
 
+// Adds save functionality to model settings
+function registerSaveButton(){
+  $('#modal-save-button').on("click",function(){
+    var labels = [];
+    var values = [];
+    $('#settings-data td').each(function(){
+      if ($(this).children().length > 0){
+        values.push($(this).children().val());
+      } else {
+        labels.push($(this).text());
+      }
+    });
+    
+    var dataObject = {};
+
+    labels.forEach(function(e,i){
+      dataObject[e] = values[i]; 
+    });
+
+    dataObject["model"] = $('.modal-title').text().split(/: /)[1];
+
+    $.ajax({
+      url: _lcarsAPI + "save",
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(dataObject),
+      success: function(data){
+        parseData(data);
+      }
+    });
+  });
+}
+
+// Populates modal dialog with corresponding model settings information.
 function populateModal(){
   $("#models").on("click","td button", function(){
     var modelName = $(this).closest("tr").find("td:nth-child(2)").text();
@@ -130,7 +166,7 @@ function predict(model_name, matrix){
   });
 }
 
-// Called when prediction data must be displayed
+// Called when data must be displayed in log or output textareas
 function parseData(data){
   try {
     var jsonObj = JSON.parse(data);

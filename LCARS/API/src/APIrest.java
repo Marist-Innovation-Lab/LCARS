@@ -365,6 +365,14 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
 
       //
+      // save - POST only - save new configuration options in ML.ini  
+      //
+      } else if (methodIsPOST && command.equals("save")) {
+         sb = responsePostSave(reqJSON);
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+
+      //
       // profiles - GET/PUT/DELETE - Get everything in Profiles table / Insert new profile / Delete all profiles
       //    Example PUT: 
       //        URL - localhost:8081/profiles
@@ -804,6 +812,14 @@ public class APIrest extends NanoHTTPD {
       String modelName = reqJSON.get("model_name").getAsString();
       String[] command = new String[]{"/var/www/html/lcars/scripts/getConfigOptions.sh", modelName};
       
+      return runShellScript(command);
+   }
+
+   private StringBuilder responsePostSave(JsonObject reqJSON) {
+      String modelName = reqJSON.remove("model").getAsString();
+      String json = reqJSON.toString();
+      String[] command = new String[]{"python","/var/www/html/lcars/scripts/setConfigOptionsML.py", json, modelName};
+
       return runShellScript(command);
    }
 

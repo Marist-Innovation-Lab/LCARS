@@ -16,12 +16,12 @@ messages = [] # List of responses to send back to client
 config = ConfigParser.ConfigParser()
 
 def main():
-  cfg = config.read('ML.ini')
+  cfg = config.read('/var/www/html/lcars/scripts/ML.ini')
   if len(cfg) == 0:
     messages.append({"log":("No configuration file found. Creating basic configuration file" +
         " ML.ini.")})
 
-    cfgfile = open("ML.ini",'w')
+    cfgfile = open("/var/www/html/lcars/scripts/ML.ini",'wb')
 
     config.add_section('Defaults')
     config.set('Defaults','shape_x',1)
@@ -35,24 +35,24 @@ def main():
     config.write(cfgfile)
     cfgfile.close()
 
-    config.read('ML.ini')
+    config.read('/var/www/html/lcars/scripts/ML.ini')
 
   try:
-      MODEL_DIR = ConfigSectionMap("ModelOptions")['model_dir']
-      TEST_DIR  = ConfigSectionMap("TestOptions")['test_dir']
-      SHAPE_X   = ConfigSectionMap(sys.argv[1])['shape_x']
-      SHAPE_Y   = ConfigSectionMap(sys.argv[1])['shape_y']
-      CLASS_0   = ConfigSectionMap(sys.argv[1])['class_0']
-      CLASS_1   = ConfigSectionMap(sys.argv[1])['class_1']
+      MODEL_DIR = config.get('ModelOptions','model_dir')
+      TEST_DIR  = config.get('TestOptions','test_dir')
+      SHAPE_X   = config.get(sys.argv[1],'shape_x')
+      SHAPE_Y   = config.get(sys.argv[1],'shape_y')
+      CLASS_0   = config.get(sys.argv[1],'class_0')
+      CLASS_1   = config.get(sys.argv[1],'class_1')
   except (KeyError,ConfigParser.NoSectionError):
       messages.append({"log":("Could not find all configuration options for " + sys.argv[1] +
           ". Using defaults.")})
-      MODEL_DIR = ConfigSectionMap("ModelOptions")['model_dir']
-      TEST_DIR  = ConfigSectionMap("TestOptions")['test_dir']
-      SHAPE_X   = ConfigSectionMap("Defaults")['shape_x']
-      SHAPE_Y   = ConfigSectionMap("Defaults")['shape_y']
-      CLASS_0   = ConfigSectionMap("Defaults")['class_0']
-      CLASS_1   = ConfigSectionMap("Defaults")['class_1']
+      MODEL_DIR = config.get('ModelOptions','model_dir')
+      TEST_DIR  = config.get('TestOptions','test_dir')
+      SHAPE_X   = config.get("Defaults",'shape_x')
+      SHAPE_Y   = config.get("Defaults",'shape_y')
+      CLASS_0   = config.get("Defaults",'class_0')
+      CLASS_1   = config.get("Defaults",'class_1')
 
   # messages.append({"log":("Started command: " +
   #     sys.argv[0], sys.argv[1], sys.argv[2], sys.argv[3])})
@@ -83,24 +83,6 @@ def main():
           "% confidence) ")})
 
   print(json.dumps(messages))
-
-'''
-Looks up values in an .ini file.
-
-See https://wiki.python.org/moin/ConfigParserExamples
-'''
-def ConfigSectionMap(section):
-    dict1 = {}
-    options = config.options(section)
-    for option in options:
-        try:
-            dict1[option] = config.get(section, option)
-            if dict1[option] == -1:
-                DebugPrint("skip: %s" % option)
-        except:
-            print("exception on %s!" % option)
-            dict1[option] = None
-    return dict1
 
 if __name__ == '__main__':
     main()
