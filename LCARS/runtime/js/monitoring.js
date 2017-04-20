@@ -85,7 +85,7 @@ function populateIptablesInfo() {
         _lcarsAPI + "iptables",
         function (data, status) {
             if (status === "success") {
-                var divHTML = '<table class="table" style="width:50%;"><thead><th>Iptables</th><th></th></thead>' +
+                var divHTML = '<table class="table" style="width:50%;"><thead><th>iptables</th><th></th></thead>' +
                     '<tr><td><b>Total Rules: </b></td><td>' + data.length + '</td></tr>' +
                     '<tr><td><b>Packets Caught: </b></td><td>' + data[0].totalpackets + '</td></tr></table>';
 

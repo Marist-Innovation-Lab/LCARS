@@ -168,6 +168,17 @@ function updateLog(action, update) {
     var formattedUpdate = formatLogData(update);
     var date = (new Date()).toString().split(' ').splice(1,4).join(' ');
     $("#reconf-log").append("[" + date + "] Action: " + action + "; " + formattedUpdate + "<br>");
+    var dataObject = { 'category':'Reconfigurator', 'message':  'Action: ' + action + '; ' + formattedUpdate };
+    $.ajax({
+            url: _lcarsAPI + "lcarslog",
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(dataObject),
+            success: function() {
+                return getFirewallData();
+            }
+    });
+
 
 }
 

@@ -2,8 +2,8 @@ var currentLog = "";
 var lastPlotType = "";
 var linkWeight = false;
 
-function viewHoneypotLogs() {
-    $("#honeypots").on("click", "td button", function() {
+function viewLongtailLogs() {
+    $("#longtail").on("click", "td button", function() {
 
         clearModal(); 
 
@@ -23,7 +23,7 @@ function viewHoneypotLogs() {
         var parsedLog = "/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json";
 
         if (button === "view") {
-            $("#log-modal").find("h4").text("Today's Log Data for " + type + " Honeypot: " + host);
+            $("#log-modal").find("h4").text("Today's Log Data for " + type + " LongTail honeypot: " + host);
             // Set the hidden span tags in the modal to the log file paths so they can be read by the viewParsedLog function
             // Tried viewParsedLog(rawLog, parsedLog) here and it does not work
             $("#rawPath").html(rawLog);
@@ -40,7 +40,7 @@ function viewHoneypotLogs() {
             var t = now.toTimeString().slice(0,5).replace(/:/g,"");
             var dateTime = d + "_" + t;
 
-            var filename = host + "-" + dateTime + ".Honeypot";
+            var filename = host + "-" + dateTime + ".LongTail";
 
             saveLogAsExperimental(rawLog, filename);
         }
@@ -77,7 +77,6 @@ function viewHoneypotLogs() {
                         currentLog = getRandomSample(logData, sizeVal);
                         // If the hive plot creation is sucessful, print success message
                         if(makeCustomPlot()){
-                            // $('#plot-modal').modal('hide');
                             setStatusColor("green");
                             $("#status").html("Successfully graphed hive plot.");
                             lastPlotType = "custom";
@@ -89,10 +88,8 @@ function viewHoneypotLogs() {
                       currentLog = getRandomSample(logData, sizeVal);
                         // If the graph creation is sucessful, print success message
                         if(makeCustomGraph(currentLog)){
-                            // $('#plot-modal').modal('hide');
                             setStatusColor("green");
                             $("#status").html("Successfully created graph.");
-
                         }
                     });
                 }
@@ -201,7 +198,6 @@ function viewBlackridgeLogs() {
                         currentLog = getRandomSample(logData, sizeVal);
                         // If the hive plot creation is sucessful, print success message
                         if(makeCustomPlot()){
-                            // $('#plot-modal').modal('hide');
                             setStatusColor("green");
                             $("#status").html("Successfully graphed hive plot.");
                             lastPlotType = "custom";
@@ -213,10 +209,8 @@ function viewBlackridgeLogs() {
                       currentLog = getRandomSample(logData, sizeVal);
                         // If the graph creation is sucessful, print success message
                         if(makeCustomGraph(currentLog)){
-                            // $('#plot-modal').modal('hide');
                             setStatusColor("green");
                             $("#status").html("Successfully created graph.");
-
                         }
                     });
                 }
@@ -314,7 +308,6 @@ function viewExperimentalLogs() {
                         currentLog = getRandomSample(logData, sizeVal);
                         // If the hive plot creation is sucessful, print success message
                         if(makeCustomPlot()){
-                            // $('#plot-modal').modal('hide');
                             setStatusColor("green");
                             $("#status").html("Successfully graphed hive plot.");
                             lastPlotType = "custom";
@@ -326,7 +319,6 @@ function viewExperimentalLogs() {
                       currentLog = getRandomSample(logData, sizeVal);
                         // If the graph creation is sucessful, print success message
                         if(makeCustomGraph(currentLog)){
-                            // $('#plot-modal').modal('hide');
                             setStatusColor("green");
                             $("#status").html("Successfully created graph.");
                         }
@@ -482,7 +474,7 @@ function jsonToSQL(data, tableName) {
 }
 
 
-// Saves a honeypot or BlackRidge log file to the Experimental section
+// Saves a log file to the Experimental section
 function saveLogAsExperimental(pathToRawLog, filenameToSaveAs) {
     var dataObject = { 'pathToLog': pathToRawLog, 'filename': filenameToSaveAs };
     $.ajax({
@@ -535,13 +527,13 @@ function clearModal() {
 }
 
 
-// Populate the Longtail HP table with info about each active honeypot, including hostname and time it was last attacked
-function populateHoneypots() {
+// Populate the LongTail HP table with info about each active honeypot, including hostname and time it was last attacked
+function populateLongtailHPs() {
     $.getJSON(
        _lcarsAPI + "hpinfo",
        function (data, status) {
           if (status === "success") {
-              $("#honeypots").empty();
+              $("#longtail").empty();
 
               $.each(data, function(i, item) {
                   var hostname = data[i].hostname;
@@ -552,7 +544,7 @@ function populateHoneypots() {
                       loc = "Marist";
                   }
  
-                  $("#honeypots").append('<tr><th scope="row">' + (i+1) + '</th>'
+                  $("#longtail").append('<tr><th scope="row">' + (i+1) + '</th>'
                                        + '<td>' + hostname + '</td>'
                                        + '<td>SSH</td>'
                                        + '<td>' + loc + '</td>'
@@ -678,7 +670,7 @@ function setLogsLastRefreshedTime() {
 
 function refreshLongtailImage() {
     // The ? + Math.random() appended to the URL below allows the image to actually refresh, without it the browser recognizes
-    // that the URL path is the same and won't grab the new image from the Longtail site     
+    // that the URL path is the same and won't grab the new image from the LongTail site
     $("#longtail-img").attr("src", "http://longtail.it.marist.edu/honey/dashboard_number_of_attacks.png?"+Math.random());
 }
 
@@ -691,10 +683,10 @@ function switchLogTab() {
 }
 
 $(document).ready(function() {
-    populateHoneypots();
+    populateLongtailHPs();
     populateBlackRidgeLogs();
     populateExperimentalLogs();
-    viewHoneypotLogs();
+    viewLongtailLogs();
     viewBlackridgeLogs();
     viewExperimentalLogs();
     viewParsedLogs();
@@ -705,7 +697,7 @@ $(document).ready(function() {
     setLogsLastRefreshedTime();
 
     // Call functions to refresh logs every hour on the 15 minute (thats when the cron job runs)
-    setIntervalAdapted(populateHoneypots, 60, 905);
+    setIntervalAdapted(populateLongtailHPs, 60, 905);
     setIntervalAdapted(setLogsLastRefreshedTime, 60, 905);
     setIntervalAdapted(refreshLongtailImage, 5, 5);
 
@@ -766,13 +758,9 @@ Date.prototype.yyyymmdd = function() {
 
 // Creates gstar plot based on log data
 function makePrebakedGraph(data){
-    // var gstarWnd = window.open(gstarAddress);
-    // var gstarTextArea = gstarWnd.document.getElementById("ace_content");
-    //var output = document.getElementById("logDataOutput");
     var lines = data.split("\n");
     var dataKeys = Object.keys(JSON.parse(lines[0]));
     var jsonLine;
-    //var colorChoices = ["red","orange","cyan","blue","yellow","green","purple","pink","brown","grey"];
     var colorChoices = ["blue", "teal", "red", "orange"];
     var colors = {};
     var result = "new graph\n";
@@ -784,16 +772,6 @@ function makePrebakedGraph(data){
       colors[key] = colorChoices.pop();
     });
 
-    //output.innerHTML = "";
-    //output.innerHTML = output.innerHTML + "new graph\n";
-    //result = "";
-
-    // function replacer(match) {
-    //   return match.substring(1,match.length);
-    // }
-
-    // var regex = /#....../g;
-
     for (var i = 0; i < lines.length; i++){
       if(!lines[i]){continue;}
       jsonLine = JSON.parse(lines[i]);
@@ -804,11 +782,8 @@ function makePrebakedGraph(data){
         if (!vertexStr.includes(str)) {
           vertexStr = vertexStr + str;
         }
-        // result = result.replace(regex, replacer);
       });
     }
-
-    //output.innerHTML = output.innerHTML + result;
 
     for (var i = 0; i < lines.length; i++) {
       if(!lines[i]){continue;}
@@ -825,7 +800,6 @@ function makePrebakedGraph(data){
     }
 
     result = result + vertexStr + edgeStr;
-    //output.innerHTML = output.innerHTML + result;
     var currentGstarText = $("#logDataOutput").val();
     $("#logDataOutput").val(currentGstarText + result + "\n\n");
 }
@@ -955,9 +929,14 @@ function makePrebakedPlot(data){
 
   var connections = [];
 
-  for(var i = 0; i < names.length - 1; i++){
+  for(var i = 0; i < names.length; i++){
     var source = names[i];
-    var target = names[i + 1];
+    var target;
+    if (i === names.length - 1) {
+        target = names[0];
+    } else {
+        target = names[i + 1];
+    }
     var connectionObject = {
     "source": source,
     "target": target
@@ -966,11 +945,6 @@ function makePrebakedPlot(data){
   }
 
   formData.set("axisConnections", connections);
-  // Open new window, and create hive plot
-  // var wnd = window.open("./hiveplot.html");
-  // wnd.addEventListener('load', function(){
-  //   wnd.spawnPlot(formData);  
-  // });
 
   // Display hive plot in div
   spawnPlot(formData);
@@ -1036,7 +1010,6 @@ function makeCustomPlot(){
       return false;
     }
 
-
     for(var x = 0; x < fromNames.length; x++){
         // Check if an axis is linked to itself
         if(fromNames[x] === toNames[x]){
@@ -1045,13 +1018,6 @@ function makeCustomPlot(){
             return false;
         }
 
-        if(fromNames[0] === toNames[x]){
-           // first axis should only have outgoing link.
-           setStatusColor("red");
-            $("#status").html("The first axis can only have outgoing links.");
-            return false;
-        }  
-        
         // populate connections
         var source = fromNames[x];
         var target = toNames[x];
@@ -1100,7 +1066,7 @@ function populateCustomDropdown(logData, logCount) {
     thead.appendTo(table);
 
     var tbody = $('<tbody />');
-    for(var x = 1; x < dataKeys.length && x < 6; x++){
+    for(var x = 0; x < dataKeys.length; x++){
         var row = $('<tr />');
         var td1 = $('<td />');
         var checkbox = $('<input type="checkbox" value="' + x + '">');

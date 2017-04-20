@@ -311,7 +311,23 @@ public class APIrest extends NanoHTTPD {
          sb = responseGetSystemInfo();
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
-         
+
+      //
+      // models - GET only - Gets list of neural network models LCARS knows about (stored in model directory, ending in .yaml)
+      //
+      } else if (methodIsGET && command.equals("models")) {
+         sb = responseGetModels();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+      
+      //
+      // tests - GET only - Gets list of neural network test matrices that LCARS knows about (inside tests directory)
+      //
+      } else if (methodIsGET && command.equals("tests")) {
+         sb = responseGetTests();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+
       //
       // lcarslog - GET/PUT - Get all log entries from the LCARS log / Create new LCARS log entry
       //
@@ -329,6 +345,30 @@ public class APIrest extends NanoHTTPD {
       //
       } else if (methodIsPOST && command.equals("savelog")) {
          sb = responsePostExperimentalLog(reqJSON);
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+
+      //
+      // predict - POST only - predict outcome using given model for given matrix 
+      //
+      } else if (methodIsPOST && command.equals("predict")) {
+         sb = responsePostPrediction(reqJSON);
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+
+      //
+      // config - POST only - get the configuration options for a model from ML.ini
+      //
+      } else if (methodIsPOST && command.equals("config")) {
+         sb = responsePostConfig(reqJSON);
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+
+      //
+      // save - POST only - save new configuration options in ML.ini  
+      //
+      } else if (methodIsPOST && command.equals("save")) {
+         sb = responsePostSave(reqJSON);
          response = new NanoHTTPD.Response(sb.toString());
          addApiResponseHeaders(response);
 
@@ -610,6 +650,7 @@ public class APIrest extends NanoHTTPD {
              "+-- GET  /responsedetails                    - get all response details and recipe association\n" +
              "+-- GET  /orchestration                      - get orchestration for all profiles\n" + 
              " +- GET  /orchestration/[pid]                - get orchestration for one profile\n" + 
+             "+-- GET  /models                             - get neural network models LCARS knows about (in models directory)\n" +
              "\n" +
              "+-- PUT  /profiles                           - create a new profile using body JSON: {\"name\": \"Profile Name\", \"details\": \"Profile Details\"}\n" +
              "+-- PUT  /responserecipes                    - create a new response recipe using body JSON: {\"name\": \"Recipe Name\"}\n" +
@@ -707,6 +748,16 @@ public class APIrest extends NanoHTTPD {
       String[] command = new String[]{"/var/www/html/lcars/scripts/osquery.sh", "osversion"};
       return runShellScript(command);
    }
+
+   private StringBuilder responseGetModels() {
+      String[] command = new String[]{"/var/www/html/lcars/scripts/getModels.sh"};
+      return runShellScript(command);
+   }
+
+   private StringBuilder responseGetTests() {
+      String[] command = new String[]{"/var/www/html/lcars/scripts/getTests.sh"};
+      return runShellScript(command);
+   }
    
    private StringBuilder responseGetInterfaceDetails() {
       String[] command = new String[]{"/var/www/html/lcars/scripts/osquery.sh", "interfacedetails"};
@@ -746,6 +797,30 @@ public class APIrest extends NanoHTTPD {
 
        String[] command = new String[]{"/var/www/html/lcars/scripts/saveAsExperimental.sh", pathToLog, filename};
        return runShellScript(command);
+   }
+
+   private StringBuilder responsePostPrediction(JsonObject reqJSON) {
+      String modelName = reqJSON.get("model_name").getAsString();
+      String modelWeights = reqJSON.get("model_weights").getAsString();
+      String matrix = reqJSON.get("matrix").getAsString();
+      String[] command = new String[]{"python","/var/www/html/lcars/scripts/ML.py", modelName, modelWeights, matrix};
+      
+      return runShellScript(command);
+   }
+
+   private StringBuilder responsePostConfig(JsonObject reqJSON) {
+      String modelName = reqJSON.get("model_name").getAsString();
+      String[] command = new String[]{"/var/www/html/lcars/scripts/getConfigOptions.sh", modelName};
+      
+      return runShellScript(command);
+   }
+
+   private StringBuilder responsePostSave(JsonObject reqJSON) {
+      String modelName = reqJSON.remove("model").getAsString();
+      String json = reqJSON.toString();
+      String[] command = new String[]{"python","/var/www/html/lcars/scripts/setConfigOptionsML.py", json, modelName};
+
+      return runShellScript(command);
    }
 
    private StringBuilder responseGetProfiles() {
@@ -1319,8 +1394,13 @@ public class APIrest extends NanoHTTPD {
       try {
           Process executeScript = Runtime.getRuntime().exec(pathToScript);
           BufferedReader reader = new BufferedReader(new InputStreamReader(executeScript.getInputStream()));
+          BufferedReader errorReader = new BufferedReader(new InputStreamReader(executeScript.getErrorStream()));
           while ((line = reader.readLine()) != null) {
               sb.append(line);
+          }
+
+          while((line = errorReader.readLine()) != null) {
+            writeLog(line);
           }
 
       } catch (IOException e) {
@@ -1329,7 +1409,6 @@ public class APIrest extends NanoHTTPD {
 
       return sb;
    }
-
 
    /**
     * Write to the error log database tables and text stream.

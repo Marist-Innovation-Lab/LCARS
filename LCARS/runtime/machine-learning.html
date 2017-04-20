@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>LCARS - System Monitoring</title>
+    <title>LCARS</title>
 
     <!-- Bootstrap -->
     <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -22,8 +22,8 @@
     <!-- jQuery -->
     <script src="../vendors/jquery/dist/jquery.min.js"></script>
 
+    <script src="js/ML.js"></script>
     <script src="js/globals.js"></script>
-    <script src="js/monitoring.js"></script>
 
   </head>
 
@@ -91,7 +91,6 @@
             <nav>
               <div class="pull-right">
                   <h4>
-                     System Monitoring &mdash;
                      <span style="color:maroon; font-weight: bold;">L</span>ightweight
                      <span style="color:maroon; font-weight: bold;">C</span>loud
                      <span style="color:maroon; font-weight: bold;">A</span>pplication for
@@ -110,20 +109,26 @@
           <!-- row 1 -->
           <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
-               <div class="x_panel">
-                 <div class="x_title">
-                   <h2>LCARS Log</h2>
-                   <div class="clearfix"></div>
-                 </div>
-                 <div class="x_content">
-                   <div class="bs-example" data-example-id="simple-jumbotron">
-                      <div class="jumbotron" style="height: 250px; overflow: auto;">
-                         <p id="lcars-log">
-                         </p>
-                      </div>
-                   </div>
-                 </div>
-               </div>
+              <div class="x_panel">
+                <div class="x_title">
+                  <h2> Machine Learning - Models</h2><div class="clearfix"></div>
+                </div>
+                <div>
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                      <th>#</th>
+                      <th>Model</th>
+                      <th>Description</th>
+                      <th>Use This?</th>
+                      <th>Settings</th>
+                      </tr>
+                    </thead>
+                    <tbody id="models">
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
           <!-- /row 1 -->
@@ -131,32 +136,92 @@
           <!-- row 2 -->
           <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
-               <div class="x_panel">
-                 <div class="x_title">
-                   <h2>LCARS System</h2>
-                   <div class="clearfix"></div>
-                 </div>
-                 <div class="x_content">
-                     <div id="os-version">
-                     </div>
-                     <br>
-                     <div id="system-info">
-                     </div>
-                     <br>
-                     <div id="interface-details">
-                      
-                     </div>
-                     <br>
-                     <div id="iptables-info">
-                     </div>
-                 </div>
-               </div>
+              <div class="x_panel">
+                <div class="x_title">
+                  <h2> Machine Learning - Tests</h2><div class="clearfix"></div>
+                </div>
+                <div>
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                      <th>#</th>
+                      <th>Test Name</th>
+                      <th>Description</th>
+                      <th>Use This?</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tests">
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
           <!-- /row 2 -->
+          <!-- row 3 -->
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12 text-center">
+              <button id="predict-button" type="button" class="btn btn-primary">Predict</button>
+            </div>
+          </div>
+          <!-- /row 3 -->
+          <!-- row 4 -->
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="x_panel">
+                <div class="x_title">
+                  <h2>Predictor</h2>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content" style="height: 300px">
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <h2>Log 
+                      <button id="clear-log" type="button" class="btn btn-default btn-xs" style="position:absolute; right:5px;">
+                        <span title="Clear" class="glyphicon glyphicon-erase">
+                        </span>
+                      </button>
+                    </h2>
+                    <textarea id="log-textarea" class="form-control" rows="12" style="font-family:monospace;"></textarea>
+                  </div>
+                  <div class="col-md-6 col-sm-6 col-xs-12">
+                    <h2>Output 
+                      <button id="clear-output" type="button" class="btn btn-default btn-xs" style="position:absolute; right:5px;">
+                        <span title="Clear" class="glyphicon glyphicon-erase">
+                        </span>
+                      </button>
+                    </h2>
+                    <textarea id="output-textarea" class="form-control" rows="12" style="font-family:monospace;"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /row 4 -->
 
-        </div> 
+        </div>
         <!-- /page content -->
+
+        <!-- Modal pop-up for settings -->
+        <div id="settings-modal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+         <div class="modal-dialog modal-md">
+          <div class="modal-content">
+           <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+             </button>
+             <h4 class="modal-title"></h4><span id="rawPath" class="sr-only"></span><span id="parsedPath" class="sr-only"></span>
+           </div>
+           <div class="modal-body" style="height: 400px; overflow:auto;">
+             <p id="settings-data">
+             </p>
+           </div>
+           <div class="modal-footer">
+             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+             <button id="modal-save-button" type="button" class="btn btn-default" data-dismiss="modal">Save</button>
+           </div>
+          </div>
+         </div>
+        </div>
+        <!-- /Modal pop-up for settings -->
 
         <!-- footer content -->
         <footer>
@@ -171,8 +236,6 @@
 
     <!-- Bootstrap -->
     <script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- Chart.js -->
-    <script src="../vendors/Chart.js/dist/Chart.min.js"></script>
     <!-- Custom Theme Scripts -->
     <script src="../build/js/custom.min.js"></script>
 
