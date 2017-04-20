@@ -1,0 +1,24 @@
+LCARS Roadmap
+=============
+
+February 2017
+-------------
+
+Dashboard
+- make the map live
+- make the chart live
+
+Analytics
+- 
+
+Threat Intel Database
+- enhance response recipes with ability to include REST commands to BlackRidge devices
+
+Reconfigurator
+- add ability to send commands to BlackRidge devices
+
+
+
+
+
+
