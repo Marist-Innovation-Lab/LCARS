@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>LCARS - Analytics</title>
+
+    <!-- Bootstrap -->
+    <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="../vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="../build/css/custom.min.css" rel="stylesheet">
+  </head>
+
+  <body class="nav-md">
+    <div class="container body">
+      <div class="main_container">
+        <div class="col-md-3 left_col">
+          <div class="left_col scroll-view">
+
+            <div class="clearfix"></div>
+
+            <!-- menu profile quick info -->
+            <div class="profile">
+              <a href="index.html">
+                 <div class="profile_pic">
+                   <img src="images/marist-seal.png" alt="Marist College" class="img-circle profile_img">
+                 </div>
+                 <div class="profile_info">
+                   <span>SecureCloud</span>
+                   <h2>LCARS</h2>
+                 </div>
+              </a>
+            </div>
+            <!-- /menu profile quick info -->
+
+            <br />
+
+            <!-- sidebar menu -->
+            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+              <div class="menu_section">
+                <ul class="nav side-menu">
+                  <li><a><i class="fa fa-home"></i>Home <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="index.html">Dashboard</a></li>
+                      <li><a href="analysis.html">Analysis</a></li>
+                      <li><a href="threat-intel.html">Threat Intelligence</a></li>
+                      <li><a href="reconfigurator.html">Reconfigurator</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+            <!-- /sidebar menu -->
+
+            <!-- /menu footer buttons -->
+            <div class="sidebar-footer hidden-small">
+              <a data-toggle="tooltip" data-placement="top" title="Settings">
+                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+                <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="Lock">
+                <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="Logout">
+                <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+              </a>
+            </div>
+            <!-- /menu footer buttons -->
+          </div>
+        </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav>
+              <div class="nav toggle pull-left">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+              <div class="pull-right">
+                  <h4>
+                     Analytics &mdash;
+                     <span style="color:maroon; font-weight: bold;">L</span>ightweight
+                     <span style="color:maroon; font-weight: bold;">C</span>loud
+                     <span style="color:maroon; font-weight: bold;">A</span>pplication for
+                     <span style="color:maroon; font-weight: bold;">R</span>ealtime
+                     <span style="color:maroon; font-weight: bold;">S</span>ecurity &nbsp;                     
+                  <h4>
+              </div>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+        <div class="right_col" role="main">
+
+          <!-- row 1 -->
+          <div class="row">
+            <div class="col-md-9 col-sm-9 col-xs-12">
+               <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Honey-pot logs <small>Last refreshed on January 23, 2112</small></h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Name</th>
+                          <th>Location</th>
+                          <th>Updated</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">1</th>
+                          <td>Longtail SSH</td>
+                          <td>Marist</td>
+                          <td>2016-09-17 14:42.25</td>
+                          <td>
+                             <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg">View</button>
+                             <button type="button" class="btn btn-primary btn-xs">Parse</button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th scope="row">2</th>
+                          <td>Dolos SDN</td>
+                          <td>Vassar</td>
+                          <td>2016-09-16 18:24.52</td>
+                          <td>
+                             <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg">View</button>
+                             <button type="button" class="btn btn-primary btn-xs">Parse</button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th scope="row">3</th>
+                          <td>Mystery Telnet</td>
+                          <td>New Paltz</td>
+                          <td>2017-01-23 5:51.00</td>
+                          <td>
+                             <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg">View</button>
+                             <button type="button" class="btn btn-primary btn-xs">Parse</button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th scope="row">4</th>
+                          <td>Yretsym HTTP</td>
+                          <td>Newburgh</td>
+                          <td>2019-04-04 15:15.51</td>
+                          <td>
+                             <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg">View</button>
+                             <button type="button" class="btn btn-primary btn-xs">Parse</button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+               </div>
+            </div>
+
+               <!-- Modal pop-up for VIEW buttons -->
+               <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+                 <div class="modal-dialog modal-lg">
+                   <div class="modal-content">
+   
+                     <div class="modal-header">
+                       <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
+                       </button>
+                       <h4 class="modal-title" id="myModalLabel">SSH/SDN/Telnet/HTTP Honeypot</h4>
+                     </div>
+                     <div class="modal-body">
+                       <h4>Log Data</h4>
+                       <p>
+                          Could someone survive inside a transporter buffer for 75 years? 
+                          Smooth as an android's bottom, eh, Data? 
+                          Ensign Babyface! 
+                          For an android with no feelings, he sure managed to evoke them in others. 
+                          Well, that's certainly good to know. 
+                          And blowing into maximum warp speed, you appeared for an instant to be in two places at once. 
+                          Damage report! 
+                          My oath is between Captain Kargan and myself. 
+                          Your only concern is with how you obey my orders. 
+                          Or do you prefer the rank of prisoner to that of lieutenant? 
+                          Maybe if we felt any human loss as keenly as we feel one of those close to us, human history would be far less bloody. 
+                          Flair is what marks the difference between artistry and mere competence. 
+                          This should be interesting. 
+                          I think you've let your personal feelings cloud your judgement. 
+                          You enjoyed that. 
+                          That might've been one of the shortest assignments in the history of Starfleet. 
+                          We could cause a diplomatic crisis. 
+                          Take the ship into the Neutral Zone. 
+                          Your head is not an artifact!
+                     </p>
+                     </div>
+                     <div class="modal-footer">
+                       <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+               <!-- /Modal pop-up for VIEW buttons -->
+
+            <div class="col-md-3 col-sm-3 col-xs-12">
+               <div class="x_panel">
+                  <div class="x_title">
+                     <h2>Profiles</h2>
+                    <div class="clearfix"></div>                     
+                  </div>
+                  <div class="x_content">
+                     <a type="button" class="btn btn-block btn-primary" href="threat-intel.html">Create Attack Profile &rarr;</a>
+                     <br>
+                     <button type="button" class="btn btn-block btn-primary">More</button>
+                     <br>
+                     <button type="button" class="btn btn-block btn-primary">Actions</button>
+                  </div>
+               </div>
+            </div>
+          </div>
+          <!--/row 1 -->
+         
+          <!-- row 2 -->
+          <div class="row">
+            <div class="col-md-9 col-sm-9 col-xs-12">
+               <div class="x_panel">
+                 <div class="x_title">
+                   <h2>Integrated Graph and SQL Analytics - G*Studio</h2>
+                   <div class="clearfix"></div>
+                 </div>
+                 <div class="x_content">
+                    <img src="images/gstar-studio.png" class="img-responsive">                    
+                 </div>
+               </div>
+            </div>
+            
+            <div class="col-md-3 col-sm-3 col-xs-12">
+               <div class="x_panel">
+                  <div class="x_title">
+                     <h2>Analytics</h2>
+                    <div class="clearfix"></div>                     
+                  </div>
+                  <div class="x_content">
+                     <button type="button" class="btn btn-block btn-primary">Launch G*Studio</button>
+                     <br>
+                     <button type="button" class="btn btn-block btn-primary">Launch PSQL</button>
+                     <br>
+                     <button type="button" class="btn btn-block btn-primary">More Actions</button>
+                  </div>
+               </div>
+            </div>
+          </div>
+          <!--/row 2 -->
+
+          <!-- row 3 -->
+          <div class="row">
+            <div class="col-md-9 col-sm-9 col-xs-12">
+               <div class="x_panel">
+                 <div class="x_title">
+                   <h2>Honey-pot Classifiers</h2>
+                   <div class="clearfix"></div>
+                 </div>
+                 <div class="x_content">
+                    <img src="images/longtail.png" class="img-responsive">                    
+                 </div>
+               </div>
+            </div>
+            
+            <div class="col-md-3 col-sm-3 col-xs-12">
+               <div class="x_panel">
+                  <div class="x_title">
+                     <h2>Honeypot Classifiers</h2>
+                    <div class="clearfix"></div>                     
+                  </div>
+                  <div class="x_content">
+                     <button type="button" class="btn btn-block btn-primary">Launch Longtail Classifier</button>
+                     <br>
+                     <button type="button" class="btn btn-block btn-primary">Launch Dolos Classifier</button>
+                     <br>
+                     <button type="button" class="btn btn-block btn-primary">More Actions</button>
+                  </div>
+               </div>
+            </div>
+          </div>
+          <!--/row 3 -->
+          
+        </div>
+        <!-- /page content -->
+
+        <!-- footer content -->
+        <footer>
+          <div class="pull-right">
+            LCARS - Lightweight Cloud Application for Realtime Security
+          </div>
+          <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+      </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="../vendors/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <!-- Custom Theme Scripts -->
+    <script src="../build/js/custom.min.js"></script>
+
+  </body>
+</html>

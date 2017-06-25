@@ -1,0 +1,10 @@
+.DS_Store
+~*.docx
+TSWLatexianTemp_*
+*.tcp
+*.tps
+*.aux
+*.dvi
+*.log
+LCARS/template/*
+LCARS/vendors/*

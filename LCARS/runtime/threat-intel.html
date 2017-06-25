@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>LCARS - Threat Intelligence</title>
+
+    <!-- Bootstrap -->
+    <link href="../vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="../vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="../build/css/custom.min.css" rel="stylesheet">
+  </head>
+
+  <body class="nav-md">
+    <div class="container body">
+      <div class="main_container">
+        <div class="col-md-3 left_col">
+          <div class="left_col scroll-view">
+
+            <div class="clearfix"></div>
+
+            <!-- menu profile quick info -->
+            <div class="profile">
+              <a href="index.html">
+                 <div class="profile_pic">
+                   <img src="images/marist-seal.png" alt="Marist College" class="img-circle profile_img">
+                 </div>
+                 <div class="profile_info">
+                   <span>SecureCloud</span>
+                   <h2>LCARS</h2>
+                 </div>
+              </a>
+            </div>
+            <!-- /menu profile quick info -->
+
+            <br />
+
+            <!-- sidebar menu -->
+            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+              <div class="menu_section">
+                <ul class="nav side-menu">
+                  <li><a><i class="fa fa-home"></i>Home <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="index.html">Dashboard</a></li>
+                      <li><a href="analysis.html">Analysis</a></li>
+                      <li><a href="threat-intel.html">Threat Intelligence</a></li>
+                      <li><a href="reconfigurator.html">Reconfigurator</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+            <!-- /sidebar menu -->
+
+            <!-- /menu footer buttons -->
+            <div class="sidebar-footer hidden-small">
+              <a data-toggle="tooltip" data-placement="top" title="Settings">
+                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+                <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="Lock">
+                <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="Logout">
+                <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+              </a>
+            </div>
+            <!-- /menu footer buttons -->
+          </div>
+        </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav>
+              <div class="nav toggle pull-left">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+              <div class="pull-right">
+                  <h4>
+                     Threat Intelligence &mdash;
+                     <span style="color:maroon; font-weight: bold;">L</span>ightweight
+                     <span style="color:maroon; font-weight: bold;">C</span>loud
+                     <span style="color:maroon; font-weight: bold;">A</span>pplication for
+                     <span style="color:maroon; font-weight: bold;">R</span>ealtime
+                     <span style="color:maroon; font-weight: bold;">S</span>ecurity &nbsp;                     
+                  <h4>
+              </div>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+        <div class="right_col" role="main">
+
+          <!-- row 1 -->
+          <div class="row">
+            <div class="col-md-3 col-sm-3 col-xs-12">
+               <div class="x_panel">
+                  <div class="x_title">
+                     <h2>Profiles</h2>
+                    <div class="clearfix"></div>                     
+                  </div>
+                  <div class="x_content">
+                     <button type="button" class="btn btn-block btn-primary">Create Attack Profile</button>
+                     <br>
+                     <button type="button" class="btn btn-block btn-primary">More</button>
+                     <br>
+                     <button type="button" class="btn btn-block btn-primary">Actions</button>
+                  </div>
+               </div>
+            </div>
+
+            <div class="col-md-9 col-sm-9 col-xs-12">
+               <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Attack Profiles</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">                   
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Name</th>
+                          <th>Profile</th>
+                          <th>Updated</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">1</th>
+                          <td>Profile in Courage</td>                          
+                          <td>
+                             <span class="sparkline_line" style="height: 160px;">
+                                <canvas width="200" height="60" style="display: inline-block; vertical-align: top; width: 94px; height: 30px;"></canvas>
+                             </span>
+                          </td>                             
+                          <td>2016-09-17 14:42.25</td>
+                          <td>
+                             <button type="button" class="btn btn-primary btn-xs">Edit</button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th scope="row">2</th>
+                          <td>Profile in Lameness</td>
+                          <td>
+                             <span class="sparkline_area" style="height: 160px;">
+                                <canvas width="200" height="60" style="display: inline-block; vertical-align: top; width: 94px; height: 30px;"></canvas>
+                             </span>
+                          </td>                             
+                          <td>2016-09-16 18:24.52</td>
+                          <td>
+                             <button type="button" class="btn btn-primary btn-xs">Edit</button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th scope="row">3</th>
+                          <td>Profile in Sarcasm</td>
+                          <td>
+                             <span class="sparkline_bar" style="height: 160px;">
+                                <canvas width="200" height="60" style="display: inline-block; vertical-align: top; width: 94px; height: 30px;"></canvas>
+                             </span>
+                          </td>                             
+                          <td>2017-01-23 5:51.00</td>
+                          <td>
+                             <button type="button" class="btn btn-primary btn-xs">Edit</button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th scope="row">4</th>
+                          <td>Profile in Dude-ness</td>
+                          <td>
+                             <span class="sparkline_discreet" style="height: 160px;">
+                                <canvas width="200" height="60" style="display: inline-block; vertical-align: top; width: 94px; height: 30px;"></canvas>
+                             </span>
+                          </td>                             
+                          <td>2019-04-04 15:15.51</td>
+                          <td>
+                             <button type="button" class="btn btn-primary btn-xs">Edit</button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+               </div>
+            </div>
+          </div>
+          <!--/row 1 -->
+
+          <!-- row 2 -->
+          <div class="row">
+            <div class="col-md-3 col-sm-3 col-xs-12">
+               <div class="x_panel">
+                  <div class="x_title">
+                     <h2>Response Recipes</h2>
+                    <div class="clearfix"></div>                     
+                  </div>
+                  <div class="x_content">
+                     <button type="button" class="btn btn-block btn-primary" href="reconfigurator.html">Create Response Recipe</button>
+                     <br>
+                     <button type="button" class="btn btn-block btn-primary">Invoke Magic</button>
+                     <br>
+                     <button type="button" class="btn btn-block btn-primary">Invoke Math <small> (launch R)</small></button>
+                  </div>
+               </div>
+            </div>
+
+            <div class="col-md-9 col-sm-9 col-xs-12">
+               <div class="x_panel">
+                  <div class="x_title">
+                    <h2>Response Recipes</h2>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="x_content">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Name</th>
+                          <th>Updated</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">1</th>
+                          <td>Close the Doors</td>
+                          <td>2016-09-17 14:42.25</td>
+                          <td>
+                             <button type="button" class="btn btn-primary btn-xs">Edit</button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th scope="row">2</th>
+                          <td>Turn Out the Lights</td>
+                          <td>2016-09-16 18:24.52</td>
+                          <td>
+                             <button type="button" class="btn btn-primary btn-xs">Edit</button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th scope="row">3</th>
+                          <td>Cower in Fear</td>
+                          <td>2017-01-23 5:51.00</td>
+                          <td>
+                             <button type="button" class="btn btn-primary btn-xs">Edit</button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <th scope="row">4</th>
+                          <td>Fight the Power</td>
+                          <td>2019-04-04 15:15.51</td>
+                          <td>
+                             <button type="button" class="btn btn-primary btn-xs">Edit</button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+               </div>
+            </div>
+          </div>
+          <!--/row 2 -->
+
+          <!-- row 3 -->
+          <div class="row">
+            <div class="col-md-9 col-sm-9 col-xs-12">
+               <div class="x_panel">
+                 <div class="x_title">
+                   <h2>Response Orchestration</h2>
+                   <div class="clearfix"></div>
+                 </div>
+                 <div class="x_content">
+                     <ul class="list-unstyled timeline">
+                        <li>
+                           <div class="block">
+                              <div class="tags">
+                                <a href="" class="tag">
+                                  <span>1</span>
+                                </a>
+                              </div>
+                              <div class="block_content">
+                                 <h2 class="title">
+                                    Close the Doors
+                                 </h2>
+                                <div class="byline">
+                                  <span>4 steps</span>
+                                </div>
+                                <p class="excerpt">
+                                   Response Recipe summary Response Recipe summary Response Recipe summary Response Recipe summary 
+                                </p>
+                              </div>
+                           </div>
+                        </li>
+                        <li>
+                           <div class="block">
+                              <div class="tags">
+                                <a href="" class="tag">
+                                  <span>2</span>
+                                </a>
+                              </div>
+                              <div class="block_content">
+                                 <h2 class="title">
+                                    Close the Doors, Turn Out the Lights
+                                 </h2>
+                                <div class="byline">
+                                  <span>6 steps</span>
+                                </div>
+                                <p class="excerpt">
+                                   Response Recipe summary Response Recipe summary Response Recipe summary Response Recipe summary 
+                                </p>
+                              </div>
+                           </div>
+                        </li>
+                        <li>
+                           <div class="block">
+                              <div class="tags">
+                                <a href="" class="tag">
+                                  <span>3</span>
+                                </a>
+                              </div>
+                              <div class="block_content">
+                                 <h2 class="title">
+                                    Cower in Fear, Put Out the Lights
+                                 </h2>
+                                <div class="byline">
+                                  <span>3 steps</span>
+                                </div>
+                                <p class="excerpt">
+                                   Response Recipe summary Response Recipe summary Response Recipe summary Response Recipe summary 
+                                </p>
+                              </div>
+                           </div>
+                        </li>
+                        <li>
+                           <div class="block">
+                              <div class="tags">
+                                <a href="" class="tag">
+                                  <span>4</span>
+                                </a>
+                              </div>
+                              <div class="block_content">
+                                 <h2 class="title">
+                                    Fight the Power
+                                 </h2>
+                                <div class="byline">
+                                  <span>1 step</span>
+                                </div>
+                                <p class="excerpt">
+                                   Response Recipe summary Response Recipe summary Response Recipe summary Response Recipe summary 
+                                </p>
+                              </div>
+                           </div>
+                        </li>
+                     </ul>
+                 </div>
+               </div>
+            </div>
+                        
+            <div class="col-md-3 col-sm-3 col-xs-12">
+               <div class="x_panel">
+                  <div class="x_title">
+                     <h2>Threat Flows</h2>
+                    <div class="clearfix"></div>                     
+                  </div>
+                  <div class="x_content">
+                     <button type="button" class="btn btn-block btn-primary">New Threat Flow</button>
+                     <br>
+                     <button type="button" class="btn btn-block btn-primary">Edit Threat Flow</button>
+                     <br>
+                     <a type="button" class="btn btn-block btn-primary" href="reconfigurator.html">Deploy Response &rarr;</a>
+                  </div>
+               </div>
+            </div>            
+          </div>
+          <!--/row 3 -->
+          
+        </div>
+        <!-- /page content -->
+
+        <!-- footer content -->
+        <footer>
+          <div class="pull-right">
+            LCARS - Lightweight Cloud Application for Realtime Security
+          </div>
+          <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+      </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="../vendors/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="../vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- jQuery Sparklines -->
+    <script src="../vendors/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
+
+    <!-- Custom Theme Scripts -->
+    <script src="../build/js/custom.min.js"></script>
+
+    <!-- jQuery Sparklines -->
+    <script>
+      $(document).ready(function() {
+        $(".sparkline_bar").sparkline([2, 4, 3, 4, 5, 4, 5, 4, 3, 4, 5, 6, 4, 5, 6, 3, 5], {
+          type: 'bar',
+          colorMap: {
+            '7': '#a1a1a1'
+          },
+          barColor: '#26B99A'
+        });
+
+        $(".sparkline_area").sparkline([5, 6, 7, 9, 9, 5, 3, 2, 2, 4, 6, 7], {
+          type: 'line',
+          lineColor: '#26B99A',
+          fillColor: '#26B99A',
+          spotColor: '#4578a0',
+          minSpotColor: '#728fb2',
+          maxSpotColor: '#6d93c4',
+          highlightSpotColor: '#ef5179',
+          highlightLineColor: '#8ba8bf',
+          spotRadius: 2.5,
+          width: 85
+        });
+
+        $(".sparkline_line").sparkline([2, 4, 3, 4, 5, 4, 5, 4, 3, 4, 5, 6, 4, 5, 6, 3, 5], {
+          type: 'line',
+          lineColor: '#26B99A',
+          fillColor: '#ffffff',
+          width: 85,
+          spotColor: '#34495E',
+          minSpotColor: '#34495E'
+        });
+
+        $(".sparkline_pie").sparkline([1, 1, 2, 1], {
+          type: 'pie',
+          sliceColors: ['#26B99A', '#ccc', '#75BCDD', '#D66DE2']
+        });
+
+        $(".sparkline_discreet").sparkline([4, 6, 7, 7, 4, 3, 2, 1, 4, 4, 2, 4, 3, 7, 8, 9, 7, 6, 4, 3], {
+          type: 'discrete',
+          barWidth: 3,
+          lineColor: '#26B99A',
+          width: '85',
+        });
+
+      });
+    </script>
+    <!-- /jQuery Sparklines -->
+
+  </body>
+</html>
