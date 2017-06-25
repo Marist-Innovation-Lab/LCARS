@@ -1,4 +1,5 @@
 
+
 var lcarsAPI = "http://10.10.7.84:8081/";
 var gstarAddress = "http://10.10.7.84/gstarstudio"
 var currentLog = "";
@@ -49,7 +50,7 @@ function viewHoneypotLogs() {
             var tableName = host + "_" + formatDate;
 
             jsonToSQL(parsedLog, tableName);
-
+ 
         }
 
     });
@@ -134,9 +135,30 @@ function viewParsedLogs() {
 }
 
 
+// Launch G* Studio in a new tab and populate the editor panes with commands from LCARS
+function launchGstar() {
+    // Get textarea values for G* commands and SQL Commands
+    var gstarCommands = $("#logDataOutput").val();
+    var sqlCommands = $("#sql-commands").val();
+ 
+    // Launch G* Studio in a new tab
+    var gstarWindow = window.open("/gstarstudio", "_blank");
+    gstarWindow.focus();
+
+    // On page load, populate the graph and database editors with their respective data
+    $(gstarWindow).on("load", function() {
+        var graphEditor = gstarWindow.document.getElementById("text-editor");
+        var dbEditor = gstarWindow.document.getElementById("database-editor");
+        graphEditor.innerHTML = gstarCommands;
+        dbEditor.innerHTML = sqlCommands;
+    });
+}
+
+
 // Function to convert parsed JSON log file to SQL 'create table' and 'insert' statements
 function jsonToSQL(logFile, tableName) {
     var createString = "CREATE TABLE IF NOT EXISTS \"" + tableName + "\" ( \n";
+    var pkString = "  primary key(";
     var insertString = "INSERT INTO \"" + tableName + "\" VALUES \n";
 
     $.get(logFile, function(data) {
@@ -150,6 +172,7 @@ function jsonToSQL(logFile, tableName) {
                 for (key in jsObj) {
                     // Read the first line and determine the columns to create based on JSON attributes
                     if (i === 0) {
+                        pkString = pkString + key + ", ";
                         createString = createString + "   " + key + " text, \n";
                     }
 
@@ -159,21 +182,27 @@ function jsonToSQL(logFile, tableName) {
                 }
 
                 valString = valString.replace(/, $/g, "),\n");
-                insertString = insertString + valString;
+                // Only include unique entries, so check if the insert string already contains this data,
+                // and if it doesn't, add it.
+                if (!insertString.includes(valString)) {
+                    insertString = insertString + valString;
+                }
             }
         }
 
+        // Append primary key string to create string
+        createString = createString + pkString;
         // Reformat last line of string with appropriate semi-colon endings
-        createString = createString.replace(/, \n$/g, "\n);\n");
+        createString = createString.replace(/, $/g, ")\n);\n");
         insertString = insertString.replace(/,\n$/g, ";");
-
+ 
         // Append the createString and insertString statements to the textbox
         // jQuery append() function doesn't work as expected with textareas, so val() is used
         var currentSQLText = $("#sql-commands").val();
         $("#sql-commands").val(currentSQLText + createString + "\n" + insertString + "\n\n");
 
     }, 'html'); 
-
+ 
 }
 
 
@@ -225,8 +254,8 @@ function populateHoneypots() {
                                        + '<td>' + data[i].time + '</td>'
                                        + '<td>'
                                          + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal"><span title="View" class="glyphicon glyphicon-list"></span></button>'
-                                         + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#plot-modal"><span title="Plot" class="fa fa-share-alt"</span></button>'
-                                         + '<button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-line-chart"</span></button>'
+                                         + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#plot-modal"><span title="Plot" class="fa fa-line-chart"</span></button>'
+                                         + '<button type="button" class="btn btn-default btn-xs"><span title="To Graph" class="fa fa-share-alt"</span></button>'
                                          + '<button type="button" class="btn btn-default btn-xs"><span title="To SQL" class="fa fa-database"</span></button>'
                                        + '</td></tr>');
 
@@ -342,27 +371,41 @@ function makeGraph(data){
     var lines = data.split("\n");
     var dataKeys = Object.keys(JSON.parse(lines[0]));
     var jsonLine;
-    var colorScale = d3.scale.category10()
+    var colorChoices = ["red","orange","cyan","blue","yellow","green","purple","pink","brown","grey"];
     var colors = {};
 
     dataKeys.forEach(function(key){
-      colors[key] = colorScale();
+      colors[key] = colorChoices.pop();
     });
 
     output.innerHTML = "";
-    output.innerHTML = output.innerHTML + "new graph<br>";
+    output.innerHTML = output.innerHTML + "new graph\n";
+    result = "";
+
+    function replacer(match) {
+      return match.substring(1,match.length);
+    }
+
+    var regex = /#....../g;
 
     for (var i = 0; i < lines.length; i++){
+      if(!lines[i]){continue;}
       jsonLine = JSON.parse(lines[i]);
       dataKeys.forEach(function(key){
-        output.innerHTML = output.innerHTML + "add vertex " + jsonLine[key] + " with attributes(color=" + colors[key] + ")" + "<br>";
+        result = result + "add vertex " + jsonLine[key] + " with attributes(color=" + colors[key] + ")" + "\n";
+        result = result.replace(regex, replacer);
       });
     }
 
+    output.innerHTML = output.innerHTML + result;
+
     for (var i = 0; i < lines.length; i++) {
+      if(!lines[i]){continue;}
       jsonLine = JSON.parse(lines[i]);
-      for (var j = 0; j < dataKeys.length - 1; j++){
-        output.innerHTML = output.innerHTML + "add edge " + jsonLine[dataKeys[j]] + " - " + jsonLine[dataKeys[j + 1]] + "<br>";
+      for (var j = 0; j < dataKeys.length; j++){
+        result = result + "add edge " + jsonLine[dataKeys[j]] + " - " + jsonLine[dataKeys[j + 1]] + "\n";
       }
     }
+
+    output.innerHTML = output.innerHTML + result;
 }
