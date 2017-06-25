@@ -140,7 +140,6 @@ function launchGstar() {
     // Get textarea values for G* commands and SQL Commands
     var gstarCommands = $("#logDataOutput").val();
     var sqlCommands = $("#sql-commands").val();
- 
     // Launch G* Studio in a new tab
     var gstarWindow = window.open("/gstarstudio", "_blank");
     gstarWindow.focus();
@@ -382,18 +381,18 @@ function makeGraph(data){
     output.innerHTML = output.innerHTML + "new graph\n";
     result = "";
 
-    function replacer(match) {
-      return match.substring(1,match.length);
-    }
+    // function replacer(match) {
+    //   return match.substring(1,match.length);
+    // }
 
-    var regex = /#....../g;
+    // var regex = /#....../g;
 
     for (var i = 0; i < lines.length; i++){
       if(!lines[i]){continue;}
       jsonLine = JSON.parse(lines[i]);
       dataKeys.forEach(function(key){
         result = result + "add vertex " + jsonLine[key] + " with attributes(color=" + colors[key] + ")" + "\n";
-        result = result.replace(regex, replacer);
+        // result = result.replace(regex, replacer);
       });
     }
 
@@ -406,6 +405,6 @@ function makeGraph(data){
         result = result + "add edge " + jsonLine[dataKeys[j]] + " - " + jsonLine[dataKeys[j + 1]] + "\n";
       }
     }
-
+    
     output.innerHTML = output.innerHTML + result;
 }

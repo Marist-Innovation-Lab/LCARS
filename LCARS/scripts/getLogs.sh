@@ -20,7 +20,7 @@ honeypots=($(awk '!seen[$2] {print $2} {++seen[$2]}' current-raw-data))
 # Find all log entries that match active honeypot hostnames, and store them in their own files
 for i in "${honeypots[@]}"
 do
-   awk -v i="$i" '$2 == i {print}' current-raw-data > $log_dir/${i,,}.log  #${i,,} changes text to lowercase, so that AWS is saved as aws.log, not AWS.log
+   awk -v i="$i" '$2 == i {print}' current-raw-data | sort -k 1 > $log_dir/${i,,}.log  #${i,,} changes text to lowercase, so that AWS is saved as aws.log, not AWS.log
 done
 
 # Run python script that converts all the new logs to json
