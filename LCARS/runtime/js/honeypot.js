@@ -26,7 +26,12 @@ function viewHoneypotLogs() {
 
         if (button === "view") {
             $("#log-modal").find("h4").text("Today's Log Data for " + type + " Honeypot: " + host);
-            $("#log-identifier").html(host.toLowerCase());
+            // Set the hidden span tags in the modal to the log file paths so they can be read by the viewParsedLog function
+            // Tried viewParsedLog(rawLog, parsedLog) here and it does not work
+            $("#rawPath").html(rawLog);
+            $("#parsedPath").html(parsedLog);
+ 
+
             $("#log-data").load(rawLog);
         }
 
@@ -107,7 +112,8 @@ function viewBlackridgeLogs() {
 
         if (button === "view") {
             $("#log-modal").find("h4").text(date + " BlackRidge Log Data for: " + host);
-            $("#log-identifier").html(date);
+            $("#rawPath").html(rawLog);
+            $("#parsedPath").html(parsedLog);
 
             $("#log-data").load(rawLog);
         }
@@ -164,22 +170,80 @@ function viewBlackridgeLogs() {
     });
 }
 
-function viewParsedLogs() {
-    $("#data-view").on("click", function() {
-        var id = $("#log-identifier").text();
-        var parsedFile;
-        var rawFile;
-        
-        // Longtail Log
-        if (id.match(/[A-Za-z]+/g)) {
-            parsedFile = "/lcars/runtime/logs/longtail/parsed_json/"+id+".log.json";   
-            rawFile = "/lcars/runtime/logs/longtail/"+id+".log";
-        // BlackRidge Log
-        } else {
-            parsedFile = "/lcars/runtime/logs/blackridge/parsed_json/"+id+".json";
-            rawFile = "/lcars/runtime/logs/blackridge/"+id;
+function viewExperimentalLogs() {
+    $("#experimental").on("click", "td button", function() {
+
+        clearModal(); 
+
+        // Gets the text of the button that was clicked to determine which it was
+        var button = $(this).children("span").attr("title").toLowerCase();
+        var name = $(this).closest("tr").find("td:nth-child(2)").text();
+        var type = $(this).closest("tr").find("td:nth-child(3)").text();
+        var logCount = $(this).closest("tr").find("td:nth-child(4)").text();
+            logCount = (+logCount.replace(',', ''));   // Remove the comma and cast to a Number
+        var sampleBox = $(this).closest("tr").find("input");
+        var sampleSize = sampleBox.val();
+            sampleSize = (+sampleSize.replace(',',''));
+
+        var filename = name + "." + type;
+        var rawLog = "/lcars/runtime/logs/experimental/"+filename+".log";
+        var parsedLog = "/lcars/runtime/logs/experimental/parsed_json/"+filename+".log.json";
+
+        if (button === "view") {
+            $("#log-modal").find("h4").text("Experimental Log Data: " + name);
+            $("#rawPath").html(rawLog);
+            $("#parsedPath").html(parsedLog);
+ 
+            $("#log-data").load(rawLog);
         }
 
+        else if ( (sampleSize > logCount) || (sampleSize < 0) ) {
+            sampleBox.css("border", "1.5px solid red");
+        }
+
+        else {
+            sampleBox.removeAttr("style");
+
+            $.get(parsedLog, function(logData) {
+                var dataToAnalyze;
+                if (!sampleSize || sampleSize === logCount) {
+                    dataToAnalyze = logData;
+                } else {
+                    dataToAnalyze = getRandomSample(logData, sampleSize);
+                }
+
+                if (button === "custom") {
+                   $("#plot-modal").find("h4").text("Settings for hive plot: " + host);
+                   $("#plot-data").html(populateHiveplotDropdown(dataToAnalyze));
+                }
+
+                if (button === "plot") {
+                    currentLog = dataToAnalyze;
+                    makePrebakedPlot(dataToAnalyze);
+                }
+
+                if (button === "to graph") {
+                    makePrebakedGraph(dataToAnalyze);
+                }
+
+                if (button === "to sql") {
+                    var tableName = name;  // going to need something more uniquifying here
+
+                    jsonToSQL(dataToAnalyze, tableName);
+                }
+
+            }, 'html');
+
+        }
+
+    });
+}
+
+function viewParsedLogs() {
+    $("#data-view").on("click", function() {
+        var parsedFile = $("#parsedPath").text();
+        var rawFile = $("#rawPath").text();
+        
         if ($(this).text() === "View Parsed") {
             $(this).html("View Raw");
             $("#log-data").load(parsedFile);
@@ -406,6 +470,37 @@ function populateHoneypots() {
 }
 
 
+// Populate the Experimental logs table with info about each log
+function populateExperimentalLogs() {
+    $.getJSON(
+       lcarsAPI + "experimentallogs",
+       function (data, status) {
+          if (status === "success") {
+              $("#experimental").empty();
+
+              $.each(data, function(i, item) {
+
+                  $("#experimental").append('<tr><th scope="row">' + (i+1) + '</th>'
+                                          + '<td>' + data[i].name + '</td>'
+                                          + '<td>' + data[i].type + '</td>'
+                                          + '<td>'
+                                            + Number(data[i].logCount).toLocaleString()
+                                            + '<button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target="#log-modal" style="float:right; margin-right:25%;"><span title="View" class="glyphicon glyphicon-list"></span></button></td>'
+                                          + '<td><div class="input-group">'
+                                            + '<div style="padding-right:5px"><input class="form-control input-xs" type="text" placeholder="Sample Size" size=1></input></div>'
+                                            + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn" data-toggle="modal" data-target="#plot-modal"><span title="Custom" class="fa fa-gear"</span></button></div>'
+                                            + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="Plot" class="fa fa-line-chart"</span></button></div>'
+                                            + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To Graph" class="fa fa-share-alt"</span></button></div>'
+                                            + '<div class="input-group-btn"><button type="button" class="btn btn-default btn-xs analyze-btn"><span title="To SQL" class="fa fa-database"</span></button></div>'
+                                          + '</div></td></tr>');
+
+              });
+          }
+       }
+    );
+}
+
+
 function setLogsLastRefreshedTime() {
    var date = new Date();
    var mins = date.getMinutes();
@@ -449,8 +544,10 @@ function switchLogTab() {
 
 $(document).ready(function() {
     populateHoneypots();
+    populateExperimentalLogs();
     viewHoneypotLogs();
     viewBlackridgeLogs();
+    viewExperimentalLogs();
     viewParsedLogs();
     blackridgeLogCount();
     clearSQLCommands();

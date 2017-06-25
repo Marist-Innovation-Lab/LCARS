@@ -118,6 +118,7 @@
                     <ul id="logs-tab" class="nav nav-tabs nav-justified">
                        <li role="presentation" data-toggle="tab" class="active"><a href="#honeypot-logs"><strong>Honeypot</strong></a></li>
                        <li role="presentation" data-toggle="tab"><a href="#blackridge-logs"><strong>BlackRidge</strong></a></li>
+                       <li role="presentation" data-toggle="tab"><a href="#experimental-logs"><strong>Experimental</strong></a></li>
                     </ul>
                   </div>
                   <div class="tab-content">
@@ -182,6 +183,21 @@
                         </tbody>
                       </table>
                     </div>
+                    <div role="tabpanel" id="experimental-logs" class="tab-pane" style="height: 250px; overflow: auto;">
+                      <table class="table table-hover">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Log Count</th>
+                            <th>Analyze</th>
+                          </tr>
+                        </thead>
+                        <tbody id="experimental">
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                </div>
             </div>
@@ -194,7 +210,7 @@
                      <div class="modal-header">
                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
                        </button>
-                       <h4 class="modal-title"></h4><span id="log-identifier" class="sr-only"></span>
+                       <h4 class="modal-title"></h4><span id="rawPath" class="sr-only"></span><span id="parsedPath" class="sr-only"></span>
                      </div>
                      <div class="modal-body" style="height: 400px; overflow:auto;">
                        <p id="log-data">
@@ -317,3 +333,4 @@
     <script src="../build/js/custom.min.js"></script>
   </body>
 </html>
+

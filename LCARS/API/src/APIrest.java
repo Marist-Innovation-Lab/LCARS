@@ -241,6 +241,14 @@ public class APIrest extends NanoHTTPD {
          addApiResponseHeaders(response);
 
       //
+      // experimentallogs - GET only - Gets information about experimental logs
+      //
+      } else if (methodIsGET && command.equals("experimentallogs")) {
+         sb = responseGetExperimentalLogs();
+         response = new NanoHTTPD.Response(sb.toString());
+         addApiResponseHeaders(response);
+
+      //
       // logentries - GET only - Gets the number of log entries recorded today
       //
       } else if (methodIsGET && command.equals("logentries")) {
@@ -560,6 +568,7 @@ public class APIrest extends NanoHTTPD {
              "+-- GET  /time                               - current time\n" +
              "+-- GET  /datetime                           - current date and time\n" +
              "+-- GET  /hpinfo                             - information about all active honeypots\n" +
+             "+-- GET  /experimentallogs                   - information about all experimental logs\n" +
              "+-- GET  /logentries                         - number of recorded log entries today\n" +
              "+-- GET  /osversion                          - version info about LCARS server operating system\n" +
              "+-- GET  /interfacedetails                   - info about LCARS server interfaces\n" +
@@ -637,6 +646,11 @@ public class APIrest extends NanoHTTPD {
    
    private StringBuilder responseGetHPInfo() {
       String[] command = new String[]{"/var/www/html/lcars/scripts/hpinfo.sh"};
+      return runShellScript(command);
+   }
+
+   private StringBuilder responseGetExperimentalLogs() {
+      String[] command = new String[]{"/var/www/html/lcars/scripts/experimentalLogInfo.sh"};
       return runShellScript(command);
    }
 
