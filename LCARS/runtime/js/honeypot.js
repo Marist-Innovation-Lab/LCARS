@@ -8,7 +8,7 @@ var linkWeight = false;
 function viewHoneypotLogs() {
     $("#honeypots").on("click", "td button", function() {
 
-        clearModal();        
+        clearModal(); 
 
         // Gets the text of the button that was clicked to determine which it was
         var button = $(this).children("span").attr("title").toLowerCase();
@@ -24,17 +24,17 @@ function viewHoneypotLogs() {
         var rawLog = "/lcars/runtime/logs/longtail/"+host.toLowerCase()+".log";
         var parsedLog = "/lcars/runtime/logs/longtail/parsed_json/"+host.toLowerCase()+".log.json";
 
-        if (button === "view") {        
+        if (button === "view") { 
             $("#log-modal").find("h4").text("Today's Log Data for " + type + " Honeypot: " + host);
             $("#log-identifier").html(host.toLowerCase());
-    
+ 
             $("#log-data").load(rawLog);
         }
 
         else if ( (sampleSize > logCount) || (sampleSize < 0) ) {
             sampleBox.css("border", "1.5px solid red");
-        } 
-        
+        }
+
         else {
             sampleBox.removeAttr("style");
 
@@ -47,7 +47,7 @@ function viewHoneypotLogs() {
                 }
 
                 if (button === "plot") {
-                    //currentLog = x;
+                    currentLog = dataToAnalyze;
                     makePrebakedPlot(dataToAnalyze);
 
                     // $("#plot-modal").find("h4").text("Settings for hive plot:");
@@ -425,21 +425,22 @@ function setIntervalAdapted(myFunction, minuteInterval, secondsOffset) {
 function makePrebakedGraph(data){
     // var gstarWnd = window.open(gstarAddress);
     // var gstarTextArea = gstarWnd.document.getElementById("ace_content");
-    var output = document.getElementById("logDataOutput");
+    //var output = document.getElementById("logDataOutput");
     var lines = data.split("\n");
     var dataKeys = Object.keys(JSON.parse(lines[0]));
     var jsonLine;
     var colorChoices = ["red","orange","cyan","blue","yellow","green","purple","pink","brown","grey"];
     var colors = {};
+    var result = "new graph\n";
 
     // Assign colors to key types
     dataKeys.forEach(function(key){
       colors[key] = colorChoices.pop();
     });
 
-    output.innerHTML = "";
-    output.innerHTML = output.innerHTML + "new graph\n";
-    result = "";
+    //output.innerHTML = "";
+    //output.innerHTML = output.innerHTML + "new graph\n";
+    //result = "";
 
     // function replacer(match) {
     //   return match.substring(1,match.length);
@@ -456,7 +457,7 @@ function makePrebakedGraph(data){
       });
     }
 
-    output.innerHTML = output.innerHTML + result;
+    //output.innerHTML = output.innerHTML + result;
 
     for (var i = 0; i < lines.length; i++) {
       if(!lines[i]){continue;}
@@ -465,8 +466,10 @@ function makePrebakedGraph(data){
         result = result + "add edge " + jsonLine[dataKeys[j]] + " - " + jsonLine[dataKeys[j + 1]] + "\n";
       }
     }
-    
-    output.innerHTML = output.innerHTML + result;
+
+    //output.innerHTML = output.innerHTML + result;
+    var currentGstarText = $("#logDataOutput").val();
+    $("#logDataOutput").val(currentGstarText + result + "\n\n");
 }
 
 function makePrebakedPlot(data){
