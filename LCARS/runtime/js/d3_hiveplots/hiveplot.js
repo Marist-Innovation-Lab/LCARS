@@ -6,12 +6,26 @@ var svg;
 var nodeMaps = {};
 var formData;
 var linkWeightMap = new Map();
-var info = document.getElementById("info");
+var info;
+var firstRun = true;
+window.onload = function(){info = document.getElementById("info");};
+
 // Generates SVG hive plot based on incoming data.
 // The incoming data is a Map with the following format:
 //    A key "axisConnections" with an array of JSON objects detailing which axis should link to which other (e.g. {"source":"sourceAxis","dest":"destAxis"})
 //    A key "axisNames" with an array of strings detailing axis names.
 function spawnPlot(formData) {
+  
+  if(!firstRun){
+    // Clear old values
+    links = [];
+    colorFunc = null;
+    nodes = null;
+    nodeMaps = {};
+    this.formData = null;
+    linkWeightMap = new Map();
+  }
+
   // Make form data accessible to all functions
   this.formData = formData;
 
@@ -81,7 +95,7 @@ function spawnPlot(formData) {
 
   // d3.js code for rendering plot begins here
   var width = 1000,
-      height = 800,
+      height = 700,
       innerRadius = 40,
       outerRadius = 400,
       majorAngle = 2 * Math.PI / 3,
@@ -100,13 +114,43 @@ function spawnPlot(formData) {
       colorFunc = color; // Give color function global scope
 
   var scaleLinks = d3.scale.linear().domain([1, getHighestWeight()]).range([1,7]);
+  // ordinal scale for legend text positioning
+  var legendPos = d3.scale.ordinal().domain(formData.get("axisNames")).range([30,50,70,90]);
+
+  // clear anything in hiveplot div before creating plot
+  if(!firstRun) {
+    svg.selectAll("*").remove();
+    d3.select("#svgElement").remove();
+  }
 
   svg = d3.select("#hiveplot").append("svg")
   .attr("width", width)
   .attr("height", height)
   .attr("id","svgElement")
-  .append("g");
-  // .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+  .append("g")
+  .attr("transform", "translate(" + 50 + "," + height / 2 + ")");
+
+  // set up legend for hive plot
+  svg.append("g")
+  .attr("id","legend")
+  .attr("transform","translate(" + 250 + "," + -355 + ")")
+  .append("rect")
+  .attr("x",10)
+  .attr("y",10)
+  .attr("width",125)
+  .attr("height",100)
+  .attr("fill","none")
+  .attr("stroke","black");
+
+  d3.select("#legend")
+  .selectAll("text")
+  .data(formData.get("axisNames"))
+  .enter().append("text")
+  .attr("x", 30)
+  .attr("y", function(d) {return legendPos(d);})
+  .attr("font-family", "sans-serif")
+  .text(function(d){ return d;})
+  .attr("fill", function(d){return color(d);});
 
   svg.selectAll(".axis")
     .data(angleDomain) // change alongside angle
@@ -170,6 +214,8 @@ function spawnPlot(formData) {
     .style("fill", function(d) {return color(d.type);})
     .on("mouseover", nodeMouseover)
     .on("mouseout",  mouseout);
+
+    firstRun = false;
 }
 
 function degrees(radians) {
