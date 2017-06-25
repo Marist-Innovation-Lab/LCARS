@@ -54,7 +54,7 @@ function getRecipesActionButton() {
  
         function editMode() {
            name.html('<input value="' + name.html() + '"></input>');
-           actions.html('<button type="button" class="btn btn-primary btn-xs">Submit</button><button type="button" class="btn btn-primary btn-xs">Delete</button>'
+           actions.html('<button type="button" class="btn btn-primary btn-xs">Submit</button>'
             + '<button type="button" class="btn btn-primary btn-xs">Cancel</button>');
         }
 
@@ -68,7 +68,7 @@ function getRecipesActionButton() {
            editedName = name.find("input").val();
            editRecipe(rrid, editedName);
         } else if (button === "delete") {
-          deleteRecipe(rrid);
+           //deleteRecipe(rrid);
         }
     });
 }    
@@ -101,7 +101,9 @@ function getProfilesActionButton() {
            editedName = name.find("input").val();
            editedDetails = details.find("input").val();
            editProfile(pid, editedName, editedDetails);
-        } 
+        } else if (button === "delete") {
+           //deleteProfile(pid);
+        }
     });
 }
 
@@ -118,6 +120,7 @@ function editProfile(pid, name, details) {
     });
 }
 
+
 // Edits response recipe based on the user inputs, can only edit Name at this time
 function editRecipe(rrid, name) {
     var dataObject = { 'name': name };
@@ -130,16 +133,27 @@ function editRecipe(rrid, name) {
     });
 }
 
+
 // Deletes a specified response recipe 
 function deleteRecipe(rrid) {
-  $.ajax({
-          url: lcarsAPI + "responserecipes/" + rrid,
-          type: 'DELETE',
-          contentType: 'application/json',
-          success: function() { return populateRecipes(); }
-  });
+    $.ajax({
+            url: lcarsAPI + "responserecipes/" + rrid,
+            type: 'DELETE',
+            contentType: 'application/json',
+            success: function() { return populateRecipes(); }
+    });
 }
 
+
+// Deletes a specified profile
+function deleteProfile(pid) {
+    $.ajax({
+            url: lcarsAPI + "profiles/" + pid,
+            type: 'DELETE',
+            success: function() { return populateProfiles(); }
+    });
+}
+            
 
 // Gets the response recipe details for the selected response recipe
 function getRecipeDetails(rrid) {
@@ -175,7 +189,8 @@ function populateRecipes() {
                                            + '<td>' + data[i].responserecipes__name + '</td>'
                                            + '<td>' + data[i].responserecipes__updatedate + '</td>'
                                            + '<td><button type="button" class="btn btn-primary btn-xs">View Details</button>'
-                                           + '<button type="button" class="btn btn-primary btn-xs">Edit</button></td></tr>');
+                                           + '<button type="button" class="btn btn-primary btn-xs">Edit</button>'
+                                           + '<button type="button" class="btn btn-primary btn-xs">Delete</button></td></tr>');
                $("#deploy-response-recipes").append('<tr><th scope="row">' + data[i].responserecipes__rrid + '</th>'
                                                   + '<td>' + data[i].responserecipes__name + '</td>'
                                                   + '<td><button type="button" class="btn btn-primary btn-xs">Deploy</button></td></tr>');
@@ -198,7 +213,8 @@ function populateProfiles() {
                                    + '<td>' + data[i].profiles__name + '</td>'
                                    + '<td>' + data[i].profiles__details + '</td>'
                                    + '<td>' + data[i].profiles__updatedate + '</td>'
-                                   + '<td><button type="button" class="btn btn-primary btn-xs">Edit</button></td></tr>');
+                                   + '<td><button type="button" class="btn btn-primary btn-xs">Edit</button>'
+                                   + '<button type="button" class="btn btn-primary btn-xs">Delete</button></td></tr>');
             });
          }
       });
